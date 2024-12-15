@@ -9,12 +9,13 @@ import SwiftUI
 
 @main
 struct Rusaint_iOSApp: App {
-    let persistenceController = PersistenceController.shared
+    @StateObject private var viewModel = DefaultSaintHomeViewModel()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            NavigationStack {
+                SaintHomeView(viewModel: viewModel)
+            }
         }
     }
 }
