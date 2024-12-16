@@ -1,0 +1,69 @@
+{
+  "originHash" : "eb648b434a347aaa7d6671c3460f678598a42c97ef8c1c22d22f2015518ac75c",
+  "pins" : [
+    {
+      "identity" : "keychainaccess",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/kishikawakatsumi/KeychainAccess.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "e0c7eebc5a4465a3c4680764f26b7a61f567cdaf"
+      }
+    },
+    {
+      "identity" : "panmodal",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/slackhq/PanModal.git",
+      "state" : {
+        "revision" : "b012aecb6b67a8e46369227f893c12544846613f",
+        "version" : "1.2.7"
+      }
+    },
+    {
+      "identity" : "parchment",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yourssu/Parchment",
+      "state" : {
+        "revision" : "42036be5d011c83145e9f8e2705c7d3756e46607",
+        "version" : "3.7.2"
+      }
+    },
+    {
+      "identity" : "rusaint-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/EATSTEAK/rusaint-ios",
+      "state" : {
+        "branch" : "main",
+        "revision" : "08f3da1ecac5a9e10b28bd3de8976eda74c0971f"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "c7c7d2cf50a3211fe2843f76869c698e4e417930",
+        "version" : "6.8.0"
+      }
+    },
+    {
+      "identity" : "snapkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SnapKit/SnapKit",
+      "state" : {
+        "revision" : "2842e6e84e82eb9a8dac0100ca90d9444b0307f4",
+        "version" : "5.7.1"
+      }
+    },
+    {
+      "identity" : "yds-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/yourssu/YDS-iOS",
+      "state" : {
+        "revision" : "7b7ffacf3fe0dd9485c2132cf95ff85a03c682b3",
+        "version" : "3.1.5"
+      }
+    }
+  ],
+  "version" : 3
+}

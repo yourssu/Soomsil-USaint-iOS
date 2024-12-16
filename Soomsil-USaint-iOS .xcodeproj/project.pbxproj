@@ -1,0 +1,454 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		02C46CEA2D0F2DA400A3E717 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CE92D0F2DA400A3E717 /* Rusaint */; };
+		02C46CED2D0F2DFC00A3E717 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CEC2D0F2DFC00A3E717 /* KeychainAccess */; };
+		02C46CF02D0F2E6200A3E717 /* SaintNexus in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CEF2D0F2E6200A3E717 /* SaintNexus */; };
+		02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CF22D0F2E9300A3E717 /* YDS */; };
+		02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CF42D0F2E9300A3E717 /* YDS-SwiftUI */; };
+		02C46CF82D0F351800A3E717 /* SaintNexus in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CF72D0F351800A3E717 /* SaintNexus */; };
+		02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8C2D0F45B200A3E717 /* RxBlocking */; };
+		02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8E2D0F45B200A3E717 /* RxCocoa */; };
+		02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D902D0F45B200A3E717 /* RxRelay */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		02C46CBE2D0F138700A3E717 /* Soomsil-USaint-iOS .app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Soomsil-USaint-iOS .app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		02C46CC02D0F138700A3E717 /* Soomsil-USaint-iOS  */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Soomsil-USaint-iOS ";
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		02C46CBB2D0F138700A3E717 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */,
+				02C46CED2D0F2DFC00A3E717 /* KeychainAccess in Frameworks */,
+				02C46CF02D0F2E6200A3E717 /* SaintNexus in Frameworks */,
+				02C46CEA2D0F2DA400A3E717 /* Rusaint in Frameworks */,
+				02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */,
+				02C46CF82D0F351800A3E717 /* SaintNexus in Frameworks */,
+				02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */,
+				02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */,
+				02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		02C46CB52D0F138700A3E717 = {
+			isa = PBXGroup;
+			children = (
+				02C46CC02D0F138700A3E717 /* Soomsil-USaint-iOS  */,
+				02C46CBF2D0F138700A3E717 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		02C46CBF2D0F138700A3E717 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				02C46CBE2D0F138700A3E717 /* Soomsil-USaint-iOS .app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		02C46CBD2D0F138700A3E717 /* Soomsil-USaint-iOS  */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 02C46CD12D0F138800A3E717 /* Build configuration list for PBXNativeTarget "Soomsil-USaint-iOS " */;
+			buildPhases = (
+				02C46CBA2D0F138700A3E717 /* Sources */,
+				02C46CBB2D0F138700A3E717 /* Frameworks */,
+				02C46CBC2D0F138700A3E717 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				02C46CC02D0F138700A3E717 /* Soomsil-USaint-iOS  */,
+			);
+			name = "Soomsil-USaint-iOS ";
+			packageProductDependencies = (
+				02C46CE92D0F2DA400A3E717 /* Rusaint */,
+				02C46CEC2D0F2DFC00A3E717 /* KeychainAccess */,
+				02C46CEF2D0F2E6200A3E717 /* SaintNexus */,
+				02C46CF22D0F2E9300A3E717 /* YDS */,
+				02C46CF42D0F2E9300A3E717 /* YDS-SwiftUI */,
+				02C46CF72D0F351800A3E717 /* SaintNexus */,
+				02C46D8C2D0F45B200A3E717 /* RxBlocking */,
+				02C46D8E2D0F45B200A3E717 /* RxCocoa */,
+				02C46D902D0F45B200A3E717 /* RxRelay */,
+			);
+			productName = "Rusaint-iOS";
+			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint-iOS .app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		02C46CB62D0F138700A3E717 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					02C46CBD2D0F138700A3E717 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = 02C46CB92D0F138700A3E717 /* Build configuration list for PBXProject "Soomsil-USaint-iOS " */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 02C46CB52D0F138700A3E717;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				02C46CE82D0F2DA400A3E717 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
+				02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+				02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */,
+				02C46CF62D0F351800A3E717 /* XCLocalSwiftPackageReference "../SaintNexus" */,
+				02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				02C46CBD2D0F138700A3E717 /* Soomsil-USaint-iOS  */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		02C46CBC2D0F138700A3E717 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		02C46CBA2D0F138700A3E717 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		02C46CCF2D0F138800A3E717 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		02C46CD02D0F138800A3E717 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		02C46CD22D0F138800A3E717 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Rusaint-iOS/Resources/Preview Content\"";
+				DEVELOPMENT_TEAM = 2N3PMJ78CA;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.joeun.Soomsil-USaint-iOS\n";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		02C46CD32D0F138800A3E717 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Rusaint-iOS/Resources/Preview Content\"";
+				DEVELOPMENT_TEAM = 2N3PMJ78CA;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "net.joeun.Soomsil-USaint-iOS\n";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		02C46CB92D0F138700A3E717 /* Build configuration list for PBXProject "Soomsil-USaint-iOS " */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02C46CCF2D0F138800A3E717 /* Debug */,
+				02C46CD02D0F138800A3E717 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		02C46CD12D0F138800A3E717 /* Build configuration list for PBXNativeTarget "Soomsil-USaint-iOS " */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				02C46CD22D0F138800A3E717 /* Debug */,
+				02C46CD32D0F138800A3E717 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		02C46CF62D0F351800A3E717 /* XCLocalSwiftPackageReference "../SaintNexus" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../SaintNexus;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		02C46CE82D0F2DA400A3E717 /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/yourssu/YDS-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.5;
+			};
+		};
+		02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.8.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		02C46CE92D0F2DA400A3E717 /* Rusaint */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46CE82D0F2DA400A3E717 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
+			productName = Rusaint;
+		};
+		02C46CEC2D0F2DFC00A3E717 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+		02C46CEF2D0F2E6200A3E717 /* SaintNexus */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SaintNexus;
+		};
+		02C46CF22D0F2E9300A3E717 /* YDS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */;
+			productName = YDS;
+		};
+		02C46CF42D0F2E9300A3E717 /* YDS-SwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */;
+			productName = "YDS-SwiftUI";
+		};
+		02C46CF72D0F351800A3E717 /* SaintNexus */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SaintNexus;
+		};
+		02C46D8C2D0F45B200A3E717 /* RxBlocking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxBlocking;
+		};
+		02C46D8E2D0F45B200A3E717 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		02C46D902D0F45B200A3E717 /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 02C46CB62D0F138700A3E717 /* Project object */;
+}
