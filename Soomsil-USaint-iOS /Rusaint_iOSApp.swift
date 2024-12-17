@@ -14,7 +14,7 @@ struct Rusaint_iOSApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-                SaintHomeView(viewModel: viewModel)
+                LoginView()
             }
         }
     }
