@@ -37,12 +37,6 @@ struct LoginView: View {
                 .font(YDSFont.body1)
             YDSPasswordTextField(text: $password)
                 .padding(.bottom, Dimension.largeSpace)
-            NavigationLink {
-                // SemesterListView로 이동
-                SettingView()
-            } label: {
-                Image("ic_setting_fill")
-            }
             Button(action: {
                 Task {
                     do {
@@ -84,10 +78,10 @@ struct LoginView: View {
             Color.clear
                 .tapToHideKeyboard()
         )
-//        NavigationLink(
-//                        destination: SaintHomeView(viewModel: DefaultSaintHomeViewModel()),
-//                        isActive: $isLoginSuccessful,
-//                        label: { EmptyView() })
+        NavigationLink(
+                        destination: SaintHomeView(viewModel: DefaultSaintHomeViewModel()),
+                        isActive: $isLoginSuccessful,
+                        label: { EmptyView() })
         .onAppear {
             initial()
         }

@@ -9,8 +9,7 @@ import SwiftUI
 
 @main
 struct Rusaint_iOSApp: App {
-    @StateObject private var viewModel = DefaultSaintHomeViewModel()
-
+    
     var body: some Scene {
         WindowGroup {
             NavigationStack {
