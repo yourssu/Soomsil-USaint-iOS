@@ -14,8 +14,8 @@ struct HomeView<VM: HomeViewModel>: View {
     @State var path: [StackView] = []
     @StateObject var viewModel: VM
 
-    @State private var isLoggedIn = false
-
+    @State private var isLoggedIn = true
+    
     var body: some View {
         if !isLoggedIn {
             LoginView(isLoggedIn: $isLoggedIn)
@@ -53,15 +53,15 @@ struct HomeView<VM: HomeViewModel>: View {
                 }
                 .registerYDSToast()
                 .animation(.easeInOut, value: viewModel.isLogedIn())
-            }
-            .navigationDestination(for: StackView.self) { stackView in
-                switch stackView.type {
-                case .Setting:
-                    SettingView(path: $path)
-                case .SemesterList:
-                    SettingView(path: $path)
-                case .SemesterDetail:
-                    SettingView(path: $path)
+                .navigationDestination(for: StackView.self) { stackView in
+                    switch stackView.type {
+                    case .Setting:
+                        SettingView(path: $path)
+                    case .SemesterList:
+                        SettingView(path: $path)
+                    case .SemesterDetail:
+                        SettingView(path: $path)
+                    }
                 }
             }
         }
