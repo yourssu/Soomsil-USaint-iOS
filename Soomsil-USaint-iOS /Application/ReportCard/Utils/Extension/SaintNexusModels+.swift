@@ -15,11 +15,11 @@ public extension SNReportList {
             Dictionary(uniqueKeysWithValues: zip(self.header, array))
         }
     }
-    func toReportListModels() -> [GradeSummaryModel] {
-        let list = self.body.map { array in
-            let dict = Dictionary(uniqueKeysWithValues: zip(self.header, array))
-            return GradeSummaryModel.init(dict)
-        }
-        return list.compactMap { $0 }
-    }
+//    func toReportListModels() -> [GradeSummaryModel] {
+//        let list = self.body.map { array in
+//            let dict = Dictionary(uniqueKeysWithValues: zip(self.header, array))
+//            return GradeSummaryModel.init(dict)
+//        }
+//        return list.compactMap { $0 }
+//    }
 }
