@@ -8,18 +8,18 @@
 
 import Foundation
 import SaintNexus
-
-public extension SNReportList {
-    func toDictionaries() -> [[String: String]] {
-        self.body.map { array in
-            Dictionary(uniqueKeysWithValues: zip(self.header, array))
-        }
-    }
-    func toReportListModels() -> [ReportSummaryModel] {
-        let list = self.body.map { array in
-            let dict = Dictionary(uniqueKeysWithValues: zip(self.header, array))
-            return ReportSummaryModel.init(dict)
-        }
-        return list.compactMap { $0 }
-    }
-}
+//
+//public extension SNReportList {
+//    func toDictionaries() -> [[String: String]] {
+//        self.body.map { array in
+//            Dictionary(uniqueKeysWithValues: zip(self.header, array))
+//        }
+//    }
+//    func toReportListModels() -> [ReportSummaryModel] {
+//        let list = self.body.map { array in
+//            let dict = Dictionary(uniqueKeysWithValues: zip(self.header, array))
+//            return ReportSummaryModel.init(dict)
+//        }
+//        return list.compactMap { $0 }
+//    }
+//}
