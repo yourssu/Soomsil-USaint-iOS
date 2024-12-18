@@ -11,6 +11,8 @@ enum StackViewType {
     case SemesterList
     case SemesterDetail
     case Setting
+    case WebViewTerm
+    case WebViewPrivacy
 }
 
 struct StackView: Hashable {
