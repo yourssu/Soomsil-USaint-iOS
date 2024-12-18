@@ -9,13 +9,12 @@ import SwiftUI
 
 @main
 struct Rusaint_iOSApp: App {
-    @StateObject private var viewModel = TestReportListViewModel()
+
+    let viewModel = DefaultSaintHomeViewModel()
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                SemesterListView(semesterListViewModel: viewModel)
-            }
+            HomeView(viewModel: viewModel)
         }
     }
 }
