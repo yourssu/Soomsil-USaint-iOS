@@ -43,7 +43,7 @@ struct LoginView: View {
                         if self.session is USaintSession {
                             await saveUserInfo(id: id, password: password, session: session!)
                             await saveReportCard(session: session!)
-                            YDSToast("로그인 성공", haptic: .success)
+                            YDSToast("로그인 성공하였습니다.", haptic: .success)
                             isLoggedIn = true
                         } else {
                             YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)

@@ -16,11 +16,9 @@ public enum ParsingError: Error {
 
 /*
  HomeRepository : Rusaint 기능 중 로컬 저장소를 담당하는 Repository.
-
- Saint Nexus로 받아온 데이터를 KeyChain, UserDefaults, Core Data를 이용해서 저장.
- 저장할 때는 SN~~ 접두사가 붙은 모델을 CD~~ 접두사가 붙은 모델로 바꿈.
- 데이터를 가져올 때는 접두사가 붙지 않은 모델로 바꿈.
+ Rusaint로 받아온 데이터를 KeyChain, UserDefaults, Core Data를 이용해서 저장.
  */
+
 class HomeRepository {
     static let shared = HomeRepository(coreDataStack: .shared)
 

@@ -5,15 +5,32 @@
 //  Created by 이조은 on 12/18/24.
 //
 
+import UIKit
 import SwiftUI
 import YDS_SwiftUI
 
 import WebKit
 
+enum ActiveAlert: Identifiable {
+    case logout
+    case permission
+
+    var id: String {
+        switch self {
+        case .logout:
+            return "logout"
+        case .permission:
+            return "permission"
+        }
+    }
+}
+
 struct SettingView: View {
     @Environment(\.dismiss) var dismiss
-
     @Binding var path: [StackView]
+
+    @State private var activeAlert: ActiveAlert?
+    @State private var isNotificationPermission: Bool = false
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -21,19 +38,80 @@ struct SettingView: View {
                 .font(YDSFont.title2)
                 .padding(.top, 8)
                 .padding(.leading, 16)
-            ButtonList(title: "계정관리", items: [ButtonItemData(
+            ButtonList(title: "계정관리", items: [itemAction(
                 text: "로그아웃",
-                action: { requestNotificationPermission() }
+                action: { activeAlert = .logout }
             )])
-            ToggleList(title: "알림", items: ["알림 받기"])
-            ButtonList(title: "약관", items: [ButtonItemData(
+            VStack(alignment: .leading, spacing: 0) {
+                Text("알림")
+                    .font(YDSFont.subtitle3)
+                    .foregroundColor(YDSColor.textSecondary)
+                    .padding(20)
+                    .frame(height: 48)
+
+                HStack {
+                    Text("알림 받기")
+                        .font(YDSFont.button3)
+                        .foregroundColor(YDSColor.textSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    Toggle("", isOn: $isNotificationPermission)
+                        .labelsHidden()
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 20)
+                        .tint(YDSColor.buttonPoint)
+                        .onChange(of: isNotificationPermission) { newValue in
+                            if newValue {
+                                // 알림 켜기
+                                LocalNotificationManager.shared.check(completion: { result in
+                                    if result {
+                                        isNotificationPermission = true
+                                    } else {
+                                        isNotificationPermission = false
+                                        activeAlert = .permission
+                                    }
+                                })
+                            } else {
+                                isNotificationPermission = false
+                            }
+                        }
+                }
+                .padding(20)
+                .frame(height: 48)
+            }
+            ButtonList(title: "약관", items: [itemAction(
                 text: "이용약관",
                 action: { path.append(StackView(type: .WebViewTerm)) }
-            ),ButtonItemData(
+            ),itemAction(
                 text: "개인정보 처리 방침",
                 action: { path.append(StackView(type: .WebViewPrivacy)) }
             )])
             Spacer()
+        }
+        .alert(item: $activeAlert) { alertType in
+            switch alertType {
+            case .logout:
+                return Alert(
+                    title: Text("로그아웃 하시겠습니까?"),
+                    message: nil,
+                    primaryButton: .default(Text("취소")),
+                    secondaryButton: .destructive(Text("로그아웃"), action: { logOut() })
+                )
+            case .permission:
+                return Alert(
+                    title: Text("알림 설정"),
+                    message: Text("알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요."),
+                    primaryButton: .default(Text("취소")),
+                    secondaryButton: .default(Text("설정"), action: { requestNotificationPermission() })
+                )
+            }
+        }
+        .onAppear() {
+            isNotificationPermission = LocalNotificationManager.shared.getNotificationPermission()
+
+        }
+        .onDisappear() {
+            LocalNotificationManager.shared.saveNotificationPermission(isNotificationPermission)
         }
         .navigationBarBackButtonHidden()
         .toolbar {
@@ -49,24 +127,38 @@ struct SettingView: View {
         }
     }
 
+    private func logOut() {
+        // 로그아웃 로직
+        print("=== logOut")
+    }
+
     private func requestNotificationPermission() {
-        
+        LocalNotificationManager.shared.requestAuthorization(completion: { result in
+            if !result {
+                guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+                DispatchQueue.main.async {
+                    if UIApplication.shared.canOpenURL(url) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            }
+        })
     }
 }
 
 // MARK: - ButtonList
-struct ButtonItemData {
+struct itemAction {
     let text: String
     let action: () -> Void
 }
 
 struct ButtonList: View {
     let title: String
-    let items: [ButtonItemData]
+    let items: [itemAction]
 
     @State private var pressedStates: [Bool]
 
-    init(title: String, items: [ButtonItemData]) {
+    init(title: String, items: [itemAction]) {
         self.title = title
         self.items = items
         self._pressedStates = State(initialValue: Array(repeating: false, count: items.count))
@@ -116,68 +208,11 @@ struct ButtonItem: View {
     }
 }
 
-// MARK: - ToggleList
-
-struct ToggleList: View {
-    let title: String
-    let items: [String]
-    @State private var isOn: [Bool]
-
-    init(title: String, items: [String]) {
-        self.title = title
-        self.items = items
-        self._isOn = State(initialValue: Array(repeating: false, count: items.count))
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(YDSFont.subtitle3)
-                .foregroundColor(YDSColor.textSecondary)
-                .padding(20)
-                .frame(height: 48)
-
-            ForEach(items.indices, id: \.self) { index in
-                ToggleItem(
-                    text: items[index],
-                    action: { print("\(items[index]) tapped") },
-                    isOn: $isOn[index]
-                )
-            }
-        }
-    }
-}
-
-struct ToggleItem: View {
-    let text: String
-    let action: () -> Void
-    @Binding var isOn: Bool
-
-    var body: some View {
-        HStack {
-            Text(text)
-                .font(YDSFont.button3)
-                .foregroundColor(YDSColor.textSecondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            Toggle("", isOn: $isOn)
-                .labelsHidden()
-                .padding(.horizontal, 20)
-                .padding(.vertical, 20)
-                .tint(YDSColor.buttonPoint)
-                .onChange(of: isOn) { newValue in
-                    action()
-                }
-        }
-        .padding(20)
-        .frame(height: 48)
-    }
-}
 
 // MARK: - WebView
 struct WebView: UIViewRepresentable {
     var urlToLoad: String
-    
+
     @Binding var path: [StackView]
     @Environment(\.dismiss) var dismiss
 
