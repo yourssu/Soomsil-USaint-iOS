@@ -61,6 +61,10 @@ struct HomeView<VM: HomeViewModel>: View {
                         SettingView(path: $path)
                     case .SemesterDetail:
                         SettingView(path: $path)
+                    case .WebViewTerm:
+                        WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/service.html")
+                    case .WebViewPrivacy:
+                        WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/information.html")
                     }
                 }
             }

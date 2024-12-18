@@ -8,6 +8,8 @@
 import SwiftUI
 import YDS_SwiftUI
 
+import WebKit
+
 struct SettingView: View {
     @Environment(\.dismiss) var dismiss
 
@@ -19,9 +21,18 @@ struct SettingView: View {
                 .font(YDSFont.title2)
                 .padding(.top, 8)
                 .padding(.leading, 16)
-            ButtonList(title: "계정관리", items: ["로그아웃"])
+            ButtonList(title: "계정관리", items: [ButtonItemData(
+                text: "로그아웃",
+                action: { requestNotificationPermission() }
+            )])
             ToggleList(title: "알림", items: ["알림 받기"])
-            ButtonList(title: "약관", items: ["이용약관","개인정보수집 및 허용"])
+            ButtonList(title: "약관", items: [ButtonItemData(
+                text: "이용약관",
+                action: { path.append(StackView(type: .WebViewTerm)) }
+            ),ButtonItemData(
+                text: "개인정보 처리 방침",
+                action: { path.append(StackView(type: .WebViewPrivacy)) }
+            )])
             Spacer()
         }
         .navigationBarBackButtonHidden()
@@ -37,15 +48,25 @@ struct SettingView: View {
             }
         }
     }
+
+    private func requestNotificationPermission() {
+        
+    }
 }
 
 // MARK: - ButtonList
+struct ButtonItemData {
+    let text: String
+    let action: () -> Void
+}
+
 struct ButtonList: View {
     let title: String
-    let items: [String]
+    let items: [ButtonItemData]
+
     @State private var pressedStates: [Bool]
 
-    init(title: String, items: [String]) {
+    init(title: String, items: [ButtonItemData]) {
         self.title = title
         self.items = items
         self._pressedStates = State(initialValue: Array(repeating: false, count: items.count))
@@ -61,8 +82,8 @@ struct ButtonList: View {
 
             ForEach(items.indices, id: \.self) { index in
                 ButtonItem(
-                    text: items[index],
-                    action: { print("\(items[index]) tapped") },
+                    text: items[index].text,
+                    action: items[index].action,
                     isPressed: $pressedStates[index]
                 )
             }
@@ -150,6 +171,68 @@ struct ToggleItem: View {
         }
         .padding(20)
         .frame(height: 48)
+    }
+}
+
+// MARK: - WebView
+struct WebView: UIViewRepresentable {
+    var urlToLoad: String
+    
+    @Binding var path: [StackView]
+    @Environment(\.dismiss) var dismiss
+
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+        webView.navigationDelegate = context.coordinator
+
+        if let url = URL(string: self.urlToLoad) {
+            webView.load(URLRequest(url: url))
+        }
+
+        return webView
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, WKNavigationDelegate {
+        var parent: WebView
+
+        init(_ parent: WebView) {
+            self.parent = parent
+        }
+
+        func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+            print("Failed to load WebView: \(error.localizedDescription)")
+        }
+
+        func handleBackAction() {
+            parent.dismiss()
+        }
+    }
+}
+
+struct WebViewContainer: View {
+    @Binding var path: [StackView]
+    var urlToLoad: String
+
+    var body: some View {
+        WebView(urlToLoad: urlToLoad, path: $path)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        path.removeLast()
+                    } label: {
+                        Image("ic_arrow_left_line")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
+                }
+            }
     }
 }
 
