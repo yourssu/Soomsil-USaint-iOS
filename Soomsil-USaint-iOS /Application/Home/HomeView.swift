@@ -14,8 +14,8 @@ struct HomeView<VM: HomeViewModel>: View {
     @State var path: [StackView] = []
     @StateObject var viewModel: VM
 
-    @State private var isLoggedIn = true
-    
+    @State private var isLoggedIn = false
+
     var body: some View {
         if !isLoggedIn {
             LoginView(isLoggedIn: $isLoggedIn)
@@ -115,7 +115,7 @@ struct HomeView<VM: HomeViewModel>: View {
                 detailGradeListView(
                     average: creditCard.gpa,
                     credit: creditCard.earnedCredit,
-                    totalCredit: creditCard.totalCredit
+                    graduateCredit: creditCard.graduateCredit
                 )
             }
             .foregroundColor(Color(red: 0.06, green: 0.07, blue: 0.07))
@@ -123,7 +123,7 @@ struct HomeView<VM: HomeViewModel>: View {
         })
     }
 
-    private func detailGradeListView(average: Float, credit: Float, totalCredit: Float) -> some View {
+    private func detailGradeListView(average: Float, credit: Float, graduateCredit: Float) -> some View {
         VStack(spacing: Dimension.DetailSpacing.vertical) {
             HStack {
                 Text("평균학점").font(YDSFont.body1)
@@ -146,7 +146,7 @@ struct HomeView<VM: HomeViewModel>: View {
                 Spacer()
                 Text(String(Int(credit))).font(YDSFont.subtitle2)
                     .foregroundColor(Color(red: 0.51, green: 0.43, blue: 0.93))
-                Text("/ \(String(Int(totalCredit)))").font(YDSFont.subtitle3)
+                Text("/ \(String(Int(graduateCredit)))").font(YDSFont.subtitle3)
                     .foregroundColor(Color(red: 0.56, green: 0.58, blue: 0.6))
                     .padding(.leading, -4)
             }

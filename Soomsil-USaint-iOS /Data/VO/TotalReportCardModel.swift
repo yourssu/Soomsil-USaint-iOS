@@ -10,7 +10,7 @@ import Foundation
 public struct TotalReportCardModel: Hashable {
     let gpa: Float
     let earnedCredit: Float
-    let totalCredit: Float
+    let graduateCredit: Float
 }
 
 public extension Array where Element == CDTotalReportCard {
@@ -18,7 +18,7 @@ public extension Array where Element == CDTotalReportCard {
         TotalReportCardModel(
             gpa: Float(self.first?.gpa ?? 0),
             earnedCredit: Float(self.first?.earnedCredit ?? 0),
-            totalCredit: Float(self.first?.totalCredit ?? 0)
+            graduateCredit: Float(self.first?.graduateCredit ?? 0)
         )
     }
 }
