@@ -104,22 +104,14 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             .padding()
         }
         .background(YDSColor.bgElevated)
-        .toolbar {
-            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                Button {
-                    Task {
-                        switch await semesterListViewModel.getReportListFromRusaint() {
-                        case .success(let success):
-                            semesterListViewModel.reportList = success
-                            YDSToast("가져오기 성공!", haptic: .success)
-                        case .failure(let failure):
-                            YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-                        }
-                    }
-                } label: {
-                    YDSIcon.refreshLine
-                        .renderingMode(.template)
-                        .foregroundColor(YDSColor.buttonNormal)
+        .refreshable {
+            Task {
+                switch await semesterListViewModel.getReportListFromRusaint() {
+                case .success(let success):
+                    semesterListViewModel.reportList = success
+                    YDSToast("가져오기 성공!", haptic: .success)
+                case .failure(let failure):
+                    YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
                 }
             }
         }
