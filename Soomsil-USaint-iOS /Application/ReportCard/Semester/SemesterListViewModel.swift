@@ -5,7 +5,8 @@
 //  Created by 최지우 on 12/16/24.
 //
 
-import Foundation
+import SwiftUI
+import Rusaint
 
 extension StringProtocol {
     var tupleOfSplittedString: (String, String) {
@@ -43,7 +44,7 @@ protocol SemesterListViewModel: BaseViewModel, ObservableObject {
 //    }
 //}
 
-final class TestReportListViewModel: BaseViewModel, SemesterListViewModel {
+final class TestSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     @Published var reportList = [GradeSummaryModel]()
     @Published var isLoading: Bool = false
     @Published var isOnSeasonalSemester: Bool = false
@@ -55,49 +56,54 @@ final class TestReportListViewModel: BaseViewModel, SemesterListViewModel {
     func getReportListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
         return .success([
             GradeSummaryModel(
-                year: "2022",
+                year: 2022,
                 semester: "1 학기",
-                credit: 13.5,
-                pfCredit: 0.5,
                 gpa: 2.22,
-                semesterRank: ("12", "34"),
-                totalRank: ("34", "566")
+                earnedCredit: 13.5,
+                semesterRank: 12,
+                semesterStudentCount: 34,
+                overallRank: 100,
+                overallStudentCount: 566
             ),
             GradeSummaryModel(
-                year: "2022",
+                year: 2022,
                 semester: "여름학기",
-                credit: 4,
-                pfCredit: 0,
-                gpa: 2.42,
-                semesterRank: ("123", "324"),
-                totalRank: ("1", "111")
+                gpa: 3.22,
+                earnedCredit: 13.5,
+                semesterRank: 123,
+                semesterStudentCount: 111,
+                overallRank: 1,
+                overallStudentCount: 324
             ),
             GradeSummaryModel(
-                year: "2022",
+                year: 2022,
                 semester: "2 학기",
-                credit: 12.5,
-                pfCredit: 5.5,
-                gpa: 2.42,
-                semesterRank: ("123", "324"),
-                totalRank: ("1", "111")
+                gpa: 4.42,
+                earnedCredit: 4.0,
+                semesterRank: 123,
+                semesterStudentCount: 100,
+                overallRank: 11,
+                overallStudentCount: 324
             ),
             GradeSummaryModel(
-                year: "2022",
+                year: 2022,
                 semester: "겨울학기",
-                credit: 4,
-                pfCredit: 0,
-                gpa: 3.42,
-                semesterRank: ("123", "324"),
-                totalRank: ("1", "111")
+                gpa: 1.92,
+                earnedCredit: 4.0,
+                semesterRank: 123,
+                semesterStudentCount: 324,
+                overallRank: 1,
+                overallStudentCount: 161
             ),
             GradeSummaryModel(
-                year: "2023",
+                year: 2023,
                 semester: "1 학기",
-                credit: 19.5,
-                pfCredit: 0.5,
-                gpa: 4.22,
-                semesterRank: ("1", "342"),
-                totalRank: ("545", "566")
+                gpa: 3.50,
+                earnedCredit: 19.5,
+                semesterRank: 11,
+                semesterStudentCount: 342,
+                overallRank: 545,
+                overallStudentCount: 586
             )
         ])
     }
