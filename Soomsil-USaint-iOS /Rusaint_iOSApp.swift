@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct Rusaint_iOSApp: App {
+
     let viewModel = DefaultSaintHomeViewModel()
 
     var body: some Scene {
