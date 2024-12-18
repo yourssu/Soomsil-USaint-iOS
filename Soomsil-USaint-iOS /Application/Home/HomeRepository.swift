@@ -117,11 +117,11 @@ class HomeRepository {
     }
 
     // MARK: - TotalReportCard (CoreData)
-    private func createTotalReportCard(gpa: Float, earnedCredit: Float, totalCredit: Float, in context: NSManagedObjectContext) {
+    private func createTotalReportCard(gpa: Float, earnedCredit: Float, graduateCredit: Float, in context: NSManagedObjectContext) {
         let detail = CDTotalReportCard(context: context)
         detail.gpa = gpa
         detail.earnedCredit = earnedCredit
-        detail.totalCredit = totalCredit
+        detail.graduateCredit = graduateCredit
     }
 
     func getTotalReportCard() -> TotalReportCardModel {
@@ -132,14 +132,14 @@ class HomeRepository {
             return data.toTotalReportCardModel()
         } catch {
             print(error.localizedDescription)
-            return TotalReportCardModel(gpa: 0.00, earnedCredit: 0, totalCredit: 0)
+            return TotalReportCardModel(gpa: 0.00, earnedCredit: 0, graduateCredit: 0)
         }
     }
 
-    func updateTotalReportCard(gpa: Float, earnedCredit: Float, totalCredit: Float) {
+    func updateTotalReportCard(gpa: Float, earnedCredit: Float, graduateCredit: Float) {
         deleteTotalReportCard()
         let context = coreDataStack.taskContext()
-        createTotalReportCard(gpa: gpa, earnedCredit: earnedCredit, totalCredit: totalCredit, in: context)
+        createTotalReportCard(gpa: gpa, earnedCredit: earnedCredit, graduateCredit: graduateCredit, in: context)
 
         context.performAndWait {
             do {

@@ -110,7 +110,7 @@ struct LoginView: View {
     private func saveReportCard(session: USaintSession) async {
         do {
             let reportCard = try await CourseGradesApplicationBuilder().build(session: self.session!).certificatedSummary(courseType: .bachelor)
-            HomeRepository.shared.updateTotalReportCard(gpa: reportCard.gradePointsAvarage, earnedCredit: reportCard.earnedCredits, totalCredit: reportCard.attemptedCredits)
+            HomeRepository.shared.updateTotalReportCard(gpa: reportCard.gradePointsAvarage, earnedCredit: reportCard.earnedCredits, graduateCredit: reportCard.attemptedCredits)
         } catch {
             print("Failed to save reportCard: \(error)")
         }

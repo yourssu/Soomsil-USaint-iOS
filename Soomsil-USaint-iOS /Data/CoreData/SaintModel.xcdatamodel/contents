@@ -22,6 +22,6 @@
     <entity name="CDTotalReportCard" representedClassName="CDTotalReportCard" syncable="YES" codeGenerationType="class">
         <attribute name="earnedCredit" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="gpa" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="totalCredit" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="graduateCredit" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
     </entity>
 </model>
