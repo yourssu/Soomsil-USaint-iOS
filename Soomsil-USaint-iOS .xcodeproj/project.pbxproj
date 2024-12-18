@@ -16,6 +16,7 @@
 		02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8C2D0F45B200A3E717 /* RxBlocking */; };
 		02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8E2D0F45B200A3E717 /* RxCocoa */; };
 		02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D902D0F45B200A3E717 /* RxRelay */; };
+		7B2D5DA12D10334C0096832D /* SaintNexus in Frameworks */ = {isa = PBXBuildFile; productRef = 7B2D5DA02D10334C0096832D /* SaintNexus */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 				02C46CF82D0F351800A3E717 /* SaintNexus in Frameworks */,
 				02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */,
 				02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */,
+				7B2D5DA12D10334C0096832D /* SaintNexus in Frameworks */,
 				02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -95,6 +97,7 @@
 				02C46D8C2D0F45B200A3E717 /* RxBlocking */,
 				02C46D8E2D0F45B200A3E717 /* RxCocoa */,
 				02C46D902D0F45B200A3E717 /* RxRelay */,
+				7B2D5DA02D10334C0096832D /* SaintNexus */,
 			);
 			productName = "Rusaint-iOS";
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint-iOS .app */;
@@ -128,8 +131,8 @@
 				02C46CE82D0F2DA400A3E717 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
 				02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */,
-				02C46CF62D0F351800A3E717 /* XCLocalSwiftPackageReference "../SaintNexus" */,
 				02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				7B2D5D9F2D10334C0096832D /* XCLocalSwiftPackageReference "../../SaintNexus" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
@@ -363,9 +366,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		02C46CF62D0F351800A3E717 /* XCLocalSwiftPackageReference "../SaintNexus" */ = {
+		7B2D5D9F2D10334C0096832D /* XCLocalSwiftPackageReference "../../SaintNexus" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../SaintNexus;
+			relativePath = ../../SaintNexus;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -447,6 +450,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxRelay;
+		};
+		7B2D5DA02D10334C0096832D /* SaintNexus */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SaintNexus;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

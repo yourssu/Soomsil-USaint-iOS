@@ -6,3 +6,13 @@
 //
 
 import Foundation
+import SaintNexus
+
+public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
+
+  
+}
+
+// MARK: - Default func
+public extension SemesterDetailViewModel {
+}
