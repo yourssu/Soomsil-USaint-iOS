@@ -10,39 +10,105 @@ import YDS_SwiftUI
 
 // swiftlint:disable identifier_name
 
-struct SaintHomeView<VM: HomeViewModel>: View {
+struct HomeView<VM: HomeViewModel>: View {
+    @State var path: [StackView] = []
     @StateObject var viewModel: VM
 
+    @State private var isLoggedIn = false
+
     var body: some View {
-        ScrollView {
-            
-            VStack(spacing: Dimension.MainSpacing.vertical) {
+        if !isLoggedIn {
+            LoginView(isLoggedIn: $isLoggedIn)
+        } else {
+            NavigationStack(path: $path) {
+                ScrollView {
+                    HStack {
+                        Text("유세인트")
+                            .font(YDSFont.title2)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
+                    .frame(height: 31)
+                    .padding(.vertical, 6)
+                    .padding(.leading, 16)
 
-                PersonView<VM>(viewModel: viewModel)
+                    VStack(spacing: Dimension.MainSpacing.vertical) {
+                        userInformationView()
 
-                if viewModel.hasFeature(.grade) {
-                    GradeItemGroup()
+                        if viewModel.hasFeature(.grade) {
+                            GradeItemGroup()
+                        }
+                        Spacer()
+                    }
+                    .frame(height: 900)
+                    .background(Color(red: 0.95, green: 0.96, blue: 0.97))
                 }
+                .background(.white)
+                .onAppear {
 
-                Spacer()
+                    if viewModel.hasCachedUserInformation() {
+                        viewModel.syncCachedUserInformation()
+                        isLoggedIn = viewModel.isLogedIn()
+                    }
+                }
+                .registerYDSToast()
+                .animation(.easeInOut, value: viewModel.isLogedIn())
+            }
+            .navigationDestination(for: StackView.self) { stackView in
+                switch stackView.type {
+                case .Setting:
+                    SettingView(path: $path)
+                case .SemesterList:
+                    SettingView(path: $path)
+                case .SemesterDetail:
+                    SettingView(path: $path)
+                }
             }
         }
-        .background(Color(red: 0.95, green: 0.96, blue: 0.97))
-        .onAppear {
-            if viewModel.hasCachedUserInformation() {
-                viewModel.syncCachedUserInformation()
+    }
+
+    @ViewBuilder
+    private func userInformationView() -> some View {
+        if viewModel.isLogedIn(),
+           let person = viewModel.person {
+            ZStack {
+                Rectangle()
+                    .frame(height: 89)
+                    .foregroundColor(.clear)
+                HStack {
+                    Image("DefaultProfileImage")
+                        .resizable()
+                        .cornerRadius(16)
+                        .frame(width: 48, height: 48)
+                    VStack(alignment: .leading) {
+                        Text(person.name)
+                            .font(YDSFont.subtitle1)
+                            .padding(.bottom, 1.0)
+                        Text("\(person.major) \(person.schoolYear)")
+                            .font(YDSFont.body1)
+                    }
+                    .padding(.leading)
+                    Spacer()
+                    Button(action: {
+                        path.append(StackView(type: .Setting))
+                    }, label: {
+                        Image("ic_setting_fill")
+                    })
+                    .padding(.trailing, 8)
+                }
+                .padding(.horizontal, 16.0)
+                .padding(.vertical, 20.0)
             }
+            .cornerRadius(16.0)
+            .padding([.top, .leading, .trailing], 16)
         }
-        .registerYDSToast()
-        .animation(.easeInOut, value: viewModel.isLogedIn())
     }
 
     @ViewBuilder
     private func GradeItemGroup() -> some View {
-        NavigationLink {
-            // SemesterListView로 이동
-            LoginView()
-        } label: {
+        Button(action: {
+            path.append(StackView(type: .SemesterList))
+        }, label: {
             SaintItemGroupView(listType: .grade) {
                 SaintItemView(.grade)
                 let creditCard = HomeRepository.shared.getTotalReportCard()
@@ -54,7 +120,7 @@ struct SaintHomeView<VM: HomeViewModel>: View {
             }
             .foregroundColor(Color(red: 0.06, green: 0.07, blue: 0.07))
             .padding(.horizontal, Dimension.MainSpacing.horizontal)
-        }
+        })
     }
 
     private func detailGradeListView(average: Float, credit: Float, totalCredit: Float) -> some View {
@@ -90,6 +156,7 @@ struct SaintHomeView<VM: HomeViewModel>: View {
 
             Button(action: {
                 // SemesterList로 이동
+                path.append(StackView(type: .SemesterList))
             }, label: {
                 Text("전체성적 보기")
                     .font(Font.custom("Apple SD Gothic Neo", size: 15))
@@ -125,46 +192,6 @@ private enum Dimension {
     enum DetailPadding {
         static let horizontal: CGFloat = 28
         static let vertical: CGFloat = 8
-    }
-}
-
-private struct PersonView<VM: HomeViewModel>: View {
-    @StateObject var viewModel: VM
-    var body: some View {
-        if viewModel.isLogedIn(),
-           let person = viewModel.person {
-            ZStack {
-                Rectangle()
-                    .frame(height: 89)
-                    .foregroundColor(.clear)
-                HStack {
-                    Image("DefaultProfileImage")
-                        .resizable()
-                        .cornerRadius(16)
-                        .frame(width: 48, height: 48)
-                    VStack(alignment: .leading) {
-                        Text(person.name)
-                            .font(YDSFont.subtitle1)
-                            .padding(.bottom, 1.0)
-                        Text("\(person.major) \(person.schoolYear)")
-                            .font(YDSFont.body1)
-                    }
-                    .padding(.leading)
-                    Spacer()
-                    NavigationLink {
-                        // SemesterListView로 이동
-                        SettingView()
-                    } label: {
-                        Image("ic_setting_fill")
-                    }
-                    .padding(.trailing, 8)
-                }
-                .padding(.horizontal, 16.0)
-                .padding(.vertical, 20.0)
-            }
-            .cornerRadius(16.0)
-            .padding([.top, .leading, .trailing], 16)
-        }
     }
 }
 
@@ -230,7 +257,7 @@ private struct SaintItemView: View {
 struct SaintMainHomeView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationStack {
-            SaintHomeView(viewModel: TestSaintMainHomeViewModel())
+            HomeView(viewModel: TestSaintMainHomeViewModel())
         }
     }
 }

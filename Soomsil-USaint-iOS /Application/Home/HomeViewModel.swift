@@ -18,19 +18,19 @@ protocol HomeViewModel: ObservableObject {
 
 final class DefaultSaintHomeViewModel: HomeViewModel {
     @Published var person: PersonalInfo?
-    private let saintRepository = HomeRepository.shared
+    private let homeRepository = HomeRepository.shared
 
     func isLogedIn() -> Bool {
         return self.person != nil
     }
     func hasCachedUserInformation() -> Bool {
-        saintRepository.hasCachedUserInformation
+        homeRepository.hasCachedUserInformation
     }
     func syncCachedUserInformation() {
         self.person = getCachedUserInformation()
     }
     func getCachedUserInformation() -> PersonalInfo? {
-        let userInfo = saintRepository.getUserInformation()
+        let userInfo = homeRepository.getUserInformation() 
         switch userInfo {
         case let .success(info):
             return PersonalInfo(name: info.name, major: info.major, schoolYear: info.schoolYear)
