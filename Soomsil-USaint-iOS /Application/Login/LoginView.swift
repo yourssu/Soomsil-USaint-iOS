@@ -21,12 +21,11 @@ private enum Dimension {
 }
 
 struct LoginView: View {
-    @Environment(\.dismiss) var dismiss
     @State private var id: String = ""
     @State private var password: String = ""
     @State private var session: USaintSession?
-    @State private var isLoginSuccessful = false
-    @State private var showToast = false
+
+    @Binding var isLoggedIn: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: Dimension.VStack.spacing) {
@@ -45,7 +44,7 @@ struct LoginView: View {
                             await saveUserInfo(id: id, password: password, session: session!)
                             await saveReportCard(session: session!)
                             YDSToast("로그인 성공", haptic: .success)
-                            isLoginSuccessful = true
+                            isLoggedIn = true
                         } else {
                             YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
                             HomeRepository.shared.deleteAllData()
@@ -78,10 +77,6 @@ struct LoginView: View {
             Color.clear
                 .tapToHideKeyboard()
         )
-        NavigationLink(
-                        destination: SaintHomeView(viewModel: DefaultSaintHomeViewModel()),
-                        isActive: $isLoginSuccessful,
-                        label: { EmptyView() })
         .onAppear {
             initial()
         }
@@ -102,8 +97,8 @@ struct LoginView: View {
 
         do {
             let personalInfo = try await StudentInformationApplicationBuilder().build(session: self.session!).general()
-            let name = personalInfo.name
-            let major = personalInfo.major ?? ""
+            let name = personalInfo.name.replacingOccurrences(of: " ", with: "")
+            let major = personalInfo.appliedDepartment
             let schoolYear = "\(personalInfo.grade)학년"
             HomeRepository.shared.updateUserInformation(name: name,
                                                          major: major,
@@ -123,7 +118,7 @@ struct LoginView: View {
 }
 
 #Preview {
-    NavigationStack {
-        LoginView()
-    }
+    @State var isLoggedIn: Bool = false
+
+    LoginView(isLoggedIn: $isLoggedIn)
 }
