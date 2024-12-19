@@ -86,6 +86,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                 ) { index, report in
                     NavigationLink {
 //                        SemesterDetailView(semesterDetailViewModel: DefaultReportDetailViewModel(report: report))
+                        SemesterDetailView(semesterDetailViewModel: TestSemesterDetailViewModel())
                     } label: {
                         SemesterRow(gradeSummaryModel: report)
                             .offset(x: self.rowAnimation ? 0 : 100)
