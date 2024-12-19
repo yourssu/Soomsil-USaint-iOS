@@ -274,7 +274,7 @@ struct WebViewContainer: View {
 }
 
 #Preview {
-    @Previewable @State var isLoggedIn: Bool = true
-
-    SettingView(path: .constant([]), isLoggedIn: $isLoggedIn)
+//    @Previewable @State var isLoggedIn: Bool = true
+//
+//    SettingView(path: .constant([]), isLoggedIn: $isLoggedIn)
 }
