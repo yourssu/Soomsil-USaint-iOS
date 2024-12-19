@@ -22,7 +22,7 @@ class ReportCardRepository {
     }
     
     // MARK: - SemesterList (Core Data)
-    private func getSemesterList() -> [GradeSummaryModel] {
+    public func getSemesterList() -> [GradeSummaryModel] {
         let context = coreDataStack.taskContext()
         let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
         do {
@@ -34,7 +34,7 @@ class ReportCardRepository {
         }
     }
     
-    private func updateSemesterList(_ rusaintSemesterList: [GradeSummaryModel]) {
+    public func updateSemesterList(_ rusaintSemesterList: [GradeSummaryModel]) {
         deleteSemesterList()
         let context = coreDataStack.taskContext()
         for semesterList in rusaintSemesterList {
@@ -57,7 +57,7 @@ class ReportCardRepository {
         }
     }
     
-    private func deleteSemesterList() {
+    public func deleteSemesterList() {
         let context = coreDataStack.taskContext()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: CDSemester.fetchRequest())
         do {
