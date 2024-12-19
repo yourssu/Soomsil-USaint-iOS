@@ -22,6 +22,10 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
     @State private var semesterSelection: String = "1 학기"
     @State private var isShowingCustomReport: Bool = true
     
+    // FIXME: session -> keychain
+    @State private var se: USaintSession? = nil
+
+    
     init(semesterListViewModel: VM) {
         self._semesterListViewModel = StateObject(wrappedValue: semesterListViewModel)
     }
@@ -83,7 +87,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                     NavigationLink {
 //                        SemesterDetailView(semesterDetailViewModel: DefaultReportDetailViewModel(report: report))
                     } label: {
-                        SemesterRow(reportListModel: report)
+                        SemesterRow(gradeSummaryModel: report)
                             .offset(x: self.rowAnimation ? 0 : 100)
                             .opacity(self.rowAnimation ? 1 : 0)
                             .animation(
@@ -106,7 +110,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
         .background(YDSColor.bgElevated)
         .refreshable {
             Task {
-                switch await semesterListViewModel.getReportListFromRusaint() {
+                switch await semesterListViewModel.getSemesterListFromRusaint(session: self.se!) {
                 case .success(let success):
                     semesterListViewModel.reportList = success
                     YDSToast("가져오기 성공!", haptic: .success)
@@ -117,7 +121,9 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
         }
         .onAppear {
             Task {
-                switch await semesterListViewModel.getReportList() {
+                await setupSession()
+                
+                switch await semesterListViewModel.getSemesterList(session: self.se) {
                 case .success(let success):
                     semesterListViewModel.reportList = success
                 case .failure(let failure):
@@ -129,6 +135,23 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             LoadingCoverView()
         }
         .registerYDSToast()
+    }
+    
+    // FIXME: session -> keychain
+    func setupSession() async {
+        do {
+            self.se = try await USaintSessionBuilder().withPassword(id: "-", password: "-")
+            if self.se == nil {
+                print("== nil")
+            } else {
+                let data = try await StudentInformationApplicationBuilder().build(session: self.se!).general()
+                print("== \(data)")
+            }
+
+            print("Session initialized successfully: \(String(describing: se))")
+        } catch {
+            print("Failed to initialize session: \(error)")
+        }
     }
 }
 
@@ -156,7 +179,7 @@ struct EmphasizedView: View {
 struct GPAGraph: View {
     struct GPAInfo: Hashable {
         let semester: String
-        let gpa: Double
+        let gpa: Float
         // shortedSemester : 차트의 label에 "2023년 1 학기" 문자열을 "23-1" 형태로 축약하여 출력
         var shortedSemester: String {
             var result = ""
@@ -237,26 +260,26 @@ struct GPAGraph: View {
 struct SemesterRow: View {
     let year: String
     let semester: String
-    let credit: Double
-    let semesterGPA: Double
-    init(year: String, semester: String, credit: Double, semesterGPA: Double) {
+    let earnedCredit: Float
+    let semesterGPA: Float
+    init(year: String, semester: String, earnedCredit: Float, semesterGPA: Float) {
         self.year = year
         self.semester = semester
-        self.credit = credit
+        self.earnedCredit = earnedCredit
         self.semesterGPA = semesterGPA
     }
-    init(reportListModel: GradeSummaryModel) {
-        self.year = reportListModel.year
-        self.semester = reportListModel.semester
-        self.credit = reportListModel.credit
-        self.semesterGPA = reportListModel.gpa
+    init(gradeSummaryModel: GradeSummaryModel) {
+        self.year = String(gradeSummaryModel.year)
+        self.semester = gradeSummaryModel.semester
+        self.earnedCredit = gradeSummaryModel.earnedCredit
+        self.semesterGPA = gradeSummaryModel.gpa
     }
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 1.0) {
                 Text("\(year)년 \(semester)")
                     .font(YDSFont.subtitle2)
-                Text("\(String(format: "%.1f", credit))학점")
+                Text("\(String(format: "%.1f", earnedCredit))학점")
                     .font(YDSFont.body1)
                     .foregroundColor(YDSColor.textTertiary)
             }
@@ -275,5 +298,5 @@ struct SemesterRow: View {
 
 
 #Preview {
-    SemesterListView(semesterListViewModel: TestReportListViewModel())
+    SemesterListView(semesterListViewModel: DefaultSemesterListViewModel())
 }
