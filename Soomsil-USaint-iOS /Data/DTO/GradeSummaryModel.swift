@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Rusaint
 
 public struct GradeSummaryModel: Identifiable, Hashable {
     public let id = UUID()
@@ -141,6 +142,23 @@ public extension Array where Element == CDSemester {
                 semesterStudentCount: Int($0.semesterStudentCount),
                 overallRank: Int($0.overallRank),
                 overallStudentCount: Int($0.overallStudentCount)
+            )
+        }
+    }
+}
+
+public extension Array where Element == Rusaint.SemesterGrade {
+    func toGradeSummaryModels() -> [GradeSummaryModel] {
+        self.map {
+            GradeSummaryModel(
+                year: Int($0.year),
+                semester: $0.semester,
+                gpa: $0.gradePointsAvarage,
+                earnedCredit: $0.earnedCredits,
+                semesterRank: Int($0.semesterRank.first),
+                semesterStudentCount: Int($0.semesterRank.second),
+                overallRank: Int($0.generalRank.first),
+                overallStudentCount: Int($0.generalRank.second)
             )
         }
     }
