@@ -1,6 +1,6 @@
 //
 //  HomeView.swift
-//  Soomsil-USaint-iOS 
+//  Soomsil-USaint-iOS
 //
 //  Created by 이조은 on 12/16/24.
 //
@@ -15,6 +15,7 @@ struct HomeView<VM: HomeViewModel>: View {
     @StateObject var viewModel: VM
 
     @State private var isLoggedIn = false
+    @State private var isFirst: Bool = LocalNotificationManager.shared.getIsFirst()
 
     var body: some View {
         if !isLoggedIn {
@@ -46,6 +47,11 @@ struct HomeView<VM: HomeViewModel>: View {
                 .background(.white)
                 .onAppear {
 
+                    if !isFirst {
+                        LocalNotificationManager().requestAuthorization(completion: { _ in
+                        })
+                    }
+
                     if viewModel.hasCachedUserInformation() {
                         viewModel.syncCachedUserInformation()
                         isLoggedIn = viewModel.isLogedIn()
@@ -56,11 +62,11 @@ struct HomeView<VM: HomeViewModel>: View {
                 .navigationDestination(for: StackView.self) { stackView in
                     switch stackView.type {
                     case .Setting:
-                        SettingView(path: $path)
+                        SettingView(path: $path, isLoggedIn: $isLoggedIn)
                     case .SemesterList:
-                        SettingView(path: $path)
+                        SettingView(path: $path, isLoggedIn: $isLoggedIn)
                     case .SemesterDetail:
-                        SettingView(path: $path)
+                        SettingView(path: $path, isLoggedIn: $isLoggedIn)
                     case .WebViewTerm:
                         WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/service.html")
                     case .WebViewPrivacy:
