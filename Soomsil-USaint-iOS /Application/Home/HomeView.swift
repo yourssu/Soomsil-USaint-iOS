@@ -140,7 +140,7 @@ struct HomeView<VM: HomeViewModel>: View {
                 Spacer()
                 Text(String(format: "%.2f", average)).font(YDSFont.subtitle2)
                     .foregroundColor(Color(red: 0.51, green: 0.43, blue: 0.93))
-                Text("/ \(String(format: "%.2f", credit))").font(YDSFont.subtitle3)
+                Text("/ \(String(format: "%.2f", 4.50))").font(YDSFont.subtitle3)
                     .foregroundColor(Color(red: 0.56, green: 0.58, blue: 0.6))
                     .padding(.leading, -4)
             }
