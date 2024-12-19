@@ -21,13 +21,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		02C46CBE2D0F138700A3E717 /* Soomsil-USaint-iOS .app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Soomsil-USaint-iOS .app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Soomsil-USaint.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		02C46CC02D0F138700A3E717 /* Soomsil-USaint-iOS  */ = {
+		02C46CC02D0F138700A3E717 /* Soomsil-USaint */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Soomsil-USaint-iOS ";
+			path = "Soomsil-USaint";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -57,7 +57,7 @@
 		02C46CB52D0F138700A3E717 = {
 			isa = PBXGroup;
 			children = (
-				02C46CC02D0F138700A3E717 /* Soomsil-USaint-iOS  */,
+				02C46CC02D0F138700A3E717 /* Soomsil-USaint */,
 				02C46CBF2D0F138700A3E717 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -65,7 +65,7 @@
 		02C46CBF2D0F138700A3E717 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				02C46CBE2D0F138700A3E717 /* Soomsil-USaint-iOS .app */,
+				02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -73,9 +73,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		02C46CBD2D0F138700A3E717 /* Soomsil-USaint-iOS  */ = {
+		02C46CBD2D0F138700A3E717 /* Soomsil-USaint */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 02C46CD12D0F138800A3E717 /* Build configuration list for PBXNativeTarget "Soomsil-USaint-iOS " */;
+			buildConfigurationList = 02C46CD12D0F138800A3E717 /* Build configuration list for PBXNativeTarget "Soomsil-USaint" */;
 			buildPhases = (
 				02C46CBA2D0F138700A3E717 /* Sources */,
 				02C46CBB2D0F138700A3E717 /* Frameworks */,
@@ -86,9 +86,9 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				02C46CC02D0F138700A3E717 /* Soomsil-USaint-iOS  */,
+				02C46CC02D0F138700A3E717 /* Soomsil-USaint */,
 			);
-			name = "Soomsil-USaint-iOS ";
+			name = "Soomsil-USaint";
 			packageProductDependencies = (
 				02C46CEC2D0F2DFC00A3E717 /* KeychainAccess */,
 				02C46CEF2D0F2E6200A3E717 /* SaintNexus */,
@@ -103,7 +103,7 @@
 				7B8AE9252D140B9D00BC3F73 /* SaintNexus */,
 			);
 			productName = "Rusaint-iOS";
-			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint-iOS .app */;
+			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -121,7 +121,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 02C46CB92D0F138700A3E717 /* Build configuration list for PBXProject "Soomsil-USaint-iOS " */;
+			buildConfigurationList = 02C46CB92D0F138700A3E717 /* Build configuration list for PBXProject "Soomsil-USaint" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -142,7 +142,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				02C46CBD2D0F138700A3E717 /* Soomsil-USaint-iOS  */,
+				02C46CBD2D0F138700A3E717 /* Soomsil-USaint */,
 			);
 		};
 /* End PBXProject section */
@@ -350,7 +350,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		02C46CB92D0F138700A3E717 /* Build configuration list for PBXProject "Soomsil-USaint-iOS " */ = {
+		02C46CB92D0F138700A3E717 /* Build configuration list for PBXProject "Soomsil-USaint" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				02C46CCF2D0F138800A3E717 /* Debug */,
@@ -359,7 +359,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		02C46CD12D0F138800A3E717 /* Build configuration list for PBXNativeTarget "Soomsil-USaint-iOS " */ = {
+		02C46CD12D0F138800A3E717 /* Build configuration list for PBXNativeTarget "Soomsil-USaint" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				02C46CD22D0F138800A3E717 /* Debug */,
