@@ -109,8 +109,14 @@ struct LoginView: View {
     }
     private func saveReportCard(session: USaintSession) async {
         do {
-            let reportCard = try await CourseGradesApplicationBuilder().build(session: self.session!).certificatedSummary(courseType: .bachelor)
-            HomeRepository.shared.updateTotalReportCard(gpa: reportCard.gradePointsAvarage, earnedCredit: reportCard.earnedCredits, graduateCredit: reportCard.attemptedCredits)
+            let courseGrades = try await CourseGradesApplicationBuilder().build(session: self.session!).certificatedSummary(courseType: .bachelor)
+            let graduationRequirement = try await GraduationRequirementsApplicationBuilder().build(session: self.session!).requirements()
+            let graduateCredit = graduationRequirement.requirements.filter { $0.value.category == "졸업필수 요건" }
+                .compactMap { $0.value.requirement }
+                .map { Float($0) }
+
+            HomeRepository.shared.updateTotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit[0]))
+
         } catch {
             print("Failed to save reportCard: \(error)")
         }
