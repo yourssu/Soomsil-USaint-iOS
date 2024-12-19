@@ -1,6 +1,6 @@
 //
 //  LoginView.swift
-//  Soomsil-USaint-iOS 
+//  Soomsil-USaint-iOS
 //
 //  Created by 이조은 on 12/16/24.
 //
@@ -101,8 +101,8 @@ struct LoginView: View {
             let major = personalInfo.appliedDepartment
             let schoolYear = "\(personalInfo.grade)학년"
             HomeRepository.shared.updateUserInformation(name: name,
-                                                         major: major,
-                                                         schoolYear: schoolYear)
+                                                        major: major,
+                                                        schoolYear: schoolYear)
         } catch {
             print("Failed to save userInfo: \(error)")
         }
