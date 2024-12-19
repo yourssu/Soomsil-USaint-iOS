@@ -11,10 +11,11 @@ import YDS_SwiftUI
 import Rusaint
 
 struct SemesterListView<VM: SemesterListViewModel>: View {
-    @Environment(\.presentationMode) private var presentationMode: Binding<PresentationMode>
+    @Binding var path: [StackView]
+    @Environment(\.dismiss) var dismiss
+    @StateObject var semesterListViewModel: VM
     @State private var rowAnimation = false
-    @StateObject private var semesterListViewModel: VM
-    
+
     private let years = (2010...(Calendar.current.component(.year, from: Date())))
         .map { "\($0)" }
     @State private var yearSelection: String = "\(Calendar.current.component(.year, from: Date()))"
@@ -25,20 +26,19 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
     // FIXME: session -> keychain
     @State private var se: USaintSession? = nil
 
-    
-    init(semesterListViewModel: VM) {
-        self._semesterListViewModel = StateObject(wrappedValue: semesterListViewModel)
-    }
     var body: some View {
         ScrollView {
             
             // MARK: - top
             VStack(alignment: .leading) {
                 HStack {
-                    let average = 4.066
-                    let sum = 76.5
+                    let creditCard = SemesterRepository.shared.getTotalReportCard()
+
+                    let average = creditCard.gpa
+                    let sum = creditCard.earnedCredit
+                    let graduateCredit = creditCard.graduateCredit
                     EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", average), sub: "4.50")
-                    EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", sum), sub: "133")
+                    EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", sum), sub: String(graduateCredit))
                 }
                 VStack(alignment: .trailing, spacing: 18) {
                     GPAGraph(
@@ -86,7 +86,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                 ) { index, report in
                     NavigationLink {
 //                        SemesterDetailView(semesterDetailViewModel: DefaultReportDetailViewModel(report: report))
-                        SemesterDetailView(semesterDetailViewModel: TestSemesterDetailViewModel())
+                        SemesterDetailView(path: $path, semesterDetailViewModel: TestSemesterDetailViewModel())
                     } label: {
                         SemesterRow(gradeSummaryModel: report)
                             .offset(x: self.rowAnimation ? 0 : 100)
@@ -111,7 +111,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
         .background(YDSColor.bgElevated)
         .refreshable {
             Task {
-                switch await semesterListViewModel.getSemesterListFromRusaint(session: self.se!) {
+                switch await semesterListViewModel.getSemesterListFromRusaint() {
                 case .success(let success):
                     semesterListViewModel.reportList = success
                     YDSToast("가져오기 성공!", haptic: .success)
@@ -124,7 +124,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             Task {
                 await setupSession()
                 
-                switch await semesterListViewModel.getSemesterList(session: self.se) {
+                switch await semesterListViewModel.getSemesterList() {
                 case .success(let success):
                     semesterListViewModel.reportList = success
                 case .failure(let failure):
@@ -136,6 +136,18 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             LoadingCoverView()
         }
         .registerYDSToast()
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image("ic_arrow_left_line")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                }
+            }
+        }
     }
     
     // FIXME: session -> keychain
@@ -299,5 +311,5 @@ struct SemesterRow: View {
 
 
 #Preview {
-    SemesterListView(semesterListViewModel: DefaultSemesterListViewModel())
+    // SemesterListView(semesterListViewModel: DefaultSemesterListViewModel())
 }

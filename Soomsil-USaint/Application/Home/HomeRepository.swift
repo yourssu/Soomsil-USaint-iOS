@@ -62,6 +62,13 @@ class HomeRepository {
         keychain["saintPW"] = password
     }
 
+    func getUserLoginInformation() -> [String] {
+        let id = keychain["saintID"] ?? ""
+        let password = keychain["saintPW"] ?? ""
+
+        return [id, password]
+    }
+
     func updateUserInformation(name: String, major: String, schoolYear: String) {
         keychain["name"] = name
         keychain["major"] = major
