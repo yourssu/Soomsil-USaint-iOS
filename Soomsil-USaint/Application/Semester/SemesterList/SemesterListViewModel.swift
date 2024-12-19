@@ -35,7 +35,7 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     private let reportCardRepository = ReportCardRepository.shared
     
     @MainActor
-    public func getSemesterList(session: USaintSession?) async -> Result<[GradeSummaryModel], RusaintError> {
+    public func getSemesterList(session: USaintSession?) async -> Result<[GradeSummaryModel], RusaintError> { 
         reportCardRepository.deleteSemesterList()
         let gradeSummaryFromDevice = reportCardRepository.getSemesterList()
         if !gradeSummaryFromDevice.isEmpty {
