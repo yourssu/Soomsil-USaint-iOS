@@ -8,11 +8,13 @@
 import Foundation
 import CoreData
 import Rusaint
+import KeychainAccess
 
 
-class ReportCardRepository {
-    static let shared = ReportCardRepository(coreDataStack: .shared)
-    
+class SemesterRepository {
+    static let shared = SemesterRepository(coreDataStack: .shared)
+    private let keychain = Keychain(service: "com.yourssu.soomsil-ios")
+
     private let coreDataStack: CoreDataStack
     // FIXME: - user session 위해 필요
 //    private let keychain = Keychain(service: "com.yourssu.soomsil-ios")
@@ -20,7 +22,28 @@ class ReportCardRepository {
     init(coreDataStack: CoreDataStack = .shared) {
         self.coreDataStack = coreDataStack
     }
-    
+
+    // MARK: - UserInfo
+    func getUserLoginInformation() -> [String] {
+        let id = keychain["saintID"] ?? ""
+        let password = keychain["saintPW"] ?? ""
+
+        return [id, password]
+    }
+
+    // MARK: - TotalReportCard (Core Data)
+    func getTotalReportCard() -> TotalReportCardModel {
+        let context = coreDataStack.taskContext()
+        let fetchRequest: NSFetchRequest<CDTotalReportCard> = CDTotalReportCard.fetchRequest()
+        do {
+            let data = try context.fetch(fetchRequest)
+            return data.toTotalReportCardModel()
+        } catch {
+            print(error.localizedDescription)
+            return TotalReportCardModel(gpa: 0.00, earnedCredit: 0, graduateCredit: 0)
+        }
+    }
+
     // MARK: - SemesterList (Core Data)
     public func getSemesterList() -> [GradeSummaryModel] {
         let context = coreDataStack.taskContext()

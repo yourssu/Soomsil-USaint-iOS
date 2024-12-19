@@ -64,9 +64,9 @@ struct HomeView<VM: HomeViewModel>: View {
                     case .Setting:
                         SettingView(path: $path, isLoggedIn: $isLoggedIn)
                     case .SemesterList:
-                        SettingView(path: $path, isLoggedIn: $isLoggedIn)
+                        SemesterListView(path: $path, semesterListViewModel: DefaultSemesterListViewModel())
                     case .SemesterDetail:
-                        SettingView(path: $path, isLoggedIn: $isLoggedIn)
+                        SemesterDetailView(path: $path, semesterDetailViewModel: TestSemesterDetailViewModel())
                     case .WebViewTerm:
                         WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/service.html")
                     case .WebViewPrivacy:
@@ -154,7 +154,7 @@ struct HomeView<VM: HomeViewModel>: View {
             HStack {
                 Text("취득학점").font(YDSFont.body1)
                 Spacer()
-                Text(String(Int(credit))).font(YDSFont.subtitle2)
+                Text(String(format: "%.1f", credit)).font(YDSFont.subtitle2)
                     .foregroundColor(Color(red: 0.51, green: 0.43, blue: 0.93))
                 Text("/ \(String(Int(graduateCredit)))").font(YDSFont.subtitle3)
                     .foregroundColor(Color(red: 0.56, green: 0.58, blue: 0.6))

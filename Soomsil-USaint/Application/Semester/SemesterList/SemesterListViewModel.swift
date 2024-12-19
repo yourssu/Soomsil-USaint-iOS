@@ -23,44 +23,61 @@ extension StringProtocol {
 protocol SemesterListViewModel: BaseViewModel, ObservableObject {
     var reportList: [GradeSummaryModel] { get set }
     var isOnSeasonalSemester: Bool { get set }
-    
+
     // FIXME: - session 인자 제거
-    func getSemesterList(session: USaintSession?) async -> Result<[GradeSummaryModel], RusaintError>
-    func getSemesterListFromRusaint(session: USaintSession) async -> Result<[GradeSummaryModel], RusaintError>
+    func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError>
+    func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError>
 }
 
 final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
+    
     @Published var reportList = [GradeSummaryModel]()
     @Published var isOnSeasonalSemester = false
-    private let reportCardRepository = ReportCardRepository.shared
-    
+    private let semesterRepository = SemesterRepository.shared
+    private var session: USaintSession?
+
     @MainActor
-    public func getSemesterList(session: USaintSession?) async -> Result<[GradeSummaryModel], RusaintError> { 
-        reportCardRepository.deleteSemesterList()
-        let gradeSummaryFromDevice = reportCardRepository.getSemesterList()
-        if !gradeSummaryFromDevice.isEmpty {
-            print("🏳️‍🌈coredata: \(gradeSummaryFromDevice)")
-            return .success(gradeSummaryFromDevice)
+    public func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError> {
+//        reportCardRepository.deleteSemesterList()
+        let userInfo = semesterRepository.getUserLoginInformation()
+        do {
+            self.session =  try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
+            if self.session != nil {
+                // 성공
+                let gradeSummaryFromDevice = semesterRepository.getSemesterList()
+                if !gradeSummaryFromDevice.isEmpty {
+                    print("🏳️‍🌈coredata: \(gradeSummaryFromDevice)")
+                    return .success(gradeSummaryFromDevice)
+                }
+                return await getSemesterListFromRusaint()
+            } else {
+                return .failure(RusaintError.invalidClientError)
+            }
+        } catch {
+            print("=== \(error)")
+            return .failure(error as! RusaintError)
         }
-        return await getSemesterListFromRusaint(session: session!)
     }
     
     @MainActor
-    public func getSemesterListFromRusaint(session: USaintSession) async -> Result<[GradeSummaryModel], RusaintError> {
+    public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
         do {
-            let response = try await CourseGradesApplicationBuilder().build(session: session).semesters(courseType: CourseType.bachelor)
-            let rusaintData = response.toGradeSummaryModels()
+            if self.session != nil {
+                let response = try await CourseGradesApplicationBuilder().build(session: self.session!).semesters(courseType: CourseType.bachelor)
+                let rusaintData = response.toGradeSummaryModels()
 
-            self.reportCardRepository.updateSemesterList(rusaintData)
-            let list = self.reportCardRepository.getSemesterList()
-            if list.isEmpty {
-                throw ParsingError.error("데이터 에러")
+                self.semesterRepository.updateSemesterList(rusaintData)
+                let list = self.semesterRepository.getSemesterList()
+
+                if list.isEmpty {
+                    throw ParsingError.error("데이터 에러")
+                } else {
+                    print("🏳️‍🌈Rusaint: \(list)")
+                    return .success(list)
+                }
             } else {
-                print("🏳️‍🌈Rusaint: \(list)")
-                return .success(list)
+                return .failure(RusaintError.invalidClientError)
             }
-
-            
         } catch (let error) {
             return .failure(error as! RusaintError)
         }

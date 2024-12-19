@@ -50,15 +50,13 @@ private typealias Padding = Dimension.Padding
 private typealias Origin = Dimension.Origin
 
 struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
-    @Environment(\.presentationMode) private var presentationMode
-    @StateObject private var semesterDetailViewModel: VM
+    @Binding var path: [StackView]
+    @Environment(\.dismiss) var dismiss
+    @StateObject var semesterDetailViewModel: VM
     @State private var viewOrigin: CGPoint = Origin.entireView
     @State private var viewSize: CGSize = Size.entireView
-    @State private var isShowSummary: Bool = true
-    init(semesterDetailViewModel: VM, isShowSummary: Bool = true) {
-        self._semesterDetailViewModel = StateObject(wrappedValue: semesterDetailViewModel)
-        self.isShowSummary = isShowSummary
-    }
+    var isShowSummary: Bool = true
+    
     var body: some View {
         ScrollView {
             ZStack(alignment: .bottomTrailing) {
@@ -198,6 +196,18 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
             }
         }
         .registerYDSToast()
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image("ic_arrow_left_line")
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                }
+            }
+        }
     }
     private func screenshot() {
         self.screenShot(origin: viewOrigin, size: viewSize) {
@@ -216,10 +226,10 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
         }
     }
 }
-
-struct ReportDetailView_Previews: PreviewProvider {
-//    @State private var report = GradeSummaryModel([:])!
-    static var previews: some View {
-        SemesterDetailView<TestSemesterDetailViewModel>(semesterDetailViewModel: TestSemesterDetailViewModel())
-    }
-}
+//
+//struct ReportDetailView_Previews: PreviewProvider {
+////    @State private var report = GradeSummaryModel([:])!
+//    static var previews: some View {
+//        SemesterDetailView<TestSemesterDetailViewModel>(semesterDetailViewModel: TestSemesterDetailViewModel())
+//    }
+//}
