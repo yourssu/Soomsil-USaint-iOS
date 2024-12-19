@@ -22,7 +22,8 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
     @State private var semesterSelection: String = "1 학기"
     @State private var isShowingCustomReport: Bool = true
     
-    @State private var session: USaintSession? = nil
+    // FIXME: session -> keychain
+    @State private var se: USaintSession? = nil
 
     
     init(semesterListViewModel: VM) {
@@ -109,7 +110,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
         .background(YDSColor.bgElevated)
         .refreshable {
             Task {
-                switch await semesterListViewModel.getReportListFromRusaint() {
+                switch await semesterListViewModel.getSemesterListFromRusaint(session: self.se!) {
                 case .success(let success):
                     semesterListViewModel.reportList = success
                     YDSToast("가져오기 성공!", haptic: .success)
@@ -119,9 +120,10 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             }
         }
         .onAppear {
-            //            setupSession()
             Task {
-                switch await semesterListViewModel.getReportList() {
+                await setupSession()
+                
+                switch await semesterListViewModel.getSemesterList(session: self.se) {
                 case .success(let success):
                     semesterListViewModel.reportList = success
                 case .failure(let failure):
@@ -135,36 +137,20 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
         .registerYDSToast()
     }
     
-    func setupSession() {
-        Task {
-            do {
-                self.session = try await USaintSessionBuilder().withPassword(id: "20201555", password: "woody12!@")
-                if self.session == nil {
-                    print("== nil")
-                } else {
-                    let data = try await StudentInformationApplicationBuilder().build(session: self.session!).general()
-                    print("== \(data)")
-                }
-
-
-                 getSemesterGrades()
-                //Session initialized successfully: Optional(Rusaint.USaintSession)
-                print("Session initialized successfully: \(String(describing: session))")
-            } catch {
-                print("Failed to initialize session: \(error)")
+    // FIXME: session -> keychain
+    func setupSession() async {
+        do {
+            self.se = try await USaintSessionBuilder().withPassword(id: "-", password: "-")
+            if self.se == nil {
+                print("== nil")
+            } else {
+                let data = try await StudentInformationApplicationBuilder().build(session: self.se!).general()
+                print("== \(data)")
             }
-        }
-    }
 
-    func getSemesterGrades() {
-        Task {
-            do {
-                let a = try await CourseGradesApplicationBuilder().build(session: session!)
-                    .semesters(courseType: CourseType.bachelor)
-                print("Session initialized successfully: \(String(describing: a))")
-            } catch {
-                print("Failed to initialize session: \(error)")
-            }
+            print("Session initialized successfully: \(String(describing: se))")
+        } catch {
+            print("Failed to initialize session: \(error)")
         }
     }
 }
@@ -312,5 +298,5 @@ struct SemesterRow: View {
 
 
 #Preview {
-    SemesterListView(semesterListViewModel: TestSemesterListViewModel())
+    SemesterListView(semesterListViewModel: DefaultSemesterListViewModel())
 }
