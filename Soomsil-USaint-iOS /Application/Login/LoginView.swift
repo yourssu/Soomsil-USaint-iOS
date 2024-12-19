@@ -32,7 +32,7 @@ struct LoginView: View {
             Text("학번")
                 .font(YDSFont.body1)
             YDSSimpleTextField(text: $id)
-            Text("비밀번호")
+            Text("유세인트 비밀번호")
                 .font(YDSFont.body1)
             YDSPasswordTextField(text: $password)
                 .padding(.bottom, Dimension.largeSpace)
@@ -40,11 +40,18 @@ struct LoginView: View {
                 Task {
                     do {
                         self.session =  try await USaintSessionBuilder().withPassword(id: id, password: password)
-                        if self.session is USaintSession {
-                            await saveUserInfo(id: id, password: password, session: session!)
-                            await saveReportCard(session: session!)
-                            YDSToast("로그인 성공하였습니다.", haptic: .success)
+                        if self.session != nil {
                             isLoggedIn = true
+                            YDSToast("로그인 성공하였습니다.", haptic: .success)
+
+                            await withTaskGroup(of: Void.self) { group in
+                               group.addTask {
+                                   await saveUserInfo(id: id, password: password, session: session!)
+                               }
+                               group.addTask {
+                                   await saveReportCard(session: session!)
+                               }
+                           }
                         } else {
                             YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
                             HomeRepository.shared.deleteAllData()
@@ -70,6 +77,7 @@ struct LoginView: View {
             .foregroundStyle(YDSColor.textPointed)
             Spacer()
         }
+        .registerYDSToast()
         .padding(Dimension.padding)
         .navigationTitle("로그인")
         .navigationBarTitleDisplayMode(.inline)
