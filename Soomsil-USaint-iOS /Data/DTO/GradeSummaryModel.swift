@@ -129,18 +129,19 @@ public extension Array where Element == GradeSummaryModel {
     }
 }
 
-//public extension Array where Element == CDReportSummary {
-//    func toGradeSummaryModel() -> [GradeSummaryModel] {
-//        self.map {
-//            GradeSummaryModel(
-//                year: $0.year ?? "",
-//                semester: $0.semester ?? "",
-//                credit: $0.credit,
-//                pfCredit: $0.pfCredit,
-//                gpa: $0.gpa,
-//                semesterRank: $0.semesterRank?.tupleOfSplittedString ?? ("-", "-"),
-//                totalRank: $0.totalRank?.tupleOfSplittedString ?? ("-", "-")
-//            )
-//        }
-//    }
-//}
+public extension Array where Element == CDSemester {
+    func toGradeSummaryModel() -> [GradeSummaryModel] {
+        self.map {
+            GradeSummaryModel(
+                year: Int($0.year),
+                semester: $0.semester ?? "",
+                gpa: $0.gpa,
+                earnedCredit: $0.earnedCredit,
+                semesterRank: Int($0.semesterRank),
+                semesterStudentCount: Int($0.semesterStudentCount),
+                overallRank: Int($0.overallRank),
+                overallStudentCount: Int($0.overallStudentCount)
+            )
+        }
+    }
+}
