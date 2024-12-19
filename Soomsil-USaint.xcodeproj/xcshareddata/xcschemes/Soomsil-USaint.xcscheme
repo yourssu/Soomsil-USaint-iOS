@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "02C46CBD2D0F138700A3E717"
-               BuildableName = "Soomsil-USaint-iOS .app"
-               BlueprintName = "Soomsil-USaint-iOS "
-               ReferencedContainer = "container:Soomsil-USaint-iOS .xcodeproj">
+               BuildableName = "Soomsil-USaint.app"
+               BlueprintName = "Soomsil-USaint"
+               ReferencedContainer = "container:Soomsil-USaint.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "02C46CBD2D0F138700A3E717"
-            BuildableName = "Soomsil-USaint-iOS .app"
-            BlueprintName = "Soomsil-USaint-iOS "
-            ReferencedContainer = "container:Soomsil-USaint-iOS .xcodeproj">
+            BuildableName = "Soomsil-USaint.app"
+            BlueprintName = "Soomsil-USaint"
+            ReferencedContainer = "container:Soomsil-USaint.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "02C46CBD2D0F138700A3E717"
-            BuildableName = "Soomsil-USaint-iOS .app"
-            BlueprintName = "Soomsil-USaint-iOS "
-            ReferencedContainer = "container:Soomsil-USaint-iOS .xcodeproj">
+            BuildableName = "Soomsil-USaint.app"
+            BlueprintName = "Soomsil-USaint"
+            ReferencedContainer = "container:Soomsil-USaint.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
