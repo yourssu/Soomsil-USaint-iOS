@@ -21,16 +21,27 @@ class LocalNotificationManager {
         return defaults.bool(forKey: "permission")
     }
 
+    func saveIsFirst(_ first: Bool) {
+        defaults.set(first, forKey: "isFirst")
+    }
+
+    func getIsFirst() -> Bool {
+        return defaults.bool(forKey: "isFirst")
+    }
+
+    func removeAll() {
+        defaults.removeObject(forKey: "permission")
+        defaults.removeObject(forKey: "isFirst")
+    }
+
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
         UNUserNotificationCenter
             .current()
             .requestAuthorization(options: [.alert, .badge, .alert]) { granted, error in
                 if granted == true && error == nil {
-                    print("알림 권한이 허용되었습니다.")
                     self.saveNotificationPermission(true)
                     completion(true)
                 } else {
-                    print("알림 권한이 거부되었습니다.")
                     self.saveNotificationPermission(false)
                     completion(false)
                 }

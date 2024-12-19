@@ -30,9 +30,11 @@ class HomeRepository {
     }
 
     func deleteAllData() {
+        // Delete - KeyChain, UserDefaults
         deleteUserInformation()
-//        deleteAllReportDetails()
-//        deleteReportSummaries()
+
+        // Delete - Core Data
+        deleteTotalReportCard()
     }
 
     // MARK: - UserInformation (KeyChain, UserDefaults)
@@ -52,25 +54,18 @@ class HomeRepository {
         try? keychain.remove("year")
         try? keychain.remove("semester")
 
-        //SaintNexus.shared.userData.removeAll()
+        LocalNotificationManager.shared.removeAll()
     }
 
     func updateUserInformation(id: String, password: String) {
         keychain["saintID"] = id
         keychain["saintPW"] = password
-
-        UserInfo.shared.userData["id"] = id
-        UserInfo.shared.userData["pw"] = password
     }
 
     func updateUserInformation(name: String, major: String, schoolYear: String) {
         keychain["name"] = name
         keychain["major"] = major
         keychain["schoolYear"] = schoolYear
-
-        UserInfo.shared.userData["name"] = name
-        UserInfo.shared.userData["major"] = major
-        UserInfo.shared.userData["schoolYear"] = schoolYear
     }
 
     func updateUserInformation(as user: UserInformation) {
@@ -79,20 +74,11 @@ class HomeRepository {
         keychain["name"] = user.name
         keychain["major"] = user.major
         keychain["schoolYear"] = user.schoolYear
-
-        UserInfo.shared.userData["id"] = user.id
-        UserInfo.shared.userData["pw"] = user.password
-        UserInfo.shared.userData["name"] = user.name
-        UserInfo.shared.userData["major"] = user.major
-        UserInfo.shared.userData["schoolYear"] = user.schoolYear
     }
 
     func updateYearAndSemester(year: String, semester: String) {
         keychain["year"] = year
         keychain["semester"] = semester
-
-        UserInfo.shared.userData["year"] = year
-        UserInfo.shared.userData["semester"] = semester
     }
 
     func getUserInformation() -> Result<UserInformation, ParsingError> {
@@ -109,9 +95,6 @@ class HomeRepository {
     func setYearAndSemester(_ year: String, _ semester: String) {
         keychain["year"] = year
         keychain["semester"] = semester
-
-        UserInfo.shared.userData["year"] = year
-        UserInfo.shared.userData["semester"] = semester
     }
 
     // MARK: - TotalReportCard (CoreData)

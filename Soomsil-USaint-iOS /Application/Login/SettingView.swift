@@ -28,6 +28,7 @@ enum ActiveAlert: Identifiable {
 struct SettingView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var path: [StackView]
+    @Binding var isLoggedIn: Bool
 
     @State private var activeAlert: ActiveAlert?
     @State private var isNotificationPermission: Bool = false
@@ -62,7 +63,6 @@ struct SettingView: View {
                         .tint(YDSColor.buttonPoint)
                         .onChange(of: isNotificationPermission) { newValue in
                             if newValue {
-                                // 알림 켜기
                                 LocalNotificationManager.shared.check(completion: { result in
                                     if result {
                                         isNotificationPermission = true
@@ -128,8 +128,10 @@ struct SettingView: View {
     }
 
     private func logOut() {
-        // 로그아웃 로직
-        print("=== logOut")
+        // deleteAllData? deleteInfoData?
+        HomeRepository.shared.deleteUserInformation()
+        path = []
+        isLoggedIn = false
     }
 
     private func requestNotificationPermission() {
@@ -272,5 +274,7 @@ struct WebViewContainer: View {
 }
 
 #Preview {
-    SettingView(path: .constant([]))
+    @Previewable @State var isLoggedIn: Bool = true
+
+    SettingView(path: .constant([]), isLoggedIn: $isLoggedIn)
 }
