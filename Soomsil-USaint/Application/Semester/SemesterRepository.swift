@@ -14,17 +14,14 @@ import KeychainAccess
 class SemesterRepository {
     static let shared = SemesterRepository(coreDataStack: .shared)
     private let keychain = Keychain(service: "com.yourssu.soomsil-ios")
-
     private let coreDataStack: CoreDataStack
-    // FIXME: - user session 위해 필요
-//    private let keychain = Keychain(service: "com.yourssu.soomsil-ios")
     
     init(coreDataStack: CoreDataStack = .shared) {
         self.coreDataStack = coreDataStack
     }
 
     // MARK: - UserInfo
-    func getUserLoginInformation() -> [String] {
+    public func getUserLoginInformation() -> [String] {
         let id = keychain["saintID"] ?? ""
         let password = keychain["saintPW"] ?? ""
 
@@ -32,7 +29,7 @@ class SemesterRepository {
     }
 
     // MARK: - TotalReportCard (Core Data)
-    func getTotalReportCard() -> TotalReportCardModel {
+    public func getTotalReportCard() -> TotalReportCardModel {
         let context = coreDataStack.taskContext()
         let fetchRequest: NSFetchRequest<CDTotalReportCard> = CDTotalReportCard.fetchRequest()
         do {
@@ -69,6 +66,7 @@ class SemesterRepository {
                            semesterStudentCount: semesterList.semesterStudentCount,
                            overallRank: semesterList.overallRank,
                            overallStudentCount: semesterList.overallStudentCount,
+                           lectures: semesterList.lectures,
                            in: context)
         }
         context.performAndWait {
@@ -100,10 +98,10 @@ class SemesterRepository {
         semesterStudentCount: Int,
         overallRank: Int,
         overallStudentCount: Int,
+        lectures: [Lecture],
         in context: NSManagedObjectContext
     ) {
         let semesterEntity = CDSemester(context: context)
-        
         semesterEntity.year = Int16(year)
         semesterEntity.semester = semester
         semesterEntity.gpa = gpa
@@ -112,6 +110,16 @@ class SemesterRepository {
         semesterEntity.semesterStudentCount = Int16(semesterStudentCount)
         semesterEntity.overallRank = Int16(overallRank)
         semesterEntity.overallStudentCount = Int16(overallStudentCount)
+        
+        for lecture in lectures {
+            let cdLecture = CDLecture(context: context)
+            cdLecture.code = lecture.code
+            cdLecture.title = lecture.title
+            cdLecture.credit = Float(lecture.credit)
+            cdLecture.score = lecture.score
+            cdLecture.grade = "\(lecture.grade)"
+            cdLecture.professorName = lecture.professorName
+            semesterEntity.addToLectures(cdLecture)
+        }
     }
 }
-
