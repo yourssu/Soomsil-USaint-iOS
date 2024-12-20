@@ -18,7 +18,7 @@
         <attribute name="semesterRank" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="semesterStudentCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="year" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <relationship name="lectures" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="CDLecture" inverseName="semester" inverseEntity="CDLecture"/>
+        <relationship name="lectures" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="CDLecture" inverseName="semester" inverseEntity="CDLecture"/>
     </entity>
     <entity name="CDTotalReportCard" representedClassName="CDTotalReportCard" syncable="YES" codeGenerationType="class">
         <attribute name="earnedCredit" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
