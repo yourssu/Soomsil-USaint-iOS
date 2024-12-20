@@ -11,10 +11,11 @@ import SwiftUI
 struct Rusaint_iOSApp: App {
 
     let viewModel = DefaultSaintHomeViewModel()
+    @State private var isLoggedIn: Bool = HomeRepository.shared.hasCachedUserInformation
 
     var body: some Scene {
         WindowGroup {
-            HomeView(viewModel: viewModel)
+            HomeView(viewModel: viewModel, isLoggedIn: $isLoggedIn)
         }
     }
 }
