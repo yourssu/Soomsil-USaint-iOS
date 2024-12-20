@@ -7,6 +7,7 @@
 
 import SwiftUI
 import YDS_SwiftUI
+import Rusaint
 
 // swiftlint:disable identifier_name
 
@@ -14,12 +15,16 @@ struct HomeView<VM: HomeViewModel>: View {
     @State var path: [StackView] = []
     @StateObject var viewModel: VM
 
-    @State private var isLoggedIn = false
-    @State private var isFirst: Bool = LocalNotificationManager.shared.getIsFirst()
+    @Binding var isLoggedIn: Bool
+    @State var isFirst: Bool = LocalNotificationManager.shared.getIsFirst()
+    @State private var session: USaintSession?
+    @State private var totalReportCard: TotalReportCardModel = HomeRepository.shared.getTotalReportCard()
 
     var body: some View {
         if !isLoggedIn {
-            LoginView(isLoggedIn: $isLoggedIn)
+            NavigationStack {
+                LoginView(isLoggedIn: $isLoggedIn)
+            }
         } else {
             NavigationStack(path: $path) {
                 ScrollView {
@@ -35,10 +40,7 @@ struct HomeView<VM: HomeViewModel>: View {
 
                     VStack(spacing: Dimension.MainSpacing.vertical) {
                         userInformationView()
-
-                        if viewModel.hasFeature(.grade) {
-                            GradeItemGroup()
-                        }
+                        GradeItemGroup(reportCard: totalReportCard)
                         Spacer()
                     }
                     .frame(height: 900)
@@ -46,15 +48,24 @@ struct HomeView<VM: HomeViewModel>: View {
                 }
                 .background(.white)
                 .onAppear {
-
                     if !isFirst {
                         LocalNotificationManager().requestAuthorization(completion: { _ in
                         })
                     }
 
                     if viewModel.hasCachedUserInformation() {
+                        isLoggedIn = viewModel.hasCachedUserInformation()
                         viewModel.syncCachedUserInformation()
-                        isLoggedIn = viewModel.isLogedIn()
+                    }
+                }
+                .task {
+                    let userInfo = HomeRepository.shared.getUserLoginInformation()
+                    do {
+                        self.session =  try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
+                        if self.session != nil {
+                            await saveReportCard(session: session!)
+                        }
+                    } catch {
                     }
                 }
                 .registerYDSToast()
@@ -115,17 +126,16 @@ struct HomeView<VM: HomeViewModel>: View {
     }
 
     @ViewBuilder
-    private func GradeItemGroup() -> some View {
+    private func GradeItemGroup(reportCard: TotalReportCardModel) -> some View {
         Button(action: {
             path.append(StackView(type: .SemesterList))
         }, label: {
             SaintItemGroupView(listType: .grade) {
                 SaintItemView(.grade)
-                let creditCard = HomeRepository.shared.getTotalReportCard()
                 detailGradeListView(
-                    average: creditCard.gpa,
-                    credit: creditCard.earnedCredit,
-                    graduateCredit: creditCard.graduateCredit
+                    average: reportCard.gpa,
+                    credit: reportCard.earnedCredit,
+                    graduateCredit: reportCard.graduateCredit
                 )
             }
             .foregroundColor(Color(red: 0.06, green: 0.07, blue: 0.07))
@@ -165,7 +175,6 @@ struct HomeView<VM: HomeViewModel>: View {
             .padding(.horizontal, Dimension.DetailPadding.horizontal)
 
             Button(action: {
-                // SemesterList로 이동
                 path.append(StackView(type: .SemesterList))
             }, label: {
                 Text("전체성적 보기")
@@ -181,6 +190,28 @@ struct HomeView<VM: HomeViewModel>: View {
             .padding(.bottom, 4)
         }
         .background(YDSColor.bgElevated)
+    }
+
+    private func saveReportCard(session: USaintSession) async {
+        do {
+            let courseGrades = try await CourseGradesApplicationBuilder().build(session: self.session!).certificatedSummary(courseType: .bachelor)
+            let graduationRequirement = try await GraduationRequirementsApplicationBuilder().build(session: self.session!).requirements()
+            let requirements = graduationRequirement.requirements.filter { $0.value.name.hasPrefix("학부-졸업학점") }
+                .compactMap { $0.value.requirement ?? 0}
+
+            if let graduateCredit = requirements.first {
+                HomeRepository.shared.updateTotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit))
+            }
+
+//            DispatchQueue.main.async {
+//                self.totalReportCard = HomeRepository.shared.getTotalReportCard()
+//            }
+            self.totalReportCard = HomeRepository.shared.getTotalReportCard()
+
+
+        } catch {
+            print("Failed to save reportCard: \(error)")
+        }
     }
 }
 
@@ -264,11 +295,13 @@ private struct SaintItemView: View {
     }
 }
 
-struct SaintMainHomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationStack {
-            HomeView(viewModel: TestSaintMainHomeViewModel())
-        }
-    }
-}
+//struct SaintMainHomeView_Previews: PreviewProvider {
+//    @State var isLoggedIn: Bool = true
+//
+//    static var previews: some View {
+//        NavigationStack {
+//            HomeView(viewModel: TestSaintMainHomeViewModel(), isLoggedIn: $isLoggedIn)
+//        }
+//    }
+//}
 

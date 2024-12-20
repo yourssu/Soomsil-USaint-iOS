@@ -38,7 +38,7 @@ class HomeRepository {
     }
 
     // MARK: - UserInformation (KeyChain, UserDefaults)
-    var hasCachedUserInformation: Bool {
+    var hasCachedUserInformation: Bool { 
         let hasID = (keychain["saintID"] != nil)
         let hasPassword = (keychain["saintPW"] != nil)
 

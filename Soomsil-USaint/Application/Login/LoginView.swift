@@ -57,8 +57,8 @@ struct LoginView: View {
                             HomeRepository.shared.deleteAllData()
                         }
                     } catch {
-                        HomeRepository.shared.deleteAllData()
                         YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
+                        HomeRepository.shared.deleteAllData()
                     }
                 }
             }, label: {
@@ -115,15 +115,17 @@ struct LoginView: View {
             print("Failed to save userInfo: \(error)")
         }
     }
+
     private func saveReportCard(session: USaintSession) async {
         do {
             let courseGrades = try await CourseGradesApplicationBuilder().build(session: self.session!).certificatedSummary(courseType: .bachelor)
             let graduationRequirement = try await GraduationRequirementsApplicationBuilder().build(session: self.session!).requirements()
-            let graduateCredit = graduationRequirement.requirements.filter { $0.value.category == "졸업필수 요건" }
-                .compactMap { $0.value.requirement }
-                .map { Float($0) }
+            let requirements = graduationRequirement.requirements.filter { $0.value.name.hasPrefix("학부-졸업학점") }
+                .compactMap { $0.value.requirement ?? 0}
 
-            HomeRepository.shared.updateTotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit[0]))
+            if let graduateCredit = requirements.first {
+                HomeRepository.shared.updateTotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit))
+            }
 
         } catch {
             print("Failed to save reportCard: \(error)")
