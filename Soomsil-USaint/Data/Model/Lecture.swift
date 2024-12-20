@@ -1,25 +1,19 @@
 //
-//  LectureDetailModel.swift
-//  Soomsil-USaint-iOS 
+//  Lecture.swift
+//  Soomsil-USaint-iOS
 //
 //  Created by 최지우 on 12/19/24.
 //
 
 import Foundation
 
-public struct ReportDetailModel {
-    let year: String
-    let semester: String
-    let lectures: [Lecture]
-
-    struct Lecture {
-        let code: String
-        let title: String
-        let credit: Double
-        let score: String
-        let grade: Grade
-        let professorName: String
-    }
+public struct Lecture {
+    let code: String
+    let title: String
+    let credit: Double
+    let score: String
+    let grade: Grade
+    let professorName: String
 }
 
 enum Grade: String {
@@ -100,25 +94,25 @@ enum Grade: String {
 
 import SaintNexus
 
-extension SNSemesterReportCard {
-    func toReportDetailModel() -> ReportDetailModel {
-        let lectures = self.lectures.map { lecture in
-            ReportDetailModel.Lecture(
-                code: lecture.code,
-                title: lecture.title,
-                credit: lecture.credit,
-                score: lecture.score,
-                grade: .init(rawValue: lecture.grade) ?? .unknown,
-                professorName: lecture.professorName
-            )
-        }
-        return ReportDetailModel(
-            year: self.year,
-            semester: self.semester,
-            lectures: lectures
-        )
-    }
-}
+//extension SNSemesterReportCard {
+//    func toReportDetailModel() -> ReportDetailModel {
+//        let lectures = self.lectures.map { lecture in
+//            ReportDetailModel.Lecture(
+//                code: lecture.code,
+//                title: lecture.title,
+//                credit: lecture.credit,
+//                score: lecture.score,
+//                grade: .init(rawValue: lecture.grade) ?? .unknown,
+//                professorName: lecture.professorName
+//            )
+//        }
+//        return ReportDetailModel(
+//            year: self.year,
+//            semester: self.semester,
+//            lectures: lectures
+//        )
+//    }
+//}
 
 //public extension Array where Element == CDReportDetail {
 //    func toReportDetailModel() -> [ReportDetailModel] {
