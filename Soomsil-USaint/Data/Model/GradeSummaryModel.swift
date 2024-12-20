@@ -18,6 +18,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
     let semesterStudentCount: Int
     let overallRank: Int
     let overallStudentCount: Int
+    let lectures: [Lecture]
     
     init(
         year: Int,
@@ -27,7 +28,8 @@ public struct GradeSummaryModel: Identifiable, Hashable {
         semesterRank: Int,
         semesterStudentCount: Int,
         overallRank: Int,
-        overallStudentCount: Int
+        overallStudentCount: Int,
+        lectures: [Lecture]
     ) {
         self.year = year
         self.semester = semester
@@ -37,6 +39,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
         self.semesterStudentCount = semesterStudentCount
         self.overallRank = overallRank
         self.overallStudentCount = overallStudentCount
+        self.lectures = lectures
     }
 
 //    init?(_ dict: [String: String]) {
@@ -66,6 +69,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
         self.semesterStudentCount = 0
         self.overallRank = 0
         self.overallStudentCount = 0
+        self.lectures = []
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -141,7 +145,8 @@ public extension Array where Element == CDSemester {
                 semesterRank: Int($0.semesterRank),
                 semesterStudentCount: Int($0.semesterStudentCount),
                 overallRank: Int($0.overallRank),
-                overallStudentCount: Int($0.overallStudentCount)
+                overallStudentCount: Int($0.overallStudentCount),
+                lectures: <#[Lecture]#>
             )
         }
     }
@@ -158,7 +163,8 @@ public extension Array where Element == Rusaint.SemesterGrade {
                 semesterRank: Int($0.semesterRank.first),
                 semesterStudentCount: Int($0.semesterRank.second),
                 overallRank: Int($0.generalRank.first),
-                overallStudentCount: Int($0.generalRank.second)
+                overallStudentCount: Int($0.generalRank.second),
+                lectures: <#T##[Lecture]#>
             )
         }
     }
