@@ -65,8 +65,8 @@ struct HomeView<VM: HomeViewModel>: View {
                         SettingView(path: $path, isLoggedIn: $isLoggedIn)
                     case .SemesterList:
                         SemesterListView(path: $path, semesterListViewModel: DefaultSemesterListViewModel())
-                    case .SemesterDetail:
-                        SemesterDetailView(path: $path, semesterDetailViewModel: TestSemesterDetailViewModel())
+                    case .SemesterDetail(let gradeSummary):
+                        SemesterDetailView(path: $path, semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: gradeSummary))
                     case .WebViewTerm:
                         WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/service.html")
                     case .WebViewPrivacy:
