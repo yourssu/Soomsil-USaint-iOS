@@ -53,21 +53,12 @@ struct HomeView<VM: HomeViewModel>: View {
                         })
                     }
 
-                    if viewModel.hasCachedUserInformation() {
-                        isLoggedIn = viewModel.hasCachedUserInformation()
-                        viewModel.syncCachedUserInformation()
-                    }
                 }
                 .task {
-                    let userInfo = HomeRepository.shared.getUserLoginInformation()
-                    do {
-                        self.session =  try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
-                        if self.session != nil {
-                            await saveReportCard(session: session!)
+                        if viewModel.person == nil {
+                            await loadUserInfo()
                         }
-                    } catch {
                     }
-                }
                 .registerYDSToast()
                 .animation(.easeInOut, value: viewModel.isLogedIn())
                 .navigationDestination(for: StackView.self) { stackView in
@@ -88,41 +79,63 @@ struct HomeView<VM: HomeViewModel>: View {
         }
     }
 
+    private func loadUserInfo() async {
+        if viewModel.hasCachedUserInformation() {
+            isLoggedIn = viewModel.hasCachedUserInformation()
+            viewModel.syncCachedUserInformation()
+        }
+
+        let userInfo = HomeRepository.shared.getUserLoginInformation()
+        do {
+            self.session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
+            if self.session != nil {
+                await saveReportCard(session: session!)
+                DispatchQueue.main.async {
+                    self.totalReportCard = HomeRepository.shared.getTotalReportCard()
+                }
+            }
+        } catch {
+            print("Failed to load user info: \(error)")
+        }
+    }
+
     @ViewBuilder
     private func userInformationView() -> some View {
-        if viewModel.isLogedIn(),
-           let person = viewModel.person {
-            ZStack {
-                Rectangle()
-                    .frame(height: 89)
-                    .foregroundColor(.clear)
-                HStack {
-                    Image("DefaultProfileImage")
-                        .resizable()
-                        .cornerRadius(16)
-                        .frame(width: 48, height: 48)
-                    VStack(alignment: .leading) {
-                        Text(person.name)
-                            .font(YDSFont.subtitle1)
-                            .padding(.bottom, 1.0)
-                        Text("\(person.major) \(person.schoolYear)")
-                            .font(YDSFont.body1)
-                    }
-                    .padding(.leading)
-                    Spacer()
-                    Button(action: {
-                        path.append(StackView(type: .Setting))
-                    }, label: {
-                        Image("ic_setting_fill")
-                    })
-                    .padding(.trailing, 8)
+
+        let person = viewModel.person
+
+
+        ZStack {
+            Rectangle()
+                .frame(height: 89)
+                .foregroundColor(.clear)
+            HStack {
+                Image("DefaultProfileImage")
+                    .resizable()
+                    .cornerRadius(16)
+                    .frame(width: 48, height: 48)
+                VStack(alignment: .leading) {
+                    Text(person?.name ?? "")
+                        .font(YDSFont.subtitle1)
+                        .padding(.bottom, 1.0)
+                    Text("\(person?.major ?? "") \(person?.schoolYear ?? "")")
+                        .font(YDSFont.body1)
                 }
-                .padding(.horizontal, 16.0)
-                .padding(.vertical, 20.0)
+                .padding(.leading)
+                Spacer()
+                Button(action: {
+                    path.append(StackView(type: .Setting))
+                }, label: {
+                    Image("ic_setting_fill")
+                })
+                .padding(.trailing, 8)
             }
-            .cornerRadius(16.0)
-            .padding([.top, .leading, .trailing], 16)
+            .padding(.horizontal, 16.0)
+            .padding(.vertical, 20.0)
         }
+        .cornerRadius(16.0)
+        .padding([.top, .leading, .trailing], 16)
+
     }
 
     @ViewBuilder

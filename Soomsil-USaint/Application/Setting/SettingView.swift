@@ -130,6 +130,7 @@ struct SettingView: View {
     private func logOut() {
         // deleteAllData? deleteInfoData?
         HomeRepository.shared.deleteUserInformation()
+        HomeRepository.shared.deleteAllData()
         path = []
         isLoggedIn = false
     }
