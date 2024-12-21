@@ -5,23 +5,6 @@
 //  Created by 최지우 on 12/17/24.
 //
 
-//struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
-//    @StateObject private var semesterDetailViewModel: VM
-//    @State private var isShowSummary: Bool = true
-//    init(semesterDetailViewModel: VM, isShowSummary: Bool = true) {
-//        self._semesterDetailViewModel = StateObject(wrappedValue: semesterDetailViewModel)
-//        self.isShowSummary = isShowSummary
-//    }
-//    
-//    var body: some View {
-//        ScrollView {
-//            ZStack(alignment: .bottomTrailing) {
-//                
-//            }
-//        }
-//    }
-//}
-
 import SwiftUI
 import YDS_SwiftUI
 
@@ -61,33 +44,34 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
         ScrollView {
             ZStack(alignment: .bottomTrailing) {
                 VStack(alignment: .leading, spacing: Spacing.mainVStack) {
-                    Text("\(semesterDetailViewModel.report.year)년 \(semesterDetailViewModel.report.semester)")
+                    Text("\(semesterDetailViewModel.gradeSummary.year)년 \(semesterDetailViewModel.gradeSummary.semester)")
                         .font(YDSFont.subtitle2)
-                    if isShowSummary, semesterDetailViewModel.report.gpa != 0 {
+                    if isShowSummary, semesterDetailViewModel.gradeSummary.gpa != 0 {
                         HStack(alignment: .lastTextBaseline) {
-                            Text(String(format: "%.2f", semesterDetailViewModel.report.gpa))
+                            Text(String(format: "%.2f", semesterDetailViewModel.gradeSummary.gpa))
                                 .font(YDSFont.display1)
                             Text("/ 4.50")
                                 .foregroundColor(YDSColor.textTertiary)
                         }
                         GradeOverview(
                             title: "취득 학점",
-                            accentText: "\(Int(semesterDetailViewModel.report.earnedCredit.rounded()))"
+                            accentText: "\(Int(semesterDetailViewModel.gradeSummary.earnedCredit.rounded()))"
                         )
                         GradeOverview(
                             title: "학기별 석차",
-                            accentText: "\(semesterDetailViewModel.report.semesterRank)",
-                            subText: "\(semesterDetailViewModel.report.semesterStudentCount)"
+                            accentText: "\(semesterDetailViewModel.gradeSummary.semesterRank)",
+                            subText: "\(semesterDetailViewModel.gradeSummary.semesterStudentCount)"
                         )
                         GradeOverview(
                             title: "전체 석차",
-                            accentText: "\(semesterDetailViewModel.report.overallRank)",
-                            subText: "\(semesterDetailViewModel.report.overallStudentCount)"
+                            accentText: "\(semesterDetailViewModel.gradeSummary.overallRank)",
+                            subText: "\(semesterDetailViewModel.gradeSummary.overallStudentCount)"
                         )
                     }
                     Divider()
-                    if let reportDetail = semesterDetailViewModel.reportDetail {
-                        ForEach(Array(reportDetail.lectures.enumerated()), id: \.offset) { index, lecture in
+                    if !semesterDetailViewModel.gradeSummary.lectures.isEmpty {
+                        let gradeSummary = semesterDetailViewModel.gradeSummary
+                        ForEach(Array(gradeSummary.lectures.enumerated()), id: \.offset) { index, lecture in
                             if semesterDetailViewModel.masking {
                                 MaskedGradeRow(grade: lecture.grade)
                             } else {
@@ -168,15 +152,16 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
                     .alert("저장 실패", isPresented: $semesterDetailViewModel.showFailureAlert, actions: {})
                 }
                 Button {
-                    Task {
-                        switch await semesterDetailViewModel.getSingleReportFromSN() {
-                        case .success(let success):
-                            semesterDetailViewModel.reportDetail = success
-                            YDSToast("가져오기 성공!", haptic: .success)
-                        case .failure(let failure):
-                            YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-                        }
-                    }
+                    // FIXME: - 로직 추가
+//                    Task {
+//                        switch await semesterDetailViewModel.getSingleReportFromSN() {
+//                        case .success(let success):
+//                            semesterDetailViewModel.reportDetail = success
+//                            YDSToast("가져오기 성공!", haptic: .success)
+//                        case .failure(let failure):
+//                            YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
+//                        }
+//                    }
                 } label: {
                     YDSIcon.refreshLine
                         .renderingMode(.template)
@@ -186,12 +171,12 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
         }
         .onAppear {
             Task {
-                switch await semesterDetailViewModel.getSingleReport() {
+                switch await semesterDetailViewModel.getSemesterDetailFromRusaint() {
                 case .success(let success):
-                    semesterDetailViewModel.reportDetail = success
                     YDSToast("가져오기 성공!", haptic: .success)
                 case .failure(let failure):
                     YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
+
                 }
             }
         }
@@ -226,7 +211,7 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
         }
     }
 }
-//
+////
 //struct ReportDetailView_Previews: PreviewProvider {
 ////    @State private var report = GradeSummaryModel([:])!
 //    static var previews: some View {

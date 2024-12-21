@@ -6,12 +6,12 @@
 //
 
 import Foundation
-import SaintNexus
+import Rusaint
 
 public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
 
-    var report: GradeSummaryModel { get set }
-    var reportDetail: ReportDetailModel? { get set }
+    var gradeSummary: GradeSummaryModel { get set }
+//    var reportDetail: LectureDetailModel? { get set }
 
     var rowAnimation: Bool { get set }
 
@@ -21,8 +21,9 @@ public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
     var showFailureAlert: Bool { get set }
     var masking: Bool { get set }
 
-    func getSingleReport() async -> Result<ReportDetailModel, ParsingError>
-    func getSingleReportFromSN() async -> Result<ReportDetailModel, ParsingError>
+//    func getSingleReport() async -> Result<ReportDetailModel, ParsingError>
+//    func getSingleReportFromSN() async -> Result<ReportDetailModel, ParsingError>
+    func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError>
 
     func calculateGPA() -> Double
 
@@ -35,24 +36,24 @@ public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
 
 // MARK: - Default func
 public extension SemesterDetailViewModel {
-    func calculateGPA() -> Double {
-        guard let lectures = self.reportDetail?.lectures else { return 0.0 }
-        var gradeSum: Double = 0.0
-        var creditSum: Double = 0.0
-        lectures
-            .compactMap { $0 }
-            .filter { lecture in
-                lecture.grade != .pass && lecture.grade != .fail && lecture.grade != .unknown
-            }
-            .forEach { lecture in
-                let gpa: Double = lecture.grade.gpa
-                if gpa > 0.0 {
-                    gradeSum += lecture.credit * gpa
-                    creditSum += lecture.credit
-                }
-            }
-        return floor(10000 * (gradeSum * 10) / (creditSum * 10)) / 10000
-    }
+//    func calculateGPA() -> Double {
+//        guard let lectures = self.reportDetail?.lectures else { return 0.0 }
+//        var gradeSum: Double = 0.0
+//        var creditSum: Double = 0.0
+//        lectures
+//            .compactMap { $0 }
+//            .filter { lecture in
+//                lecture.grade != .pass && lecture.grade != .fail && lecture.grade != .unknown
+//            }
+//            .forEach { lecture in
+//                let gpa: Double = lecture.grade.gpa
+//                if gpa > 0.0 {
+//                    gradeSum += lecture.credit * gpa
+//                    creditSum += lecture.credit
+//                }
+//            }
+//        return floor(10000 * (gradeSum * 10) / (creditSum * 10)) / 10000
+//    }
 
     func takeScreenshot() {
         showConfirmDialog = true
@@ -81,23 +82,71 @@ public extension SemesterDetailViewModel {
     }
 }
 
-//final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewModel {
-//    @Published var report: GradeSummaryModel
+final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewModel {
+//    var reportDetail: LectureDetailModel?
+    
+    func calculateGPA() -> Double {
+        return 0.0
+    }
+    
 //    @Published var reportDetail: ReportDetailModel?
-//    @Published var rowAnimation: Bool = false
-//    @Published var isCapturing: Bool = false
-//    @Published var showConfirmDialog: Bool = false
-//    @Published var showSuccessAlert: Bool = false
-//    @Published var showFailureAlert: Bool = false
-//    @Published var masking: Bool = false
-//    private let saintRepository = SaintRepository.shared
-//    init(report: ReportSummaryModel) {
-//        self.report = report
-//    }
-//
+    @Published var rowAnimation: Bool = false
+    @Published var isCapturing: Bool = false
+    @Published var showConfirmDialog: Bool = false
+    @Published var showSuccessAlert: Bool = false
+    @Published var showFailureAlert: Bool = false
+    @Published var masking: Bool = false
+    
+    @Published var gradeSummary: GradeSummaryModel
+    private let semesterRepository = SemesterRepository.shared
+    private var session: USaintSession?
+
+    init(gradeSummary: GradeSummaryModel) {
+        self.gradeSummary = gradeSummary
+    }
+    
+    @MainActor
+    public func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError> {
+        let userInfo = semesterRepository.getUserLoginInformation()
+        do {
+            self.session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
+            if self.session != nil {
+                let lectureDetailFromRusaint = try await CourseGradesApplicationBuilder().build(session: self.session!)
+                    .classes(courseType: .bachelor,
+                             year: UInt32(self.gradeSummary.year),
+                             semester: semesterType(self.gradeSummary.semester),
+                             includeDetails: false)
+                
+//                print("\(lectureDetailFromRusaint)")
+                gradeSummary.lectures = lectureDetailFromRusaint.toLectureDetailModels()
+                return .success(gradeSummary.lectures)
+            } else {
+                return .failure(RusaintError.invalidClientError)
+            }
+        } catch (let error) {
+            return .failure(error as! RusaintError)
+        }
+    }
+    
+    // FIXME: - 함수 이동 필요
+    func semesterType(_ string: String) -> SemesterType {
+        switch string.trimmingCharacters(in: .whitespacesAndNewlines) {
+        case "1 학기", "1학기":
+            return .one
+        case "여름학기":
+            return .summer
+        case "2 학기", "2학기":
+            return .two
+        case "겨울학기":
+            return .winter
+        default:
+            return .winter
+        }
+    }
+
 //    @MainActor
 //    func getSingleReport() async -> Result<ReportDetailModel, ParsingError> {
-//        let reportFromDevice = saintRepository.getReportDetail(report.year, report.semester)
+//        let reportFromDevice = semesterRepository.getLectureDetail(report.year, report.semester)
 //        if let reportFromDevice {
 //            return .success(reportFromDevice)
 //        }
@@ -106,12 +155,12 @@ public extension SemesterDetailViewModel {
 //
 //    @MainActor
 //    func getSingleReportFromSN() async -> Result<ReportDetailModel, ParsingError> {
-//        saintRepository.setYearAndSemester(report.year, report.semester)
+//        semesterRepository.setYearAndSemester(report.year, report.semester)
 //        do {
 //            let response = try await SaintNexus.shared.loadSingleReport()
 //            if response.status == 200, let rdata = response.rdata {
-//                self.saintRepository.updateReportDetail(rdata)
-//                guard let detail = self.saintRepository.getReportDetail(
+//                self.semesterRepository.updateReportDetail(rdata)
+//                guard let detail = self.semesterRepository.getLectureDetail(
 //                    report.year,
 //                    report.semester
 //                ) else {
@@ -129,30 +178,35 @@ public extension SemesterDetailViewModel {
 //            return .failure(.error(error.localizedDescription))
 //        }
 //    }
-//}
-
-final class TestSemesterDetailViewModel: BaseViewModel, SemesterDetailViewModel {
-    @Published var report: GradeSummaryModel
-    @Published var reportDetail: ReportDetailModel?
-    @Published var rowAnimation: Bool = false
-    @Published var isCapturing: Bool = false
-    @Published var showConfirmDialog: Bool = false
-    @Published var showSuccessAlert: Bool = false
-    @Published var showFailureAlert: Bool = false
-    @Published var masking: Bool = false
-    override init() {
-        self.report = GradeSummaryModel(
-            year: 2024,
-            semester: "2 학기",
-            gpa: 21.0,
-            earnedCredit: 23.0,
-            semesterRank: 50,
-            semesterStudentCount: 70,
-            overallRank: 100,
-            overallStudentCount: 148
-        )
-        super.init()
-    }
-    func getSingleReport() async -> Result<ReportDetailModel, ParsingError> { return .failure(.error("test")) }
-    func getSingleReportFromSN() async -> Result<ReportDetailModel, ParsingError> { return .failure(.error("test")) }
 }
+
+//final class TestSemesterDetailViewModel: BaseViewModel, SemesterDetailViewModel {
+//    func calculateGPA() -> Double {
+//        return 0.0
+//    }
+//    
+//    @Published var report: GradeSummaryModel
+//    @Published var reportDetail: LectureDetailModel?
+//    @Published var rowAnimation: Bool = false
+//    @Published var isCapturing: Bool = false
+//    @Published var showConfirmDialog: Bool = false
+//    @Published var showSuccessAlert: Bool = false
+//    @Published var showFailureAlert: Bool = false
+//    @Published var masking: Bool = false
+//    override init() {
+//        self.report = GradeSummaryModel(
+//            year: 2024,
+//            semester: "2 학기",
+//            gpa: 21.0,
+//            earnedCredit: 23.0,
+//            semesterRank: 50,
+//            semesterStudentCount: 70,
+//            overallRank: 100,
+//            overallStudentCount: 148,
+//            lectures: [LectureDetailModel(code: "", title: "", credit: 0.0, score: "", grade: .aMinus, professorName: "")]
+//        )
+//        super.init()
+//    }
+//    func getSingleReport() async -> Result<LectureDetailModel, ParsingError> { return .failure(.error("test")) }
+//    func getSingleReportFromSN() async -> Result<LectureDetailModel, ParsingError> { return .failure(.error("test")) }
+//}
