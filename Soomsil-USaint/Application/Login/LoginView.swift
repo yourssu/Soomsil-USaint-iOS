@@ -26,69 +26,77 @@ struct LoginView: View {
     @State private var session: USaintSession?
 
     @Binding var isLoggedIn: Bool
+    @State private var isLoading = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Dimension.VStack.spacing) {
-            Text("학번")
-                .font(YDSFont.body1)
-            YDSSimpleTextField(text: $id)
-            Text("유세인트 비밀번호")
-                .font(YDSFont.body1)
-            YDSPasswordTextField(text: $password)
-                .padding(.bottom, Dimension.largeSpace)
-            Button(action: {
-                Task {
-                    do {
-                        self.session =  try await USaintSessionBuilder().withPassword(id: id, password: password)
-                        if self.session != nil {
-                            isLoggedIn = true
-                            YDSToast("로그인 성공하였습니다.", haptic: .success)
+        ZStack {
+            VStack(alignment: .leading, spacing: Dimension.VStack.spacing) {
+                Text("학번")
+                    .font(YDSFont.body1)
+                YDSSimpleTextField(text: $id)
+                Text("유세인트 비밀번호")
+                    .font(YDSFont.body1)
+                YDSPasswordTextField(text: $password)
+                    .padding(.bottom, Dimension.largeSpace)
+                Button(action: {
+                    Task {
+                        isLoading = true
+                        do {
+                            self.session =  try await USaintSessionBuilder().withPassword(id: id, password: password)
+                            if self.session != nil {
 
-                            await withTaskGroup(of: Void.self) { group in
-                               group.addTask {
-                                   await saveUserInfo(id: id, password: password, session: session!)
-                               }
-                               group.addTask {
-                                   await saveReportCard(session: session!)
-                               }
-                           }
-                        } else {
+                                await saveUserInfo(id: id, password: password, session: session!)
+                                await saveReportCard(session: session!)
+
+                                isLoggedIn = true
+                                isLoading = false
+                                YDSToast("로그인 성공하였습니다.", haptic: .success)
+
+                            } else {
+                                YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
+                                HomeRepository.shared.deleteAllData()
+                            }
+                        } catch {
+                            isLoading = false
+
                             YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
                             HomeRepository.shared.deleteAllData()
                         }
-                    } catch {
-                        YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
-                        HomeRepository.shared.deleteAllData()
                     }
+                }, label: {
+                    Text("로그인")
+                        .foregroundStyle(YDSColor.buttonBright)
+                        .font(YDSFont.button4).frame(maxWidth: .infinity, minHeight: Dimension.Button.minHeight)
+                        .background(YDSColor.buttonPoint, in: RoundedRectangle(cornerRadius: 5))
+                })
+                .buttonStyle(.plain)
+                HStack {
+                    YDSIcon.warningcircleLine
+                        .renderingMode(.template)
+                    Text("숨쉴때 유세인트 서비스 이용을 위한 유세인트 학번 및 비밀번호는 사용자 기기에만 저장되며, 유어슈는 유세인트 서비스를 통하여 이용자의 정보를 일체 수집ㆍ저장하지 않습니다.")
+                        .font(.caption2)
                 }
-            }, label: {
-                Text("로그인")
-                    .foregroundStyle(YDSColor.buttonBright)
-                    .font(YDSFont.button4).frame(maxWidth: .infinity, minHeight: Dimension.Button.minHeight)
-                    .background(YDSColor.buttonPoint, in: RoundedRectangle(cornerRadius: 5))
-            })
-            .buttonStyle(.plain)
-            HStack {
-                YDSIcon.warningcircleLine
-                    .renderingMode(.template)
-                Text("숨쉴때 유세인트 서비스 이용을 위한 유세인트 학번 및 비밀번호는 사용자 기기에만 저장되며, 유어슈는 유세인트 서비스를 통하여 이용자의 정보를 일체 수집ㆍ저장하지 않습니다.")
-                    .font(.caption2)
+                .foregroundStyle(YDSColor.textPointed)
+                Spacer()
             }
-            .foregroundStyle(YDSColor.textPointed)
-            Spacer()
-        }
-        .registerYDSToast()
-        .padding(Dimension.padding)
-        .navigationTitle("로그인")
-        .navigationBarTitleDisplayMode(.inline)
-        .background(
-            Color.clear
-                .tapToHideKeyboard()
-        )
-        .onAppear {
-            initial()
+            .registerYDSToast()
+            .padding(Dimension.padding)
+            .navigationTitle("로그인")
+            .navigationBarTitleDisplayMode(.inline)
+            .background(
+                Color.clear
+                    .tapToHideKeyboard()
+            )
+            .onAppear {
+                initial()
+            }
+
+            if isLoading {
+                CircleLoadingView()
+            }
         }
     }
+
     private func initial() {
         let info = HomeRepository.shared.getUserInformation()
         switch info {
@@ -131,6 +139,35 @@ struct LoginView: View {
             print("Failed to save reportCard: \(error)")
         }
     }
+}
+
+struct CircleLoadingView: View {
+    @State private var isLoading = false
+
+       var body: some View {
+           ZStack {
+               Color(red: 0.77, green: 0.77, blue: 0.77).opacity(0.3)
+                      .edgesIgnoringSafeArea(.all)
+
+               Circle()
+                   .stroke(Color(red: 0.89, green: 0.88, blue: 0.91), lineWidth: 7)
+                   .frame(width: 70, height: 70)
+
+               Circle()
+                   .trim(from: 0, to: 0.2)
+                   .stroke(Color(red: 0.49, green: 0.44, blue: 0.8), lineWidth: 7)
+                   .frame(width: 70, height: 70)
+                   .rotationEffect(Angle(degrees: isLoading ? 360 : 0))
+                   .animation(
+                       .linear(duration: 1)
+                           .repeatForever(autoreverses: false),
+                       value: isLoading
+                   )
+                   .onAppear() {
+                       self.isLoading = true
+               }
+           }
+       }
 }
 
 #Preview {
