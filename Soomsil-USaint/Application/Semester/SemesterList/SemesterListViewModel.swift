@@ -24,7 +24,6 @@ protocol SemesterListViewModel: BaseViewModel, ObservableObject {
     var reportList: [GradeSummaryModel] { get set }
     var isOnSeasonalSemester: Bool { get set }
 
-    // FIXME: - session 인자 제거
     func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError>
     func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError>
 }
@@ -61,14 +60,16 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     
     @MainActor
     public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
+        let userInfo = semesterRepository.getUserLoginInformation()
         do {
+            self.session =  try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
             if self.session != nil {
                 let response = try await CourseGradesApplicationBuilder().build(session: self.session!).semesters(courseType: CourseType.bachelor)
                 let rusaintData = response.toGradeSummaryModels()
-
+                
                 self.semesterRepository.updateSemesterList(rusaintData)
                 let list = self.semesterRepository.getSemesterList()
-
+                
                 if list.isEmpty {
                     throw ParsingError.error("데이터 에러")
                 } else {
@@ -82,7 +83,6 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
             return .failure(error as! RusaintError)
         }
     }
-
 }
 
 //final class TestSemesterListViewModel: BaseViewModel, SemesterListViewModel {
