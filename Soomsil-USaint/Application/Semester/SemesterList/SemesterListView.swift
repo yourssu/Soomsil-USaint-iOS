@@ -22,128 +22,136 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
     private let semesters = ["1 학기", "여름학기", "2 학기", "겨울학기"]
     @State private var semesterSelection: String = "1 학기"
     @State private var isShowingCustomReport: Bool = true
-    
+    @State private var isLoading = true
+
     // FIXME: session -> keychain
     @State private var se: USaintSession? = nil
 
     var body: some View {
-        ScrollView {
-            
-            // MARK: - top
-            VStack(alignment: .leading) {
-                HStack {
-                    let creditCard = SemesterRepository.shared.getTotalReportCard()
+        ZStack {
+            ScrollView {
+                // MARK: - top
+                VStack(alignment: .leading) {
+                    HStack {
+                        let creditCard = SemesterRepository.shared.getTotalReportCard()
 
-                    let average = creditCard.gpa
-                    let sum = creditCard.earnedCredit
-                    let graduateCredit = creditCard.graduateCredit
-                    EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", average), sub: "4.50")
-                    EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", sum), sub: String(graduateCredit))
-                }
-                VStack(alignment: .trailing, spacing: 18) {
-                    GPAGraph(
-                        gpaList: semesterListViewModel.reportList.sortedAscending()
-                            .filter {
-                                ($0.semester != "겨울학기" && $0.semester != "여름학기")
-                                || semesterListViewModel.isOnSeasonalSemester
-                            }
-                            .map {
-                                GPAGraph.GPAInfo(semester: "\($0.year)년 \($0.semester)", gpa: $0.gpa)
-                            }
-                    )
-                    Button {
-                        semesterListViewModel.isOnSeasonalSemester.toggle()
-                    } label: {
-                        HStack(spacing: 4) {
-                            YDSIcon.checkcircleLine
-                                .resizable()
-                                .renderingMode(.template)
-                                .frame(width: 16, height: 16)
-                            Text("계절학기 포함")
-                                .font(YDSFont.button4)
-                        }
-                        .foregroundStyle(
-                            semesterListViewModel.isOnSeasonalSemester
-                            ? YDSColor.buttonPoint
-                            : YDSColor.buttonDisabled
-                        )
+                        let average = creditCard.gpa
+                        let sum = creditCard.earnedCredit
+                        let graduateCredit = creditCard.graduateCredit
+                        EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", average), sub: "4.50")
+                        EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", sum), sub: String(graduateCredit))
                     }
-                }
-            }
-            .padding()
-            
-            Rectangle()
-                .frame(height: 8.0)
-                .foregroundColor(YDSColor.borderThin)
-            
-            // MARK: - bottom
-            VStack(alignment: .leading) {
-                
-                // MARK: - List
-                ForEach(
-                    Array(semesterListViewModel.reportList.sortedAscending().enumerated()),
-                    id: \.offset
-                ) { index, report in
-                    // FIXME: path로 수정
-                    NavigationLink {
-                        SemesterDetailView(path: $path,
-                                           semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: report))
-//                        path.append(StackView(type: .SemesterDetail(gradeSummary: report)))
-                    }
-                label: {
-                        SemesterRow(gradeSummaryModel: report)
-                            .offset(x: self.rowAnimation ? 0 : 100)
-                            .opacity(self.rowAnimation ? 1 : 0)
-                            .animation(
-                                .easeIn
-                                    .delay(Double(index) * 0.1)
-                                    .speed(0.5),
-                                value: self.rowAnimation
-                            )
-                            .onAppear {
-                                withAnimation {
-                                    self.rowAnimation = true
+                    VStack(alignment: .trailing, spacing: 18) {
+                        GPAGraph(
+                            gpaList: semesterListViewModel.reportList.sortedAscending()
+                                .filter {
+                                    ($0.semester != "겨울학기" && $0.semester != "여름학기")
+                                    || semesterListViewModel.isOnSeasonalSemester
                                 }
+                                .map {
+                                    GPAGraph.GPAInfo(semester: "\($0.year)년 \($0.semester)", gpa: $0.gpa)
+                                }
+                        )
+                        Button {
+                            semesterListViewModel.isOnSeasonalSemester.toggle()
+                        } label: {
+                            HStack(spacing: 4) {
+                                YDSIcon.checkcircleLine
+                                    .resizable()
+                                    .renderingMode(.template)
+                                    .frame(width: 16, height: 16)
+                                Text("계절학기 포함")
+                                    .font(YDSFont.button4)
                             }
+                            .foregroundStyle(
+                                semesterListViewModel.isOnSeasonalSemester
+                                ? YDSColor.buttonPoint
+                                : YDSColor.buttonDisabled
+                            )
+                        }
                     }
-                    .buttonStyle(.plain)
+                }
+                .padding()
+
+                Rectangle()
+                    .frame(height: 8.0)
+                    .foregroundColor(YDSColor.borderThin)
+
+                // MARK: - bottom
+                VStack(alignment: .leading) {
+
+                    // MARK: - List
+                    ForEach(
+                        Array(semesterListViewModel.reportList.sortedAscending().enumerated()),
+                        id: \.offset
+                    ) { index, report in
+                        // FIXME: path로 수정
+                        NavigationLink {
+                            SemesterDetailView(path: $path,
+                                               semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: report))
+    //                        path.append(StackView(type: .SemesterDetail(gradeSummary: report)))
+                        }
+                    label: {
+                            SemesterRow(gradeSummaryModel: report)
+                                .offset(x: self.rowAnimation ? 0 : 100)
+                                .opacity(self.rowAnimation ? 1 : 0)
+                                .animation(
+                                    .easeIn
+                                        .delay(Double(index) * 0.1)
+                                        .speed(0.5),
+                                    value: self.rowAnimation
+                                )
+                                .onAppear {
+                                    withAnimation {
+                                        self.rowAnimation = true
+                                    }
+                                }
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .padding()
+            }
+            .background(YDSColor.bgElevated)
+            .refreshable {
+                Task {
+                    switch await semesterListViewModel.getSemesterListFromRusaint() {
+                    case .success(let success):
+                        semesterListViewModel.reportList = success
+                        YDSToast("가져오기 성공!", haptic: .success)
+                    case .failure(let failure):
+                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
+                    }
                 }
             }
-            .padding()
-        }
-        .background(YDSColor.bgElevated)
-        .refreshable {
-            Task {
-                switch await semesterListViewModel.getSemesterListFromRusaint() {
-                case .success(let success):
-                    semesterListViewModel.reportList = success
-                    YDSToast("가져오기 성공!", haptic: .success)
-                case .failure(let failure):
-                    YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
+            .onAppear {
+                Task {
+                    switch await semesterListViewModel.getSemesterListFromRusaint() {
+                    case .success(let success):
+                        isLoading = false
+                        semesterListViewModel.reportList = success
+                    case .failure(let failure):
+                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
+                        isLoading = false
+                    }
                 }
             }
-        }
-        .onAppear {
-            Task {
-                switch await semesterListViewModel.getSemesterListFromRusaint() {
-                case .success(let success):
-                    semesterListViewModel.reportList = success
-                case .failure(let failure):
-                    YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
+            .registerYDSToast()
+            .navigationBarBackButtonHidden()
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image("ic_arrow_left_line")
+                            .resizable()
+                            .frame(width: 24, height: 24)
+                    }
                 }
             }
-        }
-        .registerYDSToast()
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    dismiss()
-                } label: {
-                    Image("ic_arrow_left_line")
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                }
+
+            if isLoading {
+                CircleLoadingView()
             }
         }
     }
