@@ -63,9 +63,7 @@ struct HomeView<VM: HomeViewModel>: View {
 
                 }
                 .task {
-                    if viewModel.person == nil {
-                        await loadUserInfo()
-                    }
+                    await loadUserInfoAndTotalReposrtCard()
                 }
                 .registerYDSToast()
                 .animation(.easeInOut, value: viewModel.isLogedIn())
@@ -87,11 +85,13 @@ struct HomeView<VM: HomeViewModel>: View {
         }
     }
 
-    private func loadUserInfo() async {
+    private func loadUserInfoAndTotalReposrtCard() async {
         if viewModel.hasCachedUserInformation() {
             isLoggedIn = viewModel.hasCachedUserInformation()
             viewModel.syncCachedUserInformation()
         }
+
+        totalReportCard = HomeRepository.shared.getTotalReportCard()
 
         let userInfo = HomeRepository.shared.getUserLoginInformation()
         do {
