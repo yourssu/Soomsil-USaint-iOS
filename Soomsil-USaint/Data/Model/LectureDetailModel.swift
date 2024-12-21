@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Rusaint
 
 public struct LectureDetailModel {
     let code: String
@@ -92,8 +93,8 @@ enum Grade: String {
 //    }
 //}
 
-import SaintNexus
-
+//import SaintNexus
+//
 //extension SNSemesterReportCard {
 //    func toReportDetailModel() -> ReportDetailModel {
 //        let lectures = self.lectures.map { lecture in
@@ -113,10 +114,12 @@ import SaintNexus
 //        )
 //    }
 //}
-
-//public extension Array where Element == CDReportDetail {
-//    func toReportDetailModel() -> [ReportDetailModel] {
+//
+//public extension Array where Element == CDLecture {
+//    func toReportDetailModel() -> [LectureDetailModel] {
 //        self.map {
+//            LectureDetailModel(code: $0.code,
+//                               title: $0.title, credit: $0.credit, score: $0., grade: <#T##Grade#>, professorName: <#T##String#>)
 //            ReportDetailModel(
 //                year: $0.year ?? "",
 //                semester: $0.semester ?? "",
@@ -134,3 +137,27 @@ import SaintNexus
 //        }
 //    }
 //}
+
+public extension Array where Element == Rusaint.ClassGrade {
+    func toLectureDetailModels() -> [LectureDetailModel] {
+        self.map {
+            LectureDetailModel(code: $0.code,
+                               title: $0.className,
+                               credit: Double($0.gradePoints),
+                               score: classScoreToString($0.score),
+                               grade: Grade(rawValue: $0.rank) ?? .unknown,
+                               professorName: $0.professor)
+        }
+    }
+    
+    func classScoreToString(_ classScore: Rusaint.ClassScore) -> String {
+        switch classScore {
+        case .pass:
+            return "P"
+        case .failed:
+            return "F"
+        case .score(let value):
+            return "\(value)"
+        }
+    }
+}
