@@ -98,7 +98,7 @@ class SemesterRepository {
         semesterStudentCount: Int,
         overallRank: Int,
         overallStudentCount: Int,
-        lectures: [Lecture],
+        lectures: [LectureDetailModel],
         in context: NSManagedObjectContext
     ) {
         let semesterEntity = CDSemester(context: context)
