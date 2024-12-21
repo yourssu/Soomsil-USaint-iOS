@@ -84,10 +84,13 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                     Array(semesterListViewModel.reportList.sortedAscending().enumerated()),
                     id: \.offset
                 ) { index, report in
+                    // FIXME: path로 수정
                     NavigationLink {
-//                        SemesterDetailView(semesterDetailViewModel: DefaultReportDetailViewModel(report: report))
-                        SemesterDetailView(path: $path, semesterDetailViewModel: TestSemesterDetailViewModel())
-                    } label: {
+                        SemesterDetailView(path: $path,
+                                           semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: report))
+//                        path.append(StackView(type: .SemesterDetail(gradeSummary: report)))
+                    }
+                label: {
                         SemesterRow(gradeSummaryModel: report)
                             .offset(x: self.rowAnimation ? 0 : 100)
                             .opacity(self.rowAnimation ? 1 : 0)
@@ -122,9 +125,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
         }
         .onAppear {
             Task {
-                await setupSession()
-                
-                switch await semesterListViewModel.getSemesterList() {
+                switch await semesterListViewModel.getSemesterListFromRusaint() {
                 case .success(let success):
                     semesterListViewModel.reportList = success
                 case .failure(let failure):
@@ -147,23 +148,6 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                         .frame(width: 24, height: 24)
                 }
             }
-        }
-    }
-    
-    // FIXME: session -> keychain
-    func setupSession() async {
-        do {
-            self.se = try await USaintSessionBuilder().withPassword(id: "-", password: "-")
-            if self.se == nil {
-                print("== nil")
-            } else {
-                let data = try await StudentInformationApplicationBuilder().build(session: self.se!).general()
-                print("== \(data)")
-            }
-
-            print("Session initialized successfully: \(String(describing: se))")
-        } catch {
-            print("Failed to initialize session: \(error)")
         }
     }
 }
