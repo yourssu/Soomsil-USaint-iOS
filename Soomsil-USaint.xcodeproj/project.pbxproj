@@ -8,16 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		02C46CED2D0F2DFC00A3E717 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CEC2D0F2DFC00A3E717 /* KeychainAccess */; };
-		02C46CF02D0F2E6200A3E717 /* SaintNexus in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CEF2D0F2E6200A3E717 /* SaintNexus */; };
 		02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CF22D0F2E9300A3E717 /* YDS */; };
 		02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CF42D0F2E9300A3E717 /* YDS-SwiftUI */; };
-		02C46CF82D0F351800A3E717 /* SaintNexus in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CF72D0F351800A3E717 /* SaintNexus */; };
 		02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8C2D0F45B200A3E717 /* RxBlocking */; };
 		02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8E2D0F45B200A3E717 /* RxCocoa */; };
 		02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D902D0F45B200A3E717 /* RxRelay */; };
-		7B2D5DA12D10334C0096832D /* SaintNexus in Frameworks */ = {isa = PBXBuildFile; productRef = 7B2D5DA02D10334C0096832D /* SaintNexus */; };
 		7B3D10E92D13DCAC00374988 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = 7B3D10E82D13DCAC00374988 /* Rusaint */; };
-		7B8AE9262D140B9D00BC3F73 /* SaintNexus in Frameworks */ = {isa = PBXBuildFile; productRef = 7B8AE9252D140B9D00BC3F73 /* SaintNexus */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,13 +36,9 @@
 				02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */,
 				7B3D10E92D13DCAC00374988 /* Rusaint in Frameworks */,
 				02C46CED2D0F2DFC00A3E717 /* KeychainAccess in Frameworks */,
-				02C46CF02D0F2E6200A3E717 /* SaintNexus in Frameworks */,
 				02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */,
-				7B8AE9262D140B9D00BC3F73 /* SaintNexus in Frameworks */,
-				02C46CF82D0F351800A3E717 /* SaintNexus in Frameworks */,
 				02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */,
 				02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */,
-				7B2D5DA12D10334C0096832D /* SaintNexus in Frameworks */,
 				02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,16 +83,12 @@
 			name = "Soomsil-USaint";
 			packageProductDependencies = (
 				02C46CEC2D0F2DFC00A3E717 /* KeychainAccess */,
-				02C46CEF2D0F2E6200A3E717 /* SaintNexus */,
 				02C46CF22D0F2E9300A3E717 /* YDS */,
 				02C46CF42D0F2E9300A3E717 /* YDS-SwiftUI */,
-				02C46CF72D0F351800A3E717 /* SaintNexus */,
 				02C46D8C2D0F45B200A3E717 /* RxBlocking */,
 				02C46D8E2D0F45B200A3E717 /* RxCocoa */,
 				02C46D902D0F45B200A3E717 /* RxRelay */,
-				7B2D5DA02D10334C0096832D /* SaintNexus */,
 				7B3D10E82D13DCAC00374988 /* Rusaint */,
-				7B8AE9252D140B9D00BC3F73 /* SaintNexus */,
 			);
 			productName = "Rusaint-iOS";
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
@@ -135,7 +123,6 @@
 				02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */,
 				02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				7B3D10E72D13DCAC00374988 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
-				7B8AE9242D140B9D00BC3F73 /* XCLocalSwiftPackageReference "../../SaintNexus" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
@@ -372,13 +359,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		7B8AE9242D140B9D00BC3F73 /* XCLocalSwiftPackageReference "../../SaintNexus" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../../SaintNexus;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -420,10 +400,6 @@
 			package = 02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
 			productName = KeychainAccess;
 		};
-		02C46CEF2D0F2E6200A3E717 /* SaintNexus */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SaintNexus;
-		};
 		02C46CF22D0F2E9300A3E717 /* YDS */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */;
@@ -433,10 +409,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */;
 			productName = "YDS-SwiftUI";
-		};
-		02C46CF72D0F351800A3E717 /* SaintNexus */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SaintNexus;
 		};
 		02C46D8C2D0F45B200A3E717 /* RxBlocking */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -453,18 +425,10 @@
 			package = 02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxRelay;
 		};
-		7B2D5DA02D10334C0096832D /* SaintNexus */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SaintNexus;
-		};
 		7B3D10E82D13DCAC00374988 /* Rusaint */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 7B3D10E72D13DCAC00374988 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
 			productName = Rusaint;
-		};
-		7B8AE9252D140B9D00BC3F73 /* SaintNexus */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SaintNexus;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -1,5 +1,5 @@
 {
-  "originHash" : "31f6ce391e2b6985f8a6845d01b23669ef02a8b658b385255c40573906d424c6",
+  "originHash" : "9a89105e027b67665a9357722ab621049fb749b11df4afc155d27be53f7b3850",
   "pins" : [
     {
       "identity" : "keychainaccess",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/EATSTEAK/rusaint-ios",
       "state" : {
-        "branch" : "main",
-        "revision" : "42d58e1de286cb2f5ef9f9a18e79f64198323e2c"
+        "revision" : "13ced27cd131e19e9834e892aa8ebbb6915ccf4b",
+        "version" : "0.8.1"
       }
     },
     {

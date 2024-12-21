@@ -133,9 +133,6 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                 }
             }
         }
-        .saintNexusOnSheet {
-            LoadingCoverView()
-        }
         .registerYDSToast()
         .navigationBarBackButtonHidden()
         .toolbar {
