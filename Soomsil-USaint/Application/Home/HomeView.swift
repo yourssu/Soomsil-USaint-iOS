@@ -27,7 +27,7 @@ struct HomeView<VM: HomeViewModel>: View {
             }
         } else {
             NavigationStack(path: $path) {
-                ScrollView {
+                VStack {
                     HStack {
                         Text("유세인트")
                             .font(YDSFont.title2)
@@ -43,7 +43,6 @@ struct HomeView<VM: HomeViewModel>: View {
                         GradeItemGroup(reportCard: totalReportCard)
                         Spacer()
                     }
-                    .frame(height: 900)
                     .background(Color(red: 0.95, green: 0.96, blue: 0.97))
                 }
                 .background(.white)
