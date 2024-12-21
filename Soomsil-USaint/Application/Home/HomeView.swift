@@ -15,13 +15,22 @@ struct HomeView<VM: HomeViewModel>: View {
     @State var path: [StackView] = []
     @StateObject var viewModel: VM
 
+    @State var isLaunching: Bool = true
     @Binding var isLoggedIn: Bool
     @State var isFirst: Bool = LocalNotificationManager.shared.getIsFirst()
     @State private var session: USaintSession?
     @State private var totalReportCard: TotalReportCardModel = HomeRepository.shared.getTotalReportCard()
 
     var body: some View {
-        if !isLoggedIn {
+        if isLaunching {
+            SplashView()
+                .onAppear() {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        isLaunching = false
+                    }
+                }
+        }
+        else if !isLoggedIn {
             NavigationStack {
                 LoginView(isLoggedIn: $isLoggedIn)
             }
@@ -54,10 +63,10 @@ struct HomeView<VM: HomeViewModel>: View {
 
                 }
                 .task {
-                        if viewModel.person == nil {
-                            await loadUserInfo()
-                        }
+                    if viewModel.person == nil {
+                        await loadUserInfo()
                     }
+                }
                 .registerYDSToast()
                 .animation(.easeInOut, value: viewModel.isLogedIn())
                 .navigationDestination(for: StackView.self) { stackView in
@@ -215,9 +224,9 @@ struct HomeView<VM: HomeViewModel>: View {
                 HomeRepository.shared.updateTotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit))
             }
 
-//            DispatchQueue.main.async {
-//                self.totalReportCard = HomeRepository.shared.getTotalReportCard()
-//            }
+            //            DispatchQueue.main.async {
+            //                self.totalReportCard = HomeRepository.shared.getTotalReportCard()
+            //            }
             self.totalReportCard = HomeRepository.shared.getTotalReportCard()
 
 
@@ -304,6 +313,14 @@ private struct SaintItemView: View {
         .padding(.vertical, Dimension.MainPadding.vertical)
         .background(YDSColor.bgElevated)
         .frame(height: 72)
+    }
+}
+
+struct SplashView: View {
+    var body: some View {
+        Image("splash")
+            .resizable()
+            .aspectRatio(contentMode: .fill)
     }
 }
 
