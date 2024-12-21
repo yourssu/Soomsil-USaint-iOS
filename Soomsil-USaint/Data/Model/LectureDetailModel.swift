@@ -1,5 +1,5 @@
 //
-//  Lecture.swift
+//  LectureDetailModel.swift
 //  Soomsil-USaint-iOS
 //
 //  Created by 최지우 on 12/19/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Lecture {
+public struct LectureDetailModel {
     let code: String
     let title: String
     let credit: Double
