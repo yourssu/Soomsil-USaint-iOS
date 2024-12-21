@@ -18,7 +18,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
     let semesterStudentCount: Int
     let overallRank: Int
     let overallStudentCount: Int
-    let lectures: [Lecture]
+    var lectures: [LectureDetailModel]
     
     init(
         year: Int,
@@ -29,7 +29,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
         semesterStudentCount: Int,
         overallRank: Int,
         overallStudentCount: Int,
-        lectures: [Lecture]
+        lectures: [LectureDetailModel]
     ) {
         self.year = year
         self.semester = semester
@@ -146,7 +146,7 @@ public extension Array where Element == CDSemester {
                 semesterStudentCount: Int($0.semesterStudentCount),
                 overallRank: Int($0.overallRank),
                 overallStudentCount: Int($0.overallStudentCount),
-                lectures: <#[Lecture]#>
+                lectures: [LectureDetailModel(code: "", title: "", credit: 0.0, score: "", grade: .aMinus, professorName: "")]
             )
         }
     }
@@ -164,7 +164,7 @@ public extension Array where Element == Rusaint.SemesterGrade {
                 semesterStudentCount: Int($0.semesterRank.second),
                 overallRank: Int($0.generalRank.first),
                 overallStudentCount: Int($0.generalRank.second),
-                lectures: <#T##[Lecture]#>
+                lectures: [LectureDetailModel(code: "", title: "", credit: 0.0, score: "", grade: .aMinus, professorName: "")]
             )
         }
     }
