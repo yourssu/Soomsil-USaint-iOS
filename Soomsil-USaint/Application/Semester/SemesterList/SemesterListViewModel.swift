@@ -51,7 +51,6 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
             if self.session != nil {
                 let gradeSummaryFromDevice = semesterRepository.getSemesterList()
                 if !gradeSummaryFromDevice.isEmpty {
-                    print("🏳️‍🌈coredata: \(gradeSummaryFromDevice)")
                     return .success(gradeSummaryFromDevice)
                 }
                 return await getSemesterListFromRusaint()
@@ -106,10 +105,11 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     @MainActor
     public func getCurrentSemesterGrade() async -> Result<[LectureDetailModel], RusaintError> {
         do {
-            let response = try await CourseGradesApplicationBuilder().build(session: self.session!).classes(courseType: .bachelor, year: 2024, semester: .two, includeDetails: false)
+            let response = try await CourseGradesApplicationBuilder().build(session: self.session!).classes(courseType: .bachelor,
+                                                                                                            year: 2024,
+                                                                                                            semester: .two,
+                                                                                                            includeDetails: false)
             let rusaintData = response.toLectureDetailModels()
-            
-            print("🌈\(response)")
             return .success(rusaintData)
         } catch {
             return .failure(.applicationError)
@@ -143,7 +143,6 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
         case .failure(let error):
             self.fetchErrorMessage = "\(error)"
         }
-        
         isLoading = false
     }
 }
