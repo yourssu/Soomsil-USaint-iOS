@@ -23,9 +23,6 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
     @State private var semesterSelection: String = "1 학기"
     @State private var isShowingCustomReport: Bool = true
 
-    // FIXME: session -> keychain
-//    @State private var e: USaintSession? = nil
-
     var body: some View {
         ZStack {
             ScrollView {
@@ -46,6 +43,9 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                                 .filter {
                                     ($0.semester != "겨울학기" && $0.semester != "여름학기")
                                     || semesterListViewModel.isOnSeasonalSemester
+                                }
+                                .filter {
+                                    $0.gpa != 0
                                 }
                                 .map {
                                     GPAGraph.GPAInfo(semester: "\($0.year)년 \($0.semester)", gpa: $0.gpa)
