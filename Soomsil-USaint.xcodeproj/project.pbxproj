@@ -13,7 +13,7 @@
 		02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8C2D0F45B200A3E717 /* RxBlocking */; };
 		02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8E2D0F45B200A3E717 /* RxCocoa */; };
 		02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D902D0F45B200A3E717 /* RxRelay */; };
-		7B3D10E92D13DCAC00374988 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = 7B3D10E82D13DCAC00374988 /* Rusaint */; };
+		7BA4D7D32D17FAE700CF6689 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = 7BA4D7D22D17FAE700CF6689 /* Rusaint */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,8 +46,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7BA4D7D32D17FAE700CF6689 /* Rusaint in Frameworks */,
 				02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */,
-				7B3D10E92D13DCAC00374988 /* Rusaint in Frameworks */,
 				02C46CED2D0F2DFC00A3E717 /* KeychainAccess in Frameworks */,
 				02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */,
 				02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */,
@@ -101,7 +101,7 @@
 				02C46D8C2D0F45B200A3E717 /* RxBlocking */,
 				02C46D8E2D0F45B200A3E717 /* RxCocoa */,
 				02C46D902D0F45B200A3E717 /* RxRelay */,
-				7B3D10E82D13DCAC00374988 /* Rusaint */,
+				7BA4D7D22D17FAE700CF6689 /* Rusaint */,
 			);
 			productName = "Rusaint-iOS";
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
@@ -135,7 +135,7 @@
 				02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */,
 				02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */,
-				7B3D10E72D13DCAC00374988 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
+				7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
@@ -399,12 +399,12 @@
 				minimumVersion = 6.8.0;
 			};
 		};
-		7B3D10E72D13DCAC00374988 /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
+		7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios.git";
 			requirement = {
 				kind = upToNextMinorVersion;
-				minimumVersion = 0.8.0;
+				minimumVersion = 0.8.2;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -440,9 +440,9 @@
 			package = 02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxRelay;
 		};
-		7B3D10E82D13DCAC00374988 /* Rusaint */ = {
+		7BA4D7D22D17FAE700CF6689 /* Rusaint */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 7B3D10E72D13DCAC00374988 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
+			package = 7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
 			productName = Rusaint;
 		};
 /* End XCSwiftPackageProductDependency section */
