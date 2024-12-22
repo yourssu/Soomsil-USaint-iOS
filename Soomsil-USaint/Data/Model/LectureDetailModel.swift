@@ -158,6 +158,8 @@ public extension Array where Element == Rusaint.ClassGrade {
             return "F"
         case .score(let value):
             return "\(value)"
+        case .empty:
+            return ""
         }
     }
 }

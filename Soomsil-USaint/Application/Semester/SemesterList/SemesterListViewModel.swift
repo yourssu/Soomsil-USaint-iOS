@@ -23,29 +23,34 @@ extension StringProtocol {
 protocol SemesterListViewModel: BaseViewModel, ObservableObject {
     var reportList: [GradeSummaryModel] { get set }
     var isOnSeasonalSemester: Bool { get set }
+    var fetchErrorMessage: String { get set }
+    var isLoading: Bool { get set }
 
     func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError>
     func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError>
+    func getCurrentSemesterGrade() async -> Result<[LectureDetailModel], RusaintError>
+    func onAppear() async
 }
 
 final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     
     @Published var reportList = [GradeSummaryModel]()
     @Published var isOnSeasonalSemester = false
+    @Published var isLoading = true
+    @Published var fetchErrorMessage: String = ""
+    
     private let semesterRepository = SemesterRepository.shared
     private var session: USaintSession?
-
+    
     @MainActor
     public func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError> {
-//        reportCardRepository.deleteSemesterList()
+        //        reportCardRepository.deleteSemesterList()
         let userInfo = semesterRepository.getUserLoginInformation()
         do {
             self.session =  try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
             if self.session != nil {
-                // 성공
                 let gradeSummaryFromDevice = semesterRepository.getSemesterList()
                 if !gradeSummaryFromDevice.isEmpty {
-                    print("🏳️‍🌈coredata: \(gradeSummaryFromDevice)")
                     return .success(gradeSummaryFromDevice)
                 }
                 return await getSemesterListFromRusaint()
@@ -59,29 +64,86 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     }
     
     @MainActor
-    public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
+    public func setSession() async -> Result<Void, RusaintError> {
         let userInfo = semesterRepository.getUserLoginInformation()
         do {
-            self.session =  try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
-            if self.session != nil {
-                let response = try await CourseGradesApplicationBuilder().build(session: self.session!).semesters(courseType: CourseType.bachelor)
-                let rusaintData = response.toGradeSummaryModels()
-                
-                self.semesterRepository.updateSemesterList(rusaintData)
-                let list = self.semesterRepository.getSemesterList()
-                
-                if list.isEmpty {
-                    throw ParsingError.error("데이터 에러")
-                } else {
-                    print("🏳️‍🌈Rusaint: \(list)")
-                    return .success(list)
-                }
-            } else {
-                return .failure(RusaintError.invalidClientError)
+            self.session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
+            
+            guard self.session != nil else {
+                return .failure(.invalidClientError)
             }
-        } catch (let error) {
-            return .failure(error as! RusaintError)
+            return .success(())
+            
+        } catch {
+            return .failure(.invalidClientError)
         }
+    }
+    
+    @MainActor
+    public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
+        do {
+            let response = try await CourseGradesApplicationBuilder().build(session: self.session!).semesters(courseType: CourseType.bachelor)
+            let rusaintData = response.toGradeSummaryModels()
+            
+            self.semesterRepository.updateSemesterList(rusaintData)
+            let list = self.semesterRepository.getSemesterList()
+            
+            if list.isEmpty {
+                throw ParsingError.error("데이터 에러")
+            } else {
+                return .success(list)
+            }
+            
+        } catch {
+            return .failure(.applicationError)
+        }
+    }
+    
+    /**
+     2024년 2학기를 불러오는 함수입니다.
+     */
+    @MainActor
+    public func getCurrentSemesterGrade() async -> Result<[LectureDetailModel], RusaintError> {
+        do {
+            let response = try await CourseGradesApplicationBuilder().build(session: self.session!).classes(courseType: .bachelor,
+                                                                                                            year: 2024,
+                                                                                                            semester: .two,
+                                                                                                            includeDetails: false)
+            let rusaintData = response.toLectureDetailModels()
+            return .success(rusaintData)
+        } catch {
+            return .failure(.applicationError)
+        }
+    }
+
+    @MainActor
+    public func onAppear() async {
+        let sessionResult = await setSession()
+        
+        switch sessionResult {
+        case .success:
+            var semesterListResult = [GradeSummaryModel]()
+            let currentGrade = await getCurrentSemesterGrade()
+            switch currentGrade {
+            case .success(let response):
+                if !response.isEmpty {
+                    semesterListResult.append(GradeSummaryModel(year: 2024, semester: "2 학기"))
+                }
+                let listResponse = await getSemesterListFromRusaint()
+                switch listResponse {
+                case .success(let response):
+                    semesterListResult.append(contentsOf: response)
+                case .failure(let error):
+                    self.fetchErrorMessage = "\(error)"
+                }
+                reportList = semesterListResult
+            case .failure(let error):
+                self.fetchErrorMessage = "\(error)"
+            }
+        case .failure(let error):
+            self.fetchErrorMessage = "\(error)"
+        }
+        isLoading = false
     }
 }
 

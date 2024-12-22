@@ -22,10 +22,6 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
     private let semesters = ["1 학기", "여름학기", "2 학기", "겨울학기"]
     @State private var semesterSelection: String = "1 학기"
     @State private var isShowingCustomReport: Bool = true
-    @State private var isLoading = true
-
-    // FIXME: session -> keychain
-    @State private var se: USaintSession? = nil
 
     var body: some View {
         ZStack {
@@ -47,6 +43,9 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                                 .filter {
                                     ($0.semester != "겨울학기" && $0.semester != "여름학기")
                                     || semesterListViewModel.isOnSeasonalSemester
+                                }
+                                .filter {
+                                    $0.gpa != 0
                                 }
                                 .map {
                                     GPAGraph.GPAInfo(semester: "\($0.year)년 \($0.semester)", gpa: $0.gpa)
@@ -82,7 +81,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
 
                     // MARK: - List
                     ForEach(
-                        Array(semesterListViewModel.reportList.sortedAscending().enumerated()),
+                        Array(semesterListViewModel.reportList.sortedDescending().enumerated()),
                         id: \.offset
                     ) { index, report in
                         // FIXME: path로 수정
@@ -115,27 +114,18 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             .background(YDSColor.bgElevated)
             .refreshable {
                 Task {
-                    switch await semesterListViewModel.getSemesterListFromRusaint() {
-                    case .success(let success):
-                        semesterListViewModel.reportList = success
-                        YDSToast("가져오기 성공!", haptic: .success)
-                    case .failure(let failure):
-                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-                    }
+                     await semesterListViewModel.onAppear()
                 }
             }
             .onAppear {
                 Task {
-                    switch await semesterListViewModel.getSemesterListFromRusaint() {
-                    case .success(let success):
-                        isLoading = false
-                        semesterListViewModel.reportList = success
-                    case .failure(let failure):
-                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-                        isLoading = false
-                    }
+                    await semesterListViewModel.onAppear()
                 }
             }
+            .onChange(of: semesterListViewModel.fetchErrorMessage) { message in
+                    YDSToast("가져오기 실패 : \(message)", haptic: .failed)
+            }
+            
             .registerYDSToast()
             .navigationBarBackButtonHidden()
             .toolbar {
@@ -149,8 +139,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                     }
                 }
             }
-
-            if isLoading {
+            if semesterListViewModel.isLoading {
                 CircleLoadingView()
             }
         }
