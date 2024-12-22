@@ -82,7 +82,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
 
                     // MARK: - List
                     ForEach(
-                        Array(semesterListViewModel.reportList.sortedAscending().enumerated()),
+                        Array(semesterListViewModel.reportList.sortedDescending().enumerated()),
                         id: \.offset
                     ) { index, report in
                         // FIXME: path로 수정
