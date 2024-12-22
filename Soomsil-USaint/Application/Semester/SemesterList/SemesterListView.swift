@@ -115,26 +115,11 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             .refreshable {
                 Task {
                      await semesterListViewModel.onAppear()
-//                    {
-//                    case .success(let success):
-//                        semesterListViewModel.reportList = success
-//                        YDSToast("가져오기 성공!", haptic: .success)
-//                    case .failure(let failure):
-//                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-//                    }
                 }
             }
             .onAppear {
                 Task {
                     await semesterListViewModel.onAppear()
-//                    switch await semesterListViewModel.getSemesterListFromRusaint() {
-//                    case .success(let success):
-//                        isLoading = false
-//                        semesterListViewModel.reportList = success
-//                    case .failure(let failure):
-//                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-//                        isLoading = false
-//                    }
                 }
             }
             .onChange(of: semesterListViewModel.fetchErrorMessage) { message in
