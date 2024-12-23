@@ -36,25 +36,31 @@ public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
 
 // MARK: - Default func
 public extension SemesterDetailViewModel {
-//    func calculateGPA() -> Double {
-//        guard let lectures = self.reportDetail?.lectures else { return 0.0 }
-//        var gradeSum: Double = 0.0
-//        var creditSum: Double = 0.0
-//        lectures
-//            .compactMap { $0 }
-//            .filter { lecture in
-//                lecture.grade != .pass && lecture.grade != .fail && lecture.grade != .unknown
-//            }
-//            .forEach { lecture in
-//                let gpa: Double = lecture.grade.gpa
-//                if gpa > 0.0 {
-//                    gradeSum += lecture.credit * gpa
-//                    creditSum += lecture.credit
-//                }
-//            }
-//        return floor(10000 * (gradeSum * 10) / (creditSum * 10)) / 10000
-//    }
-
+    func calculateGPA() -> Double {
+        let lectures = self.gradeSummary.lectures
+        var gradeSum: Double = 0.0
+        var creditSum: Double = 0.0
+        
+        let nonNilLectures = lectures.compactMap { $0 }
+        
+        let validLectures = nonNilLectures.filter { lecture in
+            lecture.grade != .pass &&
+            lecture.grade != .fail &&
+            lecture.grade != .unknown &&
+            lecture.grade != .empty
+        }
+        
+        validLectures.forEach { lecture in
+            let gpa: Double = lecture.grade.gpa
+            if gpa > 0.0 {
+                gradeSum += lecture.credit * gpa
+                creditSum += lecture.credit
+            }
+        }
+        guard creditSum > 0 else { return 0.0 }
+        return floor(10000 * (gradeSum * 10) / (creditSum * 10)) / 10000
+    }
+    
     func takeScreenshot() {
         showConfirmDialog = true
     }
@@ -85,9 +91,6 @@ public extension SemesterDetailViewModel {
 final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewModel {
 //    var reportDetail: LectureDetailModel?
     
-    func calculateGPA() -> Double {
-        return 0.0
-    }
     
 //    @Published var reportDetail: ReportDetailModel?
     @Published var rowAnimation: Bool = false

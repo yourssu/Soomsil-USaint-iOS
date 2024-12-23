@@ -49,9 +49,12 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
                     VStack(alignment: .leading, spacing: Spacing.mainVStack) {
                         Text("\(String(semesterDetailViewModel.gradeSummary.year))년 \(semesterDetailViewModel.gradeSummary.semester)")
                             .font(YDSFont.subtitle2)
-                        if isShowSummary, semesterDetailViewModel.gradeSummary.gpa != 0 {
+                        if isShowSummary {
                             HStack(alignment: .lastTextBaseline) {
-                                Text(String(format: "%.2f", semesterDetailViewModel.gradeSummary.gpa))
+                                Text(String(format: "%.2f",
+                                            semesterDetailViewModel.gradeSummary.gpa == 0
+                                            ? semesterDetailViewModel.calculateGPA()
+                                            : semesterDetailViewModel.gradeSummary.gpa))
                                     .font(YDSFont.display1)
                                 Text("/ 4.50")
                                     .foregroundColor(YDSColor.textTertiary)

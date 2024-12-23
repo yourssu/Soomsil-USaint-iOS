@@ -33,6 +33,7 @@ enum Grade: String {
     case pass = "P"
     case fail = "F"
     case unknown = "Unknown"
+    case empty = "empty"
 
     var string: String {
         self.rawValue
@@ -69,6 +70,8 @@ enum Grade: String {
         case .fail:
             return 0.0
         case .unknown:
+            return 0.0
+        case .empty:
             return 0.0
         }
     }

@@ -20,18 +20,22 @@ struct GradeOverview: View {
 
     var body: some View {
         HStack(alignment: .lastTextBaseline) {
-            Text(title)
+            Text(transformIfZero(title))
                 .font(Font(YDSFont.body1))
                 .foregroundColor(Color(YDSColor.textTertiary))
             Spacer()
-            Text(accentText)
+            Text(transformIfZero(accentText))
                 .font(Font(YDSFont.subtitle2))
             if let subText {
-                Text("/ \(subText)")
+                Text("/ \(transformIfZero(subText))")
                     .font(Font(YDSFont.caption0))
                     .foregroundColor(Color(YDSColor.textTertiary))
             }
         }
+    }
+    
+    private func transformIfZero(_ text: String) -> String {
+        return text == "0" ? "-" : text
     }
 }
 
