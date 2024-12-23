@@ -1,6 +1,6 @@
 //
 //  UserDefaultManager.swift
-//  Soomsil-USaint-iOS 
+//  Soomsil-USaint-iOS
 //
 //  Created by 이조은 on 12/18/24.
 //
@@ -45,7 +45,7 @@ class LocalNotificationManager {
                     self.saveNotificationPermission(false)
                     completion(false)
                 }
-        }
+            }
     }
 
 
@@ -60,6 +60,25 @@ class LocalNotificationManager {
                 completion(false)
             @unknown default:
                 completion(false)
+            }
+        }
+    }
+
+    func pushNotification(title: String, body: String, identifier: String) {
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.title = title
+        notificationContent.body = body
+        notificationContent.sound = .default
+
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+
+        let request = UNNotificationRequest(identifier: identifier,
+                                            content: notificationContent,
+                                            trigger: trigger)
+
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("Notification Error: ", error)
             }
         }
     }
