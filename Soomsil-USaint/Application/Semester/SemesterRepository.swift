@@ -78,6 +78,29 @@ class SemesterRepository {
         }
     }
     
+    public func addSemester(_ newSemester: GradeSummaryModel) {
+        let context = coreDataStack.taskContext()
+        
+        createSemester(year: newSemester.year,
+                       semester: newSemester.semester,
+                       gpa: newSemester.gpa,
+                       earnedCredit: newSemester.earnedCredit,
+                       semesterRank: newSemester.semesterRank,
+                       semesterStudentCount: newSemester.semesterStudentCount,
+                       overallRank: newSemester.overallRank,
+                       overallStudentCount: newSemester.overallStudentCount,
+                       lectures: newSemester.lectures,
+                       in: context)
+        
+        context.performAndWait {
+            do {
+                try context.save()
+            } catch {
+                print("add semester error : \(error)")
+            }
+        }
+    }
+    
     public func deleteSemesterList() {
         let context = coreDataStack.taskContext()
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: CDSemester.fetchRequest())
