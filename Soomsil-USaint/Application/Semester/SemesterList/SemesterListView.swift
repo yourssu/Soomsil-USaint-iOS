@@ -16,9 +16,6 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
     @StateObject var semesterListViewModel: VM
     @State private var rowAnimation = false
 
-    private let years = (2010...(Calendar.current.component(.year, from: Date())))
-        .map { "\($0)" }
-    @State private var yearSelection: String = "\(Calendar.current.component(.year, from: Date()))"
     private let semesters = ["1 학기", "여름학기", "2 학기", "겨울학기"]
     @State private var semesterSelection: String = "1 학기"
     @State private var isShowingCustomReport: Bool = true
@@ -89,8 +86,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                             SemesterDetailView(path: $path,
                                                semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: report))
     //                        path.append(StackView(type: .SemesterDetail(gradeSummary: report)))
-                        }
-                    label: {
+                        } label: {
                             SemesterRow(gradeSummaryModel: report)
                                 .offset(x: self.rowAnimation ? 0 : 100)
                                 .opacity(self.rowAnimation ? 1 : 0)
@@ -103,6 +99,11 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                                 .onAppear {
                                     withAnimation {
                                         self.rowAnimation = true
+                                    }
+                                }
+                                .overlay {
+                                    if semesterListViewModel.isLatestSemesterNotYetConfirmed && index == 0 {
+                                        Text("asdf")
                                     }
                                 }
                         }
@@ -171,7 +172,7 @@ struct GPAGraph: View {
     struct GPAInfo: Hashable {
         let semester: String
         let gpa: Float
-        // shortedSemester : 차트의 label에 "2023년 1 학기" 문자열을 "23-1" 형태로 축약하여 출력
+        /// shortedSemester : 차트의 label에 "2023년 1 학기" 문자열을 "23-1" 형태로 축약하여 출력
         var shortedSemester: String {
             var result = ""
             
@@ -253,17 +254,20 @@ struct SemesterRow: View {
     let semester: String
     let earnedCredit: Float
     let semesterGPA: Float
-    init(year: String, semester: String, earnedCredit: Float, semesterGPA: Float) {
+    let isLatestSemesterNotYetConfirmed: Bool
+    init(year: String, semester: String, earnedCredit: Float, semesterGPA: Float, _ isLatestSemesterNotYetConfirmed: Bool) {
         self.year = year
         self.semester = semester
         self.earnedCredit = earnedCredit
         self.semesterGPA = semesterGPA
+        self.isLatestSemesterNotYetConfirmed = isLatestSemesterNotYetConfirmed
     }
     init(gradeSummaryModel: GradeSummaryModel) {
         self.year = String(gradeSummaryModel.year)
         self.semester = gradeSummaryModel.semester
         self.earnedCredit = gradeSummaryModel.earnedCredit
         self.semesterGPA = gradeSummaryModel.gpa
+        self.isLatestSemesterNotYetConfirmed = false
     }
     var body: some View {
         HStack {
@@ -289,5 +293,7 @@ struct SemesterRow: View {
 
 
 #Preview {
-    // SemesterListView(semesterListViewModel: DefaultSemesterListViewModel())
+    NavigationStack {
+        SemesterListView(path: .constant([]), semesterListViewModel: MockSemesterListViewModel())
+    }
 }

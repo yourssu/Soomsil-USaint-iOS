@@ -25,6 +25,7 @@ protocol SemesterListViewModel: BaseViewModel, ObservableObject {
     var isOnSeasonalSemester: Bool { get set }
     var fetchErrorMessage: String { get set }
     var isLoading: Bool { get set }
+    var isLatestSemesterNotYetConfirmed: Bool { get set }
 
     func getSemesterList() async -> Result<[GradeSummaryModel]?, RusaintError>
     func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel]?, RusaintError>
@@ -33,13 +34,47 @@ protocol SemesterListViewModel: BaseViewModel, ObservableObject {
     func onRefresh() async
 }
 
+extension SemesterListViewModel {
+    
+    /// 현재 가장 최근 학기 정보를 알려줍니다.
+    /// (ex) 25년 1월 13일은 (year: 24, semester: "겨울 학기") 로 리턴됩니다.
+    /// - Returns: year는 Int로, semester은 "1 학기", "여름학기", "2 학기", "겨울학기" 중 하나로 리턴됩니다.
+    func currentYearAndSemester() -> (year: Int, semester: String)? {
+        let date = Date()
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day], from: date)
+
+        guard let year = components.year,
+              let month = components.month,
+              let day = components.day else {
+            return nil
+        }
+
+        switch (month: month, day: day) {
+        case DateRange(start: (month: 6, day: 8), end: (month: 7, day: 7)):
+            return (year: year, semester: "1 학기")
+        case DateRange(start: (month: 7, day: 11), end: (month: 7, day: 25)):
+            return (year: year, semester: "여름학기")
+        case DateRange(start: (month: 12, day: 8), end: (month: 12, day: 31)):
+            return (year: year, semester: "2 학기")
+        case DateRange(start: (month: 1, day: 1), end: (month: 1, day: 7)):
+            return (year: year - 1, semester: "2 학기")
+        case DateRange(start: (month: 1, day: 11), end: (month: 1, day: 26)):
+            return (year: year - 1, semester: "겨울학기")
+        default:
+            return nil
+        }
+    }
+}
+
 final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     
     @Published var reportList = [GradeSummaryModel]()
     @Published var isOnSeasonalSemester = false
     @Published var isLoading = true
     @Published var fetchErrorMessage: String = ""
-    
+    @Published var isLatestSemesterNotYetConfirmed: Bool = false
+
     private let semesterRepository = SemesterRepository.shared
     private var session: USaintSession?
     
@@ -187,67 +222,72 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     }
 }
 
-//final class TestSemesterListViewModel: BaseViewModel, SemesterListViewModel {
-//    @Published var reportList = [GradeSummaryModel]()
-//    @Published var isLoading: Bool = false
-//    @Published var isOnSeasonalSemester: Bool = false
-//    private let reportCardRepository = ReportCardRepository.shared
-//
-//    func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError> {
-//        return await getSemesterListFromRusaint()
-//    }
-//    func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
-//        return .success([
-//            GradeSummaryModel(
-//                year: 2022,
-//                semester: "1 학기",
-//                gpa: 2.22,
-//                earnedCredit: 13.5,
-//                semesterRank: 12,
-//                semesterStudentCount: 34,
-//                overallRank: 100,
-//                overallStudentCount: 566
-//            ),
-//            GradeSummaryModel(
-//                year: 2022,
-//                semester: "여름학기",
-//                gpa: 3.22,
-//                earnedCredit: 13.5,
-//                semesterRank: 123,
-//                semesterStudentCount: 111,
-//                overallRank: 1,
-//                overallStudentCount: 324
-//            ),
-//            GradeSummaryModel(
-//                year: 2022,
-//                semester: "2 학기",
-//                gpa: 4.42,
-//                earnedCredit: 4.0,
-//                semesterRank: 123,
-//                semesterStudentCount: 100,
-//                overallRank: 11,
-//                overallStudentCount: 324
-//            ),
-//            GradeSummaryModel(
-//                year: 2022,
-//                semester: "겨울학기",
-//                gpa: 1.92,
-//                earnedCredit: 4.0,
-//                semesterRank: 123,
-//                semesterStudentCount: 324,
-//                overallRank: 1,
-//                overallStudentCount: 161
-//            ),
-//            GradeSummaryModel(
-//                year: 2023,
-//                semester: "1 학기",
-//                gpa: 3.50,
-//                earnedCredit: 19.5,
-//                semesterRank: 11,
-//                semesterStudentCount: 342,
-//                overallRank: 545,
-//                overallStudentCount: 586
-//            )
-//        ])
-//    }
-//}
+final class MockSemesterListViewModel: BaseViewModel, SemesterListViewModel {
+    @Published var reportList = [GradeSummaryModel]()
+    @Published var isOnSeasonalSemester = false
+    @Published var isLoading = true
+    @Published var fetchErrorMessage: String = ""
+    @Published var isLatestSemesterNotYetConfirmed: Bool = false
+
+    public func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError> {
+        return await getSemesterListFromRusaint()
+    }
+
+    public func setSession() async -> Result<Void, RusaintError> {
+        return .success(())
+    }
+
+    public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
+        .success([
+            .init(year: 2024, semester: "1 학기", gpa: 4.1, earnedCredit: 17.5, semesterRank: 3, semesterStudentCount: 30, overallRank: 4, overallStudentCount: 33, lectures: []),
+            .init(year: 2023, semester: "2 학기", gpa: 1.9, earnedCredit: 17.5, semesterRank: 3, semesterStudentCount: 30, overallRank: 4, overallStudentCount: 33, lectures: []),
+            .init(year: 2023, semester: "1 학기", gpa: 4.4, earnedCredit: 17.5, semesterRank: 3, semesterStudentCount: 30, overallRank: 4, overallStudentCount: 33, lectures: []),
+        ])
+    }
+
+    /**
+     2024년 2학기를 불러오는 함수입니다.
+     */
+    public func getCurrentSemesterGrade() async -> Result<[LectureDetailModel], RusaintError> {
+        return .success([
+            .init(code: "code1", title: "과목명1", credit: 3.0, score: "score1", grade: .aMinus, professorName: "교수명1"),
+            .init(code: "code2", title: "과목명2", credit: 2.0, score: "score2", grade: .bPlus, professorName: "교수명2"),
+            .init(code: "code3", title: "과목명3", credit: 3.0, score: "score3", grade: .unknown, professorName: "교수명3"),
+        ])
+    }
+
+    public func onAppear() async {
+        let sessionResult = await setSession()
+
+        switch sessionResult {
+        case .success:
+            var semesterListResult = [GradeSummaryModel]()
+            let listResponse = await getSemesterListFromRusaint()
+            switch listResponse {
+            case .success(let response):
+                semesterListResult.append(contentsOf: response)
+            case .failure(let error):
+                self.fetchErrorMessage = "\(error)"
+            }
+
+            let currentGrade = await getCurrentSemesterGrade()
+            switch currentGrade {
+            case .success(let response):
+                if !response.isEmpty {
+                    // 만약 최근 학기가 List에 포함이 되어있지 않다면? 성적 처리중인 친구.
+                    if let (currentYear, currentSemester) = self.currentYearAndSemester(),
+                       !semesterListResult.contains(where: { $0.year == currentYear && $0.semester == currentSemester }) {
+                        self.isLatestSemesterNotYetConfirmed = true
+                        semesterListResult.insert(GradeSummaryModel(year: currentYear, semester: currentSemester), at: 0)
+                    }
+                }
+            case .failure(let error):
+                self.fetchErrorMessage = "\(error)"
+            }
+            self.reportList = semesterListResult
+        case .failure(let error):
+            self.fetchErrorMessage = "\(error)"
+        }
+        isLoading = false
+    }
+}
