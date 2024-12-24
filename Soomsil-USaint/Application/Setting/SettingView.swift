@@ -131,6 +131,7 @@ struct SettingView: View {
         // deleteAllData? deleteInfoData?
         HomeRepository.shared.deleteUserInformation()
         HomeRepository.shared.deleteAllData()
+        SemesterRepository.shared.deleteSemesterList()
         path = []
         isLoggedIn = false
     }

@@ -114,7 +114,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             .background(YDSColor.bgElevated)
             .refreshable {
                 Task {
-                     await semesterListViewModel.onAppear()
+                    await semesterListViewModel.onRefresh()
                 }
             }
             .onAppear {
