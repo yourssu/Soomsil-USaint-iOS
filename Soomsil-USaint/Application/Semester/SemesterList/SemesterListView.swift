@@ -87,7 +87,8 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                                                semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: report))
     //                        path.append(StackView(type: .SemesterDetail(gradeSummary: report)))
                         } label: {
-                            SemesterRow(gradeSummaryModel: report)
+                            let isLatestSemesterNotYetConfirmed = semesterListViewModel.isLatestSemesterNotYetConfirmed && index == 0
+                            SemesterRow(gradeSummaryModel: report, isLatestSemesterNotYetConfirmed)
                                 .offset(x: self.rowAnimation ? 0 : 100)
                                 .opacity(self.rowAnimation ? 1 : 0)
                                 .animation(
@@ -99,11 +100,6 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                                 .onAppear {
                                     withAnimation {
                                         self.rowAnimation = true
-                                    }
-                                }
-                                .overlay {
-                                    if semesterListViewModel.isLatestSemesterNotYetConfirmed && index == 0 {
-                                        Text("asdf")
                                     }
                                 }
                         }
@@ -255,33 +251,37 @@ struct SemesterRow: View {
     let earnedCredit: Float
     let semesterGPA: Float
     let isLatestSemesterNotYetConfirmed: Bool
-    init(year: String, semester: String, earnedCredit: Float, semesterGPA: Float, _ isLatestSemesterNotYetConfirmed: Bool) {
-        self.year = year
-        self.semester = semester
-        self.earnedCredit = earnedCredit
-        self.semesterGPA = semesterGPA
-        self.isLatestSemesterNotYetConfirmed = isLatestSemesterNotYetConfirmed
-    }
-    init(gradeSummaryModel: GradeSummaryModel) {
+    init(gradeSummaryModel: GradeSummaryModel, _ isLatestSemesterNotYetConfirmed: Bool = false) {
         self.year = String(gradeSummaryModel.year)
         self.semester = gradeSummaryModel.semester
         self.earnedCredit = gradeSummaryModel.earnedCredit
         self.semesterGPA = gradeSummaryModel.gpa
-        self.isLatestSemesterNotYetConfirmed = false
+        self.isLatestSemesterNotYetConfirmed = isLatestSemesterNotYetConfirmed
     }
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 1.0) {
-                Text("\(year)년 \(semester)")
-                    .font(YDSFont.subtitle2)
+                HStack {
+                    Text("\(year)년 \(semester)")
+                        .font(YDSFont.subtitle2)
+                    if isLatestSemesterNotYetConfirmed {
+                        YDSChip(text: "성적 처리 기간", isSelected: true)
+                    }
+                }
                 Text("\(String(format: "%.1f", earnedCredit))학점")
                     .font(YDSFont.body1)
                     .foregroundColor(YDSColor.textTertiary)
             }
             Spacer()
-            Text("\(String(format: "%.2f", semesterGPA))")
-                .font(YDSFont.button0)
-                .foregroundColor(YDSColor.buttonNormal)
+            if isLatestSemesterNotYetConfirmed {
+                Text("(예정) \(String(format: "%.2f", semesterGPA))")
+                    .font(YDSFont.button0)
+                    .foregroundColor(YDSColor.buttonDisabled)
+            } else {
+                Text("\(String(format: "%.2f", semesterGPA))")
+                    .font(YDSFont.button0)
+                    .foregroundColor(YDSColor.buttonNormal)
+            }
             YDSIcon.arrowRightLine
                 .renderingMode(.template)
                 .foregroundColor(YDSColor.buttonNormal)
