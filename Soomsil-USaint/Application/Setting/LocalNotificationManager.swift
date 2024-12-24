@@ -64,15 +64,15 @@ class LocalNotificationManager {
         }
     }
 
-    func pushNotification(title: String, body: String, identifier: String) {
+    func pushLectureNotification(lectureTitle: String) {
         let notificationContent = UNMutableNotificationContent()
-        notificationContent.title = title
-        notificationContent.body = body
+        notificationContent.title = "숨쉴때 유세인트"
+        notificationContent.body = "[\(lectureTitle)] 과목의 성적이 공개되었어요."
         notificationContent.sound = .default
 
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
 
-        let request = UNNotificationRequest(identifier: identifier,
+        let request = UNNotificationRequest(identifier: lectureTitle,
                                             content: notificationContent,
                                             trigger: trigger)
 
