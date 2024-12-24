@@ -100,6 +100,46 @@ class SemesterRepository {
         }
     }
     
+    public func updateLecturesForSemester(year: Int, semester: String, newLectures: [LectureDetailModel]) {
+        let context = coreDataStack.taskContext()
+        let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
+        
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "year == %d", year),
+            NSPredicate(format: "semester == %@", semester)
+        ])
+        
+        do {
+            if let semesterEntity = try context.fetch(fetchRequest).first {
+                semesterEntity.removeFromLectures(semesterEntity.lectures ?? [])
+                
+                let newLectureEntities = newLectures.map { lecture in
+                    let cdLecture = CDLecture(context: context)
+                    cdLecture.code = lecture.code
+                    cdLecture.title = lecture.title
+                    cdLecture.credit = Float(lecture.credit)
+                    cdLecture.score = lecture.score
+                    cdLecture.grade = "\(lecture.grade)"
+                    cdLecture.professorName = lecture.professorName
+                    return cdLecture
+                }
+                
+                newLectureEntities.forEach { semesterEntity.addToLectures($0) }
+                context.performAndWait {
+                    do {
+                        try context.save()
+                    } catch {
+                        print("lectures 업데이트 실패: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                print("해당 학기 찾기 실패: Year \(year), Semester \(semester)")
+            }
+        } catch {
+            print("coredata fetch 실패: \(error)")
+        }
+    }
+    
     public func addSemester(_ newSemester: GradeSummaryModel) {
         let context = coreDataStack.taskContext()
         
