@@ -54,6 +54,7 @@ class SemesterRepository {
         }
     }
     
+    /// - Returns: GradeSummaryModel? 타입으로 리턴됩니다.
     public func getSemester(year: Int, semester: String) -> GradeSummaryModel? {
         let context = coreDataStack.taskContext()
         let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
@@ -87,7 +88,7 @@ class SemesterRepository {
                            semesterStudentCount: semesterList.semesterStudentCount,
                            overallRank: semesterList.overallRank,
                            overallStudentCount: semesterList.overallStudentCount,
-                           lectures: semesterList.lectures ?? [],
+                           lectures: semesterList.lectures ?? nil,
                            in: context)
         }
         context.performAndWait {
@@ -110,7 +111,7 @@ class SemesterRepository {
                        semesterStudentCount: newSemester.semesterStudentCount,
                        overallRank: newSemester.overallRank,
                        overallStudentCount: newSemester.overallStudentCount,
-                       lectures: newSemester.lectures ?? [],
+                       lectures: newSemester.lectures ?? nil,
                        in: context)
         
         context.performAndWait {
