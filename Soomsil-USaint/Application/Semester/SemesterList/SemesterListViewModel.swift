@@ -58,6 +58,7 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
         do {
             let response = try await CourseGradesApplicationBuilder().build(session: self.session!).semesters(courseType: CourseType.bachelor)
             let rusaintData = response.toGradeSummaryModels()
+            saveSemesterListToCoreData(rusaintData)
             return .success(rusaintData)
         } catch {
             return .failure(.applicationError)
@@ -108,8 +109,7 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     private func loadSemesterListData() async {
         let semesterListResponse = await getSemesterList()
         switch semesterListResponse {
-        case .success(let semesterList):
-            saveSemesterListToCoreData(semesterList)
+        case .success(_): break
         case .failure(let error):
             self.fetchErrorMessage = "\(error)"
         }
