@@ -18,11 +18,11 @@ public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
     var showSuccessAlert: Bool { get set }
     var showFailureAlert: Bool { get set }
     var masking: Bool { get set }
+    var fetchErrorMessage: String { get set }
 
-    func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError>
-
-    func calculateGPA() -> Double
-
+//    func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError>
+    func getLectureList() async
+    
     func takeScreenshot()
     func takeScreenshotWithMasking(screenshotMethod: @escaping () -> Void)
     func takeScreenshotWithoutMasking(screenshotMethod: @escaping () -> Void)
@@ -32,21 +32,23 @@ public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
 
 // MARK: - Default func
 public extension SemesterDetailViewModel {
-    func calculateGPA() -> Double {
+    public func calculateGPA() -> Double {
         let lectures = self.gradeSummary.lectures
         var gradeSum: Double = 0.0
         var creditSum: Double = 0.0
         
-        let nonNilLectures = lectures.compactMap { $0 }
+        // FIXME: optional
+        let nonNilLectures = lectures?.compactMap { $0 }
         
-        let validLectures = nonNilLectures.filter { lecture in
+        // FIXME: optional
+        let validLectures = nonNilLectures?.filter { lecture in
             lecture.grade != .pass &&
             lecture.grade != .fail &&
             lecture.grade != .unknown &&
             lecture.grade != .empty
         }
         
-        validLectures.forEach { lecture in
+        validLectures?.forEach { lecture in
             let gpa: Double = lecture.grade.gpa
             if gpa > 0.0 {
                 gradeSum += lecture.credit * gpa
@@ -92,6 +94,7 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
     @Published var showSuccessAlert: Bool = false
     @Published var showFailureAlert: Bool = false
     @Published var masking: Bool = false
+    @Published var fetchErrorMessage: String = ""
     
     @Published var gradeSummary: GradeSummaryModel
     private let semesterRepository = SemesterRepository.shared
@@ -102,25 +105,61 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
     }
     
     @MainActor
-    public func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError> {
+    private func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError> {
         let userInfo = semesterRepository.getUserLoginInformation()
         do {
             self.session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
             if self.session != nil {
-                let lectureDetailFromRusaint = try await CourseGradesApplicationBuilder().build(session: self.session!)
+                let lecturesFromRusaint = try await CourseGradesApplicationBuilder().build(session: self.session!)
                     .classes(courseType: .bachelor,
                              year: UInt32(self.gradeSummary.year),
                              semester: semesterType(self.gradeSummary.semester),
                              includeDetails: false)
-                
-//                print("\(lectureDetailFromRusaint)")
-                gradeSummary.lectures = lectureDetailFromRusaint.toLectureDetailModels()
-                return .success(gradeSummary.lectures)
+                print("3️⃣getSemesterDetailFromRusaint: \(lecturesFromRusaint.toLectureDetailModels())")
+                return .success(lecturesFromRusaint.toLectureDetailModels())
             } else {
                 return .failure(RusaintError.invalidClientError)
             }
         } catch (let error) {
             return .failure(error as! RusaintError)
+        }
+    }
+    
+    private func saveLectureListToCoreData(_ lectureList: [LectureDetailModel]) {
+        self.semesterRepository.updateLecturesForSemester(year: gradeSummary.year,
+                                                          semester: gradeSummary.semester,
+                                                          newLectures: lectureList)
+        print("🔥saveLectureListToCoreData")
+    }
+    
+    @MainActor
+    private func loadLectureListFromRusaint() async {
+        print("2️⃣loadLectureListFromRusaint: \(gradeSummary)")
+        let lectureListResponse = await getSemesterDetailFromRusaint()
+        switch lectureListResponse {
+        case .success(let lectureList):
+            saveLectureListToCoreData(lectureList)
+            if let updatedLectures = semesterRepository.getSemester(year: gradeSummary.year, semester: gradeSummary.semester) {
+                self.gradeSummary = updatedLectures
+                print("4️⃣loadLectureListFromRusaint__updatedLectures: \(self.gradeSummary)")
+            }
+        case .failure(let error):
+            self.fetchErrorMessage = "\(error)"
+        }
+    }
+    
+    @MainActor
+    public func getLectureList() async {
+        if let semester = semesterRepository.getSemester(year: self.gradeSummary.year,
+                                                         semester: self.gradeSummary.semester) {
+            if let lectures = semester.lectures {
+                if !lectures.isEmpty {
+                    self.fetchErrorMessage = "불러오기 성공"
+                    print("1️⃣getLectureList: \(gradeSummary)")
+                } else {
+                    await loadLectureListFromRusaint()
+                }
+            }
         }
     }
     
@@ -139,41 +178,6 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
             return .winter
         }
     }
-
-//    @MainActor
-//    func getSingleReport() async -> Result<ReportDetailModel, ParsingError> {
-//        let reportFromDevice = semesterRepository.getLectureDetail(report.year, report.semester)
-//        if let reportFromDevice {
-//            return .success(reportFromDevice)
-//        }
-//        return await getSingleReportFromSN()
-//    }
-//
-//    @MainActor
-//    func getSingleReportFromSN() async -> Result<ReportDetailModel, ParsingError> {
-//        semesterRepository.setYearAndSemester(report.year, report.semester)
-//        do {
-//            let response = try await SaintNexus.shared.loadSingleReport()
-//            if response.status == 200, let rdata = response.rdata {
-//                self.semesterRepository.updateReportDetail(rdata)
-//                guard let detail = self.semesterRepository.getLectureDetail(
-//                    report.year,
-//                    report.semester
-//                ) else {
-//                    throw ParsingError.error("파싱 데이터 에러")
-//                }
-//                return .success(detail)
-//            } else {
-//                throw ParsingError.error("\(response.status) 에러")
-//            }
-//        } catch is SNError {
-//            return .failure(.error("Saint Nexus 클라이언트 에러"))
-//        } catch ParsingError.error(let error) {
-//            return .failure(.error(error))
-//        } catch {
-//            return .failure(.error(error.localizedDescription))
-//        }
-//    }
 }
 
 //final class TestSemesterDetailViewModel: BaseViewModel, SemesterDetailViewModel {

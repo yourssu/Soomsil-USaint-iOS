@@ -75,9 +75,12 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
                             )
                         }
                         Divider()
-                        if !semesterDetailViewModel.gradeSummary.lectures.isEmpty {
-                            let gradeSummary = semesterDetailViewModel.gradeSummary
-                            ForEach(Array(gradeSummary.lectures.enumerated()), id: \.offset) { index, lecture in
+                        
+                        // FIXME: optional
+//                        if !semesterDetailViewModel.gradeSummary.lectures.isEmpty {
+                        if let lectures = semesterDetailViewModel.gradeSummary.lectures {
+//                            let gradeSummary = lectures
+                            ForEach(Array(lectures.enumerated()), id: \.offset) { index, lecture in
                                 if semesterDetailViewModel.masking {
                                     MaskedGradeRow(grade: lecture.grade)
                                 } else {
@@ -177,16 +180,22 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
             }
             .onAppear {
                 Task {
-                    switch await semesterDetailViewModel.getSemesterDetailFromRusaint() {
-                    case .success(let success):
-                        isLoading = false
-                        YDSToast("가져오기 성공!", haptic: .success)
-                    case .failure(let failure):
-                        isLoading = false
-                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-
-                    }
+                    await semesterDetailViewModel.getLectureList()
+                    print("5️⃣onAppear: \(semesterDetailViewModel.gradeSummary)")
+                    isLoading = false
                 }
+            }
+            .refreshable {
+//                Task {
+//                    switch await semesterDetailViewModel.getSemesterDetailFromRusaint() {
+//                    case .success(_):
+//                        isLoading = false
+//                        YDSToast("가져오기 성공!", haptic: .success)
+//                    case .failure(let failure):
+//                        isLoading = false
+//                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
+//                    }
+//                }
             }
             .registerYDSToast()
             .navigationBarBackButtonHidden()
