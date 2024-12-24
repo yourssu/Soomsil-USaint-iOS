@@ -31,8 +31,11 @@ struct Rusaint_iOSApp: App {
                 }
         }
         .backgroundTask(.appRefresh("soomsilUSaint.com")) {
-            scheduleCurrentSemester()
-            await compareAndFetchCurrentSemester()
+            notificationPermission = LocalNotificationManager.shared.getNotificationPermission()
+            if await notificationPermission {
+                scheduleCurrentSemester()
+                await compareAndFetchCurrentSemester()
+            }
         }
     }
 }
@@ -88,6 +91,8 @@ public func compareAndFetchCurrentSemester() async {
                     for i in 0...differences.count-1 {
                         LocalNotificationManager.shared.pushLectureNotification(lectureTitle: differences[i])
                     }
+                } else {
+                    LocalNotificationManager.shared.pushLectureNotification(lectureTitle: "업데이트 X")
                 }
             } else {
                 print("No existing semester found.")

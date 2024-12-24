@@ -31,7 +31,7 @@ struct SettingView: View {
     @Binding var isLoggedIn: Bool
 
     @State private var activeAlert: ActiveAlert?
-    @State private var isNotificationPermission: Bool = false
+    @State private var isNotificationPermission: Bool = LocalNotificationManager.shared.getNotificationPermission()
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -74,6 +74,7 @@ struct SettingView: View {
                             } else {
                                 isNotificationPermission = false
                             }
+                            LocalNotificationManager.shared.saveNotificationPermission(isNotificationPermission)
                         }
                 }
                 .padding(20)
@@ -108,10 +109,6 @@ struct SettingView: View {
         }
         .onAppear() {
             isNotificationPermission = LocalNotificationManager.shared.getNotificationPermission()
-
-        }
-        .onDisappear() {
-            LocalNotificationManager.shared.saveNotificationPermission(isNotificationPermission)
         }
         .navigationBarBackButtonHidden()
         .toolbar {

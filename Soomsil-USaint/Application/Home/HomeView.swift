@@ -59,6 +59,7 @@ struct HomeView<VM: HomeViewModel>: View {
                     if !isFirst {
                         LocalNotificationManager().requestAuthorization(completion: { _ in
                         })
+                        LocalNotificationManager.shared.saveIsFirst(true)
                     }
 
                 }
