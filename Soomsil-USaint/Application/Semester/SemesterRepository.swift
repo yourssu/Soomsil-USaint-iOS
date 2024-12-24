@@ -54,8 +54,27 @@ class SemesterRepository {
         }
     }
     
-    // MARK: get 이번학기 코어데이터 
-    
+    public func getSemester(year: Int, semester: String) -> GradeSummaryModel? {
+        let context = coreDataStack.taskContext()
+        let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "year == %d", year),
+            NSPredicate(format: "semester == %@", semester)
+        ])
+        
+        do {
+            if let semesterEntity = try context.fetch(fetchRequest).first {
+                return semesterEntity.toGradeSummaryModel()
+            } else {
+                print("No semester found for Year \(year), Semester \(semester)")
+                return nil
+            }
+        } catch {
+            print("Faild to fetch semester: \(error)")
+            return nil
+        }
+    }
+
     public func updateSemesterList(_ rusaintSemesterList: [GradeSummaryModel]) {
         deleteSemesterList()
         let context = coreDataStack.taskContext()
