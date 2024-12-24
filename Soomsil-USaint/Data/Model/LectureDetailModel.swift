@@ -148,7 +148,7 @@ public extension Array where Element == Rusaint.ClassGrade {
                                title: $0.className,
                                credit: Double($0.gradePoints),
                                score: classScoreToString($0.score),
-                               grade: Grade(rawValue: $0.rank) ?? .unknown,
+                               grade: Grade(rawValue: $0.rank) ?? .empty,
                                professorName: $0.professor)
         }
     }
@@ -163,6 +163,25 @@ public extension Array where Element == Rusaint.ClassGrade {
             return "\(value)"
         case .empty:
             return ""
+        }
+    }
+}
+
+/**
+ NSSet -> [LectureDetailModel] 변환하는 확장입니다.
+ */
+public extension Optional where Wrapped == NSSet {
+    func toLectureDetailModels() -> [LectureDetailModel] {
+        guard let lectureSet = self as? Set<CDLecture> else { return [] }
+        return lectureSet.map { lecture in
+            LectureDetailModel(
+                code: lecture.code ?? "",
+                title: lecture.title ?? "",
+                credit: Double(lecture.credit),
+                score: lecture.score ?? "",
+                grade: Grade(rawValue: lecture.grade ?? "") ?? .empty,
+                professorName: lecture.professorName ?? ""
+            )
         }
     }
 }

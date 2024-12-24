@@ -69,7 +69,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
         self.semesterStudentCount = 0
         self.overallRank = 0
         self.overallStudentCount = 0
-        self.lectures = []
+        self.lectures = nil
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -146,7 +146,7 @@ public extension Array where Element == CDSemester {
                 semesterStudentCount: Int($0.semesterStudentCount),
                 overallRank: Int($0.overallRank),
                 overallStudentCount: Int($0.overallStudentCount),
-                lectures: [LectureDetailModel(code: "", title: "", credit: 0.0, score: "", grade: .empty, professorName: "")]
+                lectures: $0.lectures.toLectureDetailModels()
             )
         }
     }
@@ -164,7 +164,7 @@ public extension Array where Element == Rusaint.SemesterGrade {
                 semesterStudentCount: Int($0.semesterRank.second),
                 overallRank: Int($0.generalRank.first),
                 overallStudentCount: Int($0.generalRank.second),
-                lectures: [LectureDetailModel(code: "", title: "", credit: 0.0, score: "", grade: .empty, professorName: "")]
+                lectures: nil
             )
         }
     }
@@ -181,16 +181,7 @@ public extension CDSemester {
             semesterStudentCount: Int(self.semesterStudentCount),
             overallRank: Int(self.overallRank),
             overallStudentCount: Int(self.overallStudentCount),
-            lectures: (self.lectures?.allObjects as? [CDLecture])?.compactMap { lecture in
-                LectureDetailModel(
-                    code: lecture.code ?? "Unknown Code",
-                    title: lecture.title ?? "Unknown Title",
-                    credit: Double(lecture.credit),
-                    score: lecture.score ?? "N/A",
-                    grade: Grade(rawValue: lecture.grade ?? "") ?? .empty,
-                    professorName: lecture.professorName ?? "Unknown Professor"
-                )
-            } ?? []
+            lectures: self.lectures.toLectureDetailModels()
         )
     }
 }
