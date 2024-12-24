@@ -87,7 +87,7 @@ class SemesterRepository {
                            semesterStudentCount: semesterList.semesterStudentCount,
                            overallRank: semesterList.overallRank,
                            overallStudentCount: semesterList.overallStudentCount,
-                           lectures: semesterList.lectures,
+                           lectures: semesterList.lectures ?? [],
                            in: context)
         }
         context.performAndWait {
@@ -110,7 +110,7 @@ class SemesterRepository {
                        semesterStudentCount: newSemester.semesterStudentCount,
                        overallRank: newSemester.overallRank,
                        overallStudentCount: newSemester.overallStudentCount,
-                       lectures: newSemester.lectures,
+                       lectures: newSemester.lectures ?? [],
                        in: context)
         
         context.performAndWait {
@@ -162,7 +162,7 @@ class SemesterRepository {
         semesterStudentCount: Int,
         overallRank: Int,
         overallStudentCount: Int,
-        lectures: [LectureDetailModel],
+        lectures: [LectureDetailModel]?,
         in context: NSManagedObjectContext
     ) {
         let semesterEntity = CDSemester(context: context)
@@ -174,8 +174,8 @@ class SemesterRepository {
         semesterEntity.semesterStudentCount = Int16(semesterStudentCount)
         semesterEntity.overallRank = Int16(overallRank)
         semesterEntity.overallStudentCount = Int16(overallStudentCount)
-        
-        for lecture in lectures {
+
+        let lectureEntities = lectures?.compactMap { lecture -> CDLecture? in
             let cdLecture = CDLecture(context: context)
             cdLecture.code = lecture.code
             cdLecture.title = lecture.title
@@ -183,7 +183,9 @@ class SemesterRepository {
             cdLecture.score = lecture.score
             cdLecture.grade = "\(lecture.grade)"
             cdLecture.professorName = lecture.professorName
-            semesterEntity.addToLectures(cdLecture)
+            return cdLecture
         }
+        
+        lectureEntities?.forEach { semesterEntity.addToLectures($0) }
     }
 }
