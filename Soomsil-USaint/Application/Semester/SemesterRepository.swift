@@ -54,6 +54,8 @@ class SemesterRepository {
         }
     }
     
+    // MARK: get 이번학기 코어데이터 
+    
     public func updateSemesterList(_ rusaintSemesterList: [GradeSummaryModel]) {
         deleteSemesterList()
         let context = coreDataStack.taskContext()
@@ -109,6 +111,26 @@ class SemesterRepository {
             try context.save()
         } catch {
             print(error.localizedDescription)
+        }
+    }
+    
+    public func deleteSemester(year: Int, semester: String) {
+        let context = coreDataStack.taskContext()
+        let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "year == %d", year),
+            NSPredicate(format: "semester == %@", semester)
+        ])
+        
+        do {
+            let results = try context.fetch(fetchRequest)
+            for object in results {
+                context.delete(object)
+            }
+            try context.save()
+            print("Deleted semester: Year \(year), Semester \(semester)")
+        } catch {
+            print("Failed to delete semester: \(error)")
         }
     }
     
