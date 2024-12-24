@@ -8,27 +8,12 @@
 import SwiftUI
 import Rusaint
 
-extension StringProtocol {
-    var tupleOfSplittedString: (String, String) {
-        if !self.isEmpty {
-            let splitted = self.split(separator: "/").map { String($0) }
-            let firstPart = splitted[0].replacingOccurrences(of: " ", with: "")
-            let otherPart = String(splitted[1...].joined()).replacingOccurrences(of: " ", with: "")
-            return (firstPart, otherPart)
-        }
-        return ("", "")
-    }
-}
-
 protocol SemesterListViewModel: BaseViewModel, ObservableObject {
     var reportList: [GradeSummaryModel] { get set }
     var isOnSeasonalSemester: Bool { get set }
     var fetchErrorMessage: String { get set }
     var isLoading: Bool { get set }
 
-    func getSemesterList() async -> Result<[GradeSummaryModel]?, RusaintError>
-    func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel]?, RusaintError>
-    func getCurrentSemesterGrade() async -> Result<GradeSummaryModel, RusaintError>
     func onAppear() async
     func onRefresh() async
 }
@@ -60,16 +45,16 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     }
     
     @MainActor
-    public func getSemesterList() async -> Result<[GradeSummaryModel]?, RusaintError> {
+    public func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError> {
         let semesterListFromDevice = semesterRepository.getSemesterList()
         if semesterListFromDevice.isEmpty {
             return await getSemesterListFromRusaint()
         }
-        return .success(nil)
+        return .success(semesterListFromDevice)
     }
     
     @MainActor
-    public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel]?, RusaintError> {
+    public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
         do {
             let response = try await CourseGradesApplicationBuilder().build(session: self.session!).semesters(courseType: CourseType.bachelor)
             let rusaintData = response.toGradeSummaryModels()
@@ -114,35 +99,39 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
         self.semesterRepository.addSemester(currentSemester)
     }
     
+    /**
+     이전학기 [GradeSummaryModel] 을 불러오는 함수입니다.
+     - CoreData에 list 존재 시, CoreData 정보를 불러옵니다.
+     - CoreData에 list 존재하지 않을 시, Rusaint에서 정보를 불러옵니다.
+     */
     @MainActor
-    public func onAppear() async {
-        let sessionResult = await setSession()
-        
-        switch sessionResult {
-        case .success:
-            await loadSemesterData()
-            await loadCurrentSemesterData()
-            reportList = semesterRepository.getSemesterList()
-        case .failure(let error):
-            self.fetchErrorMessage = "\(error)"
-        }
-
-        isLoading = false
-    }
-    
-    @MainActor
-    private func loadSemesterData() async {
+    private func loadSemesterListData() async {
         let semesterListResponse = await getSemesterList()
         switch semesterListResponse {
         case .success(let semesterList):
-            if let list = semesterList {
-                saveSemesterListToCoreData(list)
-            }
+            saveSemesterListToCoreData(semesterList)
         case .failure(let error):
             self.fetchErrorMessage = "\(error)"
         }
     }
     
+    /**
+     이전학기 [GradeSummaryModel]을 Rusaint에서 불러옵니다.
+     */
+    @MainActor
+    private func loadSemesterListFromRusaint() async {
+        let semesterListResponse = await getSemesterListFromRusaint()
+        switch semesterListResponse {
+        case .success(let semesterList):
+            saveSemesterListToCoreData(semesterList)
+        case .failure(let error):
+            self.fetchErrorMessage = "\(error)"
+        }
+    }
+    
+    /**
+     현재학기 GradeSummaryModel을 Rusaint에서 불러옵니다.
+     */
     @MainActor
     private func loadCurrentSemesterData() async {
         let currentSemesterGradeResponse = await getCurrentSemesterGrade()
@@ -155,6 +144,24 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     }
     
     @MainActor
+    public func onAppear() async {
+        let sessionResult = await setSession()
+        
+        switch sessionResult {
+        case .success:
+            // 이전학기 호출 (CoreData -> Rusaint)
+            await loadSemesterListData()
+            // 현재학기 호출 (Rusaint)
+            await loadCurrentSemesterData()
+            
+            reportList = semesterRepository.getSemesterList()
+        case .failure(let error):
+            self.fetchErrorMessage = "\(error)"
+        }
+        isLoading = false
+    }
+    
+    @MainActor
     public func onRefresh() async {
         let sessionResult = await setSession()
         semesterRepository.deleteSemesterList()
@@ -162,27 +169,14 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
         switch sessionResult {
         case .success:
             // 이전학기 호출 (Rusaint)
-            let semesterListResponse = await getSemesterListFromRusaint()
-            switch semesterListResponse {
-            case .success(let semesterList):
-                if let list = semesterList {
-                    saveSemesterListToCoreData(list)
-                }
-            case .failure(let error):
-                self.fetchErrorMessage = "\(error)"
-            }
+            await loadSemesterListFromRusaint()
             // 현재학기 호출 (Rusaint)
-            let currentSemesterGradeResponse = await getCurrentSemesterGrade()
-            switch currentSemesterGradeResponse {
-            case .success(let currentSemester):
-                saveCurrentSemesterToCoreData(currentSemester)
-            case .failure(let error):
-                self.fetchErrorMessage = "\(error)"
-            }
+            await loadCurrentSemesterData()
+            
+            reportList = semesterRepository.getSemesterList()
         case .failure(let error):
             self.fetchErrorMessage = "\(error)"
         }
-        reportList = semesterRepository.getSemesterList()
         isLoading = false
     }
 }
