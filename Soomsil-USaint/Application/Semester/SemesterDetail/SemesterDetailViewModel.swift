@@ -11,8 +11,6 @@ import Rusaint
 public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
 
     var gradeSummary: GradeSummaryModel { get set }
-//    var reportDetail: LectureDetailModel? { get set }
-
     var rowAnimation: Bool { get set }
 
     var isCapturing: Bool { get set }
@@ -21,8 +19,6 @@ public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
     var showFailureAlert: Bool { get set }
     var masking: Bool { get set }
 
-//    func getSingleReport() async -> Result<ReportDetailModel, ParsingError>
-//    func getSingleReportFromSN() async -> Result<ReportDetailModel, ParsingError>
     func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError>
 
     func calculateGPA() -> Double
@@ -89,10 +85,7 @@ public extension SemesterDetailViewModel {
 }
 
 final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewModel {
-//    var reportDetail: LectureDetailModel?
-    
-    
-//    @Published var reportDetail: ReportDetailModel?
+
     @Published var rowAnimation: Bool = false
     @Published var isCapturing: Bool = false
     @Published var showConfirmDialog: Bool = false
