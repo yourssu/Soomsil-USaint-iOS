@@ -7,6 +7,7 @@
 
 import SwiftUI
 import BackgroundTasks
+import Rusaint
 
 @main
 struct Rusaint_iOSApp: App {
@@ -14,27 +15,32 @@ struct Rusaint_iOSApp: App {
     @Environment(\.scenePhase) var scenePhase
     let viewModel = DefaultSaintHomeViewModel()
     @State private var isLoggedIn: Bool = HomeRepository.shared.hasCachedUserInformation
+    @State private var notificationPermission: Bool = false
 
     var body: some Scene {
         WindowGroup {
             HomeView(viewModel: viewModel, isLoggedIn: $isLoggedIn)
                 .onChange(of: scenePhase) { newPhase in
-                    if newPhase == .background {
+                    notificationPermission = LocalNotificationManager.shared.getNotificationPermission()
+                    if newPhase == .background && notificationPermission {
                         scheduleCurrentSemester()
-                        notifyUpdateLecture()
+                        Task {
+                            await compareAndFetchCurrentSemester()
+                        }
                     }
                 }
         }
         .backgroundTask(.appRefresh("soomsilUSaint.com")) {
-            print("=== backgroundTask")
             scheduleCurrentSemester()
-            notifyUpdateLecture()
+            await compareAndFetchCurrentSemester()
         }
     }
 }
 
+/**
+ 2024년 2학기를 불러와서 기존 Core Data랑 비교하는 함수
+ */
 func scheduleCurrentSemester() {
-    print("=== scheduleCurrentSemester")
     let request = BGAppRefreshTaskRequest(identifier: "soomsilUSaint.com")
     request.earliestBeginDate = Date(timeIntervalSinceNow: 30*60)
 
@@ -46,9 +52,67 @@ func scheduleCurrentSemester() {
     }
 }
 
-func notifyUpdateLecture() {
-    print("=== notifyUpdateLecture")
+public func compareAndFetchCurrentSemester() async {
+    do {
+        let existingSemester = SemesterRepository.shared.getSemester(year: 2024, semester: "2 학기")
 
-    let lectureTitle = "창의융합인재되기3code전략"
-    LocalNotificationManager.shared.pushNotification(title: "숨쉴때 유세인트", body: "[\(lectureTitle)] 과목의 성적이 공개되었어요.", identifier: "notifyUpdateLecture")
+        print("=== 🌟🌟🌟\(String(describing: existingSemester))")
+        print()
+
+        let userInfo = HomeRepository.shared.getUserLoginInformation()
+        let session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
+        if session != nil {
+            let response = try await CourseGradesApplicationBuilder().build(session: session).classes(courseType: .bachelor,
+                                                                                                            year: 2024,
+                                                                                                            semester: .two,
+                                                                                                            includeDetails: false)
+
+
+            let currentClassesData = response.toLectureDetailModels()
+            let currentSemester = GradeSummaryModel(year: 2024,
+                                                    semester: "2 학기",
+                                                    gpa: 0,
+                                                    earnedCredit: 0,
+                                                    semesterRank: 0,
+                                                    semesterStudentCount: 0,
+                                                    overallRank: 0,
+                                                    overallStudentCount: 0,
+                                                    lectures: currentClassesData)
+
+            if let existingSemester = existingSemester {
+                let differences = compareSemesters(existingSemester, currentSemester)
+                print("=== ❌❌❌ Differences:", differences)
+                print()
+
+                if !differences.isEmpty {
+                    for i in 0...differences.count-1 {
+                        LocalNotificationManager.shared.pushLectureNotification(lectureTitle: differences[i])
+                    }
+                }
+            } else {
+                print("No existing semester found.")
+            }
+        }
+    } catch {
+        print(" Compare And Fetch Current Semester Error: \(error)")
+    }
+}
+
+private func compareSemesters(_ oldSemester: GradeSummaryModel, _ newSemester: GradeSummaryModel) -> [String] {
+    let oldLectures = oldSemester.lectures.reduce(into: [String: LectureDetailModel]()) { result, lecture in
+        result[lecture.code] = lecture
+    }
+    let newLectures = newSemester.lectures.reduce(into: [String: LectureDetailModel]()) { result, lecture in
+        result[lecture.code] = lecture
+    }
+    var gradeChangedLectures: [String] = []
+
+    for (code, newLecture) in newLectures {
+        if let oldLecture = oldLectures[code],
+           oldLecture.grade != newLecture.grade {
+            gradeChangedLectures.append(newLecture.title)
+        }
+    }
+
+    return gradeChangedLectures
 }
