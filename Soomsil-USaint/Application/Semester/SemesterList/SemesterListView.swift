@@ -16,10 +16,6 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
     @StateObject var semesterListViewModel: VM
     @State private var rowAnimation = false
 
-    private let semesters = ["1 학기", "여름학기", "2 학기", "겨울학기"]
-    @State private var semesterSelection: String = "1 학기"
-    @State private var isShowingCustomReport: Bool = true
-
     var body: some View {
         ZStack {
             ScrollView {
@@ -73,10 +69,7 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                     .frame(height: 8.0)
                     .foregroundColor(YDSColor.borderThin)
 
-                // MARK: - bottom
                 VStack(alignment: .leading) {
-
-                    // MARK: - List
                     ForEach(
                         Array(semesterListViewModel.reportList.sortedDescending().enumerated()),
                         id: \.offset
@@ -109,20 +102,19 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                 .padding()
             }
             .background(YDSColor.bgElevated)
-            .refreshable {
-                Task {
-                    await semesterListViewModel.onRefresh()
-                }
-            }
             .onAppear {
                 Task {
                     await semesterListViewModel.onAppear()
                 }
             }
-            .onChange(of: semesterListViewModel.fetchErrorMessage) { message in
-                    YDSToast("가져오기 실패 : \(message)", haptic: .failed)
+            .refreshable {
+                Task {
+                    await semesterListViewModel.onRefresh()
+                }
             }
-            
+            .onChange(of: semesterListViewModel.fetchErrorMessage) { message in
+                    YDSToast(message, haptic: .failed)
+            }
             .registerYDSToast()
             .navigationBarBackButtonHidden()
             .toolbar {

@@ -12,13 +12,13 @@ public struct GradeSummaryModel: Identifiable, Hashable {
     public let id = UUID()
     let year: Int
     let semester: String
-    let gpa: Float
+    var gpa: Float
     let earnedCredit: Float
     let semesterRank: Int
     let semesterStudentCount: Int
     let overallRank: Int
     let overallStudentCount: Int
-    var lectures: [LectureDetailModel]
+    var lectures: [LectureDetailModel]?
     
     init(
         year: Int,
@@ -29,7 +29,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
         semesterStudentCount: Int,
         overallRank: Int,
         overallStudentCount: Int,
-        lectures: [LectureDetailModel]
+        lectures: [LectureDetailModel]?
     ) {
         self.year = year
         self.semester = semester
@@ -69,7 +69,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
         self.semesterStudentCount = 0
         self.overallRank = 0
         self.overallStudentCount = 0
-        self.lectures = []
+        self.lectures = nil
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -146,7 +146,7 @@ public extension Array where Element == CDSemester {
                 semesterStudentCount: Int($0.semesterStudentCount),
                 overallRank: Int($0.overallRank),
                 overallStudentCount: Int($0.overallStudentCount),
-                lectures: [LectureDetailModel(code: "", title: "", credit: 0.0, score: "", grade: .aMinus, professorName: "")]
+                lectures: $0.lectures.toLectureDetailModels()
             )
         }
     }
@@ -164,8 +164,25 @@ public extension Array where Element == Rusaint.SemesterGrade {
                 semesterStudentCount: Int($0.semesterRank.second),
                 overallRank: Int($0.generalRank.first),
                 overallStudentCount: Int($0.generalRank.second),
-                lectures: [LectureDetailModel(code: "", title: "", credit: 0.0, score: "", grade: .aMinus, professorName: "")]
+                lectures: nil
             )
         }
     }
 }
+
+public extension CDSemester {
+    func toGradeSummaryModel() -> GradeSummaryModel {
+        GradeSummaryModel(
+            year: Int(self.year),
+            semester: self.semester ?? "",
+            gpa: self.gpa,
+            earnedCredit: self.earnedCredit,
+            semesterRank: Int(self.semesterRank),
+            semesterStudentCount: Int(self.semesterStudentCount),
+            overallRank: Int(self.overallRank),
+            overallStudentCount: Int(self.overallStudentCount),
+            lectures: self.lectures.toLectureDetailModels()
+        )
+    }
+}
+
