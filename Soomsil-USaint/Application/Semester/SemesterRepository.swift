@@ -119,7 +119,7 @@ class SemesterRepository {
                     cdLecture.title = lecture.title
                     cdLecture.credit = Float(lecture.credit)
                     cdLecture.score = lecture.score
-                    cdLecture.grade = "\(lecture.grade)"
+                    cdLecture.grade = lecture.grade.rawValue
                     cdLecture.professorName = lecture.professorName
                     return cdLecture
                 }
@@ -137,6 +137,26 @@ class SemesterRepository {
             }
         } catch {
             print("coredata fetch 실패: \(error)")
+        }
+    }
+    
+    func updateGPA(year: Int, semester: String, gpa: Float) {
+        let context = coreDataStack.taskContext()
+        let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "year == %d", year),
+            NSPredicate(format: "semester == %@", semester)
+        ])
+        
+        do {
+            if let semesterEntity = try context.fetch(fetchRequest).first {
+                semesterEntity.gpa = gpa
+                try context.save()
+            } else {
+                print("No semester found to update GPA for Year \(year), Semester \(semester)")
+            }
+        } catch {
+            print("Failed to update GPA in Core Data: \(error)")
         }
     }
     
@@ -222,7 +242,7 @@ class SemesterRepository {
             cdLecture.title = lecture.title
             cdLecture.credit = Float(lecture.credit)
             cdLecture.score = lecture.score
-            cdLecture.grade = "\(lecture.grade)"
+            cdLecture.grade = lecture.grade.rawValue
             cdLecture.professorName = lecture.professorName
             return cdLecture
         }
