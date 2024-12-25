@@ -108,13 +108,16 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
      2024년 2학기를 불러오는 함수입니다.
      */
     @MainActor
-    public func getCurrentSemesterGrade() async -> Result<GradeSummaryModel, RusaintError> {
+    private func getCurrentSemesterGrade() async -> Result<GradeSummaryModel?, RusaintError> {
         semesterRepository.deleteSemester(year: 2024, semester: "2 학기")
         do {
             let response = try await CourseGradesApplicationBuilder().build(session: self.session!).classes(courseType: .bachelor,
                                                                                                             year: 2024,
                                                                                                             semester: .two,
                                                                                                             includeDetails: false)
+            if response.isEmpty {
+                return .success(nil)
+            }
             let currentClassesData = response.toLectureDetailModels()
             let currentSemester = GradeSummaryModel(year: 2024,
                                                     semester: "2 학기",
@@ -181,12 +184,15 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
         let currentSemesterGradeResponse = await getCurrentSemesterGrade()
         switch currentSemesterGradeResponse {
         case .success(let currentSemesterGrade):
-            saveCurrentSemesterToCoreData(currentSemesterGrade)
-            if let (currentYear, currentSemester) = self.currentYearAndSemester(),
-               currentSemesterGrade.year == currentYear,
-               currentSemesterGrade.semester == currentSemester {
-                self.isLatestSemesterExistInCurrentSemester = true
+            if let currentSemesterGrade = currentSemesterGrade {
+                saveCurrentSemesterToCoreData(currentSemesterGrade)
+                if let (currentYear, currentSemester) = self.currentYearAndSemester(),
+                   currentSemesterGrade.year == currentYear,
+                   currentSemesterGrade.semester == currentSemester {
+                    self.isLatestSemesterExistInCurrentSemester = true
+                }
             }
+            
         case .failure(let error):
             self.fetchErrorMessage = "\(error)"
         }
