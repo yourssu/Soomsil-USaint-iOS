@@ -59,8 +59,8 @@ public func compareAndFetchCurrentSemester() async {
     do {
         let existingSemester = SemesterRepository.shared.getSemester(year: 2024, semester: "2 학기")
 
-        print("=== 🌟🌟🌟\(String(describing: existingSemester))")
-        print()
+//        print("=== 🌟🌟🌟\(String(describing: existingSemester))")
+//        print()
 
         let userInfo = HomeRepository.shared.getUserLoginInformation()
         let session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
@@ -84,15 +84,14 @@ public func compareAndFetchCurrentSemester() async {
 
             if let existingSemester = existingSemester {
                 let differences = compareSemesters(existingSemester, currentSemester)
-                print("=== ❌❌❌ Differences:", differences)
-                print()
+//                print("=== ❌❌❌ Differences:", differences)
+//                print()
 
                 if !differences.isEmpty {
                     for i in 0...differences.count-1 {
                         LocalNotificationManager.shared.pushLectureNotification(lectureTitle: differences[i])
                     }
-                } else {
-                    LocalNotificationManager.shared.pushLectureNotification(lectureTitle: "업데이트 X")
+                    SemesterRepository.shared.updateLecturesForSemester(year: 2024, semester: "2 학기", newLectures: currentClassesData)
                 }
             } else {
                 print("No existing semester found.")
@@ -104,18 +103,20 @@ public func compareAndFetchCurrentSemester() async {
 }
 
 private func compareSemesters(_ oldSemester: GradeSummaryModel, _ newSemester: GradeSummaryModel) -> [String] {
-    let oldLectures = oldSemester.lectures.reduce(into: [String: LectureDetailModel]()) { result, lecture in
+    let oldLectures = oldSemester.lectures?.reduce(into: [String: LectureDetailModel]()) { result, lecture in
         result[lecture.code] = lecture
     }
-    let newLectures = newSemester.lectures.reduce(into: [String: LectureDetailModel]()) { result, lecture in
+    let newLectures = newSemester.lectures?.reduce(into: [String: LectureDetailModel]()) { result, lecture in
         result[lecture.code] = lecture
     }
     var gradeChangedLectures: [String] = []
 
-    for (code, newLecture) in newLectures {
-        if let oldLecture = oldLectures[code],
-           oldLecture.grade != newLecture.grade {
-            gradeChangedLectures.append(newLecture.title)
+    if let newLectures = newLectures { // 먼저 newLectures를 언랩
+        for (code, newLecture) in newLectures {
+            if let oldLecture = oldLectures?[code],
+               oldLecture.grade != newLecture.grade {
+                gradeChangedLectures.append(newLecture.title)
+            }
         }
     }
 
