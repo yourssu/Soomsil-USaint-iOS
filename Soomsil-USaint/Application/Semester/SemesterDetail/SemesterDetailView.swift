@@ -159,7 +159,6 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
             .onAppear {
                 Task {
                     await semesterDetailViewModel.getLectureList()
-                    print("5️⃣onAppear: \(semesterDetailViewModel.gradeSummary)")
                     isLoading = false
                 }
             }

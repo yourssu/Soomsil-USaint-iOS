@@ -105,13 +105,11 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
             .onAppear {
                 Task {
                     await semesterListViewModel.onAppear()
-                    print("1️⃣onAppear: \(SemesterRepository.shared.getSemesterList())")
                 }
             }
             .refreshable {
                 Task {
                     await semesterListViewModel.onRefresh()
-                    print("2️⃣refreshable: \(SemesterRepository.shared.getSemesterList())")
                 }
             }
             .onChange(of: semesterListViewModel.fetchErrorMessage) { message in

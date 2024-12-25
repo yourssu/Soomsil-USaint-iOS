@@ -120,7 +120,6 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
                              year: UInt32(self.gradeSummary.year),
                              semester: semesterType(self.gradeSummary.semester),
                              includeDetails: false)
-                print("3️⃣getSemesterDetailFromRusaint: \(lecturesFromRusaint.toLectureDetailModels())")
                 return .success(lecturesFromRusaint.toLectureDetailModels())
             } else {
                 return .failure(RusaintError.invalidClientError)
@@ -134,12 +133,10 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
         self.semesterRepository.updateLecturesForSemester(year: gradeSummary.year,
                                                           semester: gradeSummary.semester,
                                                           newLectures: lectureList)
-        print("🔥saveLectureListToCoreData")
     }
     
     @MainActor
     public func loadLectureListFromRusaint() async {
-        print("2️⃣loadLectureListFromRusaint: \(gradeSummary)")
         let lectureListResponse = await getSemesterDetailFromRusaint()
         switch lectureListResponse {
         case .success(let lectureList):
@@ -147,7 +144,6 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
             if let updatedLectures = semesterRepository.getSemester(year: gradeSummary.year, semester: gradeSummary.semester) {
                 self.gradeSummary = updatedLectures
                 self.fetchErrorMessage = "가져오기 성공"
-                print("4️⃣loadLectureListFromRusaint__updatedLectures: \(self.gradeSummary)")
             }
         case .failure(let error):
             self.fetchErrorMessage = "\(error)"
@@ -161,7 +157,6 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
             if let lectures = semester.lectures {
                 if !lectures.isEmpty {
                     self.fetchErrorMessage = "불러오기 성공"
-                    print("1️⃣getLectureList: \(gradeSummary)")
                 } else {
                     await loadLectureListFromRusaint()
                 }
@@ -172,14 +167,12 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
     public func setCalculatedGPA() {
         if self.gradeSummary.gpa == 0 {
             let calculatedGPA = Float(calculateGPA())
-            print("🌈\(calculatedGPA)")
             semesterRepository.updateGPA(year: self.gradeSummary.year,
                                          semester: self.gradeSummary.semester,
                                          gpa: calculatedGPA)
             if let semester = semesterRepository.getSemester(year: self.gradeSummary.year,
                                                              semester: self.gradeSummary.semester) {
                 self.gradeSummary = semester
-                print("7️⃣setCalculatedGPA: \(self.gradeSummary)")
             }
         }
     }
