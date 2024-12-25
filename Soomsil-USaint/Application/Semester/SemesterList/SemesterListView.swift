@@ -79,9 +79,9 @@ struct SemesterListView<VM: SemesterListViewModel>: View {
                             SemesterDetailView(path: $path,
                                                semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: report))
     //                        path.append(StackView(type: .SemesterDetail(gradeSummary: report)))
-                        }
-                    label: {
-                            SemesterRow(gradeSummaryModel: report)
+                        } label: {
+                            let isLatestSemesterNotYetConfirmed = semesterListViewModel.isLatestSemesterNotYetConfirmed && index == 0
+                            SemesterRow(gradeSummaryModel: report, isLatestSemesterNotYetConfirmed)
                                 .offset(x: self.rowAnimation ? 0 : 100)
                                 .opacity(self.rowAnimation ? 1 : 0)
                                 .animation(
@@ -160,7 +160,7 @@ struct GPAGraph: View {
     struct GPAInfo: Hashable {
         let semester: String
         let gpa: Float
-        // shortedSemester : 차트의 label에 "2023년 1 학기" 문자열을 "23-1" 형태로 축약하여 출력
+        /// shortedSemester : 차트의 label에 "2023년 1 학기" 문자열을 "23-1" 형태로 축약하여 출력
         var shortedSemester: String {
             var result = ""
             
@@ -242,31 +242,38 @@ struct SemesterRow: View {
     let semester: String
     let earnedCredit: Float
     let semesterGPA: Float
-    init(year: String, semester: String, earnedCredit: Float, semesterGPA: Float) {
-        self.year = year
-        self.semester = semester
-        self.earnedCredit = earnedCredit
-        self.semesterGPA = semesterGPA
-    }
-    init(gradeSummaryModel: GradeSummaryModel) {
+    let isLatestSemesterNotYetConfirmed: Bool
+    init(gradeSummaryModel: GradeSummaryModel, _ isLatestSemesterNotYetConfirmed: Bool = false) {
         self.year = String(gradeSummaryModel.year)
         self.semester = gradeSummaryModel.semester
         self.earnedCredit = gradeSummaryModel.earnedCredit
         self.semesterGPA = gradeSummaryModel.gpa
+        self.isLatestSemesterNotYetConfirmed = isLatestSemesterNotYetConfirmed
     }
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 1.0) {
-                Text("\(year)년 \(semester)")
-                    .font(YDSFont.subtitle2)
+                HStack {
+                    Text("\(year)년 \(semester)")
+                        .font(YDSFont.subtitle2)
+                    if isLatestSemesterNotYetConfirmed {
+                        YDSChip(text: "성적 처리 기간", isSelected: true)
+                    }
+                }
                 Text("\(String(format: "%.1f", earnedCredit))학점")
                     .font(YDSFont.body1)
                     .foregroundColor(YDSColor.textTertiary)
             }
             Spacer()
-            Text("\(String(format: "%.2f", semesterGPA))")
-                .font(YDSFont.button0)
-                .foregroundColor(YDSColor.buttonNormal)
+            if isLatestSemesterNotYetConfirmed {
+                Text("(예정) \(String(format: "%.2f", semesterGPA))")
+                    .font(YDSFont.button0)
+                    .foregroundColor(YDSColor.buttonDisabled)
+            } else {
+                Text("\(String(format: "%.2f", semesterGPA))")
+                    .font(YDSFont.button0)
+                    .foregroundColor(YDSColor.buttonNormal)
+            }
             YDSIcon.arrowRightLine
                 .renderingMode(.template)
                 .foregroundColor(YDSColor.buttonNormal)
@@ -278,5 +285,7 @@ struct SemesterRow: View {
 
 
 #Preview {
-//     SemesterListView(semesterListViewModel: DefaultSemesterListViewModel())
+    NavigationStack {
+        SemesterListView(path: .constant([]), semesterListViewModel: MockSemesterListViewModel())
+    }
 }
