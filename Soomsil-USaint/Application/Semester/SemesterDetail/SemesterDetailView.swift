@@ -51,10 +51,7 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
                             .font(YDSFont.subtitle2)
                         if isShowSummary {
                             HStack(alignment: .lastTextBaseline) {
-                                Text(String(format: "%.2f",
-                                            semesterDetailViewModel.gradeSummary.gpa == 0
-                                            ? semesterDetailViewModel.calculateGPA()
-                                            : semesterDetailViewModel.gradeSummary.gpa))
+                                Text(String(format: "%.2f", semesterDetailViewModel.gradeSummary.gpa))
                                     .font(YDSFont.display1)
                                 Text("/ 4.50")
                                     .foregroundColor(YDSColor.textTertiary)
@@ -75,9 +72,9 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
                             )
                         }
                         Divider()
-                        if !semesterDetailViewModel.gradeSummary.lectures.isEmpty {
-                            let gradeSummary = semesterDetailViewModel.gradeSummary
-                            ForEach(Array(gradeSummary.lectures.enumerated()), id: \.offset) { index, lecture in
+                        
+                        if let lectures = semesterDetailViewModel.gradeSummary.lectures {
+                            ForEach(Array(lectures.enumerated()), id: \.offset) { index, lecture in
                                 if semesterDetailViewModel.masking {
                                     MaskedGradeRow(grade: lecture.grade)
                                 } else {
@@ -157,36 +154,22 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
                         .alert("저장 완료", isPresented: $semesterDetailViewModel.showSuccessAlert, actions: {})
                         .alert("저장 실패", isPresented: $semesterDetailViewModel.showFailureAlert, actions: {})
                     }
-                    Button {
-                        // FIXME: - 로직 추가
-    //                    Task {
-    //                        switch await semesterDetailViewModel.getSingleReportFromSN() {
-    //                        case .success(let success):
-    //                            semesterDetailViewModel.reportDetail = success
-    //                            YDSToast("가져오기 성공!", haptic: .success)
-    //                        case .failure(let failure):
-    //                            YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-    //                        }
-    //                    }
-                    } label: {
-                        YDSIcon.refreshLine
-                            .renderingMode(.template)
-                            .foregroundColor(YDSColor.buttonNormal)
-                    }
                 }
             }
             .onAppear {
                 Task {
-                    switch await semesterDetailViewModel.getSemesterDetailFromRusaint() {
-                    case .success(let success):
-                        isLoading = false
-                        YDSToast("가져오기 성공!", haptic: .success)
-                    case .failure(let failure):
-                        isLoading = false
-                        YDSToast("가져오기 실패 : \(failure)", haptic: .failed)
-
-                    }
+                    await semesterDetailViewModel.getLectureList()
+                    isLoading = false
                 }
+            }
+            .refreshable {
+                Task {
+                    await semesterDetailViewModel.loadLectureListFromRusaint()
+                }
+            }
+            .onChange(of: semesterDetailViewModel.fetchErrorMessage) {
+                message in
+                YDSToast(message, haptic: .failed)
             }
             .registerYDSToast()
             .navigationBarBackButtonHidden()

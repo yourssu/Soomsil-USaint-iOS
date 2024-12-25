@@ -96,51 +96,6 @@ enum Grade: String {
 //    }
 //}
 
-//import SaintNexus
-//
-//extension SNSemesterReportCard {
-//    func toReportDetailModel() -> ReportDetailModel {
-//        let lectures = self.lectures.map { lecture in
-//            ReportDetailModel.Lecture(
-//                code: lecture.code,
-//                title: lecture.title,
-//                credit: lecture.credit,
-//                score: lecture.score,
-//                grade: .init(rawValue: lecture.grade) ?? .unknown,
-//                professorName: lecture.professorName
-//            )
-//        }
-//        return ReportDetailModel(
-//            year: self.year,
-//            semester: self.semester,
-//            lectures: lectures
-//        )
-//    }
-//}
-//
-//public extension Array where Element == CDLecture {
-//    func toReportDetailModel() -> [LectureDetailModel] {
-//        self.map {
-//            LectureDetailModel(code: $0.code,
-//                               title: $0.title, credit: $0.credit, score: $0., grade: <#T##Grade#>, professorName: <#T##String#>)
-//            ReportDetailModel(
-//                year: $0.year ?? "",
-//                semester: $0.semester ?? "",
-//                lectures: ($0.lectures?.allObjects as? [CDLecture] ?? []).map { lecture in
-//                    ReportDetailModel.Lecture(
-//                        code: lecture.code ?? "",
-//                        title: lecture.title ?? "",
-//                        credit: lecture.credit,
-//                        score: lecture.score ?? "",
-//                        grade: .init(rawValue: lecture.grade ?? "") ?? .unknown,
-//                        professorName: lecture.professorName ?? ""
-//                    )
-//                }
-//            )
-//        }
-//    }
-//}
-
 public extension Array where Element == Rusaint.ClassGrade {
     func toLectureDetailModels() -> [LectureDetailModel] {
         self.map {
@@ -163,6 +118,25 @@ public extension Array where Element == Rusaint.ClassGrade {
             return "\(value)"
         case .empty:
             return ""
+        }
+    }
+}
+
+/**
+ NSSet -> [LectureDetailModel] 변환하는 확장입니다.
+ */
+public extension Optional where Wrapped == NSSet {
+    func toLectureDetailModels() -> [LectureDetailModel]? {
+        guard let lectureSet = self as? Set<CDLecture> else { return nil }
+        return lectureSet.map { lecture in
+            LectureDetailModel(
+                code: lecture.code ?? "",
+                title: lecture.title ?? "",
+                credit: Double(lecture.credit),
+                score: lecture.score ?? "",
+                grade: Grade(rawValue: lecture.grade ?? "") ?? .unknown,
+                professorName: lecture.professorName ?? ""
+            )
         }
     }
 }

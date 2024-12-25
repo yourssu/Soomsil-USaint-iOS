@@ -54,8 +54,28 @@ class SemesterRepository {
         }
     }
     
-    // MARK: get 이번학기 코어데이터 
-    
+    /// - Returns: GradeSummaryModel? 타입으로 리턴됩니다.
+    public func getSemester(year: Int, semester: String) -> GradeSummaryModel? {
+        let context = coreDataStack.taskContext()
+        let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "year == %d", year),
+            NSPredicate(format: "semester == %@", semester)
+        ])
+        
+        do {
+            if let semesterEntity = try context.fetch(fetchRequest).first {
+                return semesterEntity.toGradeSummaryModel()
+            } else {
+                print("No semester found for Year \(year), Semester \(semester)")
+                return nil
+            }
+        } catch {
+            print("Faild to fetch semester: \(error)")
+            return nil
+        }
+    }
+
     public func updateSemesterList(_ rusaintSemesterList: [GradeSummaryModel]) {
         deleteSemesterList()
         let context = coreDataStack.taskContext()
@@ -68,7 +88,7 @@ class SemesterRepository {
                            semesterStudentCount: semesterList.semesterStudentCount,
                            overallRank: semesterList.overallRank,
                            overallStudentCount: semesterList.overallStudentCount,
-                           lectures: semesterList.lectures,
+                           lectures: semesterList.lectures ?? nil,
                            in: context)
         }
         context.performAndWait {
@@ -77,6 +97,66 @@ class SemesterRepository {
             } catch {
                 print("update report summary error : \(error)")
             }
+        }
+    }
+    
+    public func updateLecturesForSemester(year: Int, semester: String, newLectures: [LectureDetailModel]) {
+        let context = coreDataStack.taskContext()
+        let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
+        
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "year == %d", year),
+            NSPredicate(format: "semester == %@", semester)
+        ])
+        
+        do {
+            if let semesterEntity = try context.fetch(fetchRequest).first {
+                semesterEntity.removeFromLectures(semesterEntity.lectures ?? [])
+                
+                let newLectureEntities = newLectures.map { lecture in
+                    let cdLecture = CDLecture(context: context)
+                    cdLecture.code = lecture.code
+                    cdLecture.title = lecture.title
+                    cdLecture.credit = Float(lecture.credit)
+                    cdLecture.score = lecture.score
+                    cdLecture.grade = lecture.grade.rawValue
+                    cdLecture.professorName = lecture.professorName
+                    return cdLecture
+                }
+                
+                newLectureEntities.forEach { semesterEntity.addToLectures($0) }
+                context.performAndWait {
+                    do {
+                        try context.save()
+                    } catch {
+                        print("lectures 업데이트 실패: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                print("해당 학기 찾기 실패: Year \(year), Semester \(semester)")
+            }
+        } catch {
+            print("coredata fetch 실패: \(error)")
+        }
+    }
+    
+    func updateGPA(year: Int, semester: String, gpa: Float) {
+        let context = coreDataStack.taskContext()
+        let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
+        fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "year == %d", year),
+            NSPredicate(format: "semester == %@", semester)
+        ])
+        
+        do {
+            if let semesterEntity = try context.fetch(fetchRequest).first {
+                semesterEntity.gpa = gpa
+                try context.save()
+            } else {
+                print("No semester found to update GPA for Year \(year), Semester \(semester)")
+            }
+        } catch {
+            print("Failed to update GPA in Core Data: \(error)")
         }
     }
     
@@ -91,7 +171,7 @@ class SemesterRepository {
                        semesterStudentCount: newSemester.semesterStudentCount,
                        overallRank: newSemester.overallRank,
                        overallStudentCount: newSemester.overallStudentCount,
-                       lectures: newSemester.lectures,
+                       lectures: newSemester.lectures ?? nil,
                        in: context)
         
         context.performAndWait {
@@ -143,7 +223,7 @@ class SemesterRepository {
         semesterStudentCount: Int,
         overallRank: Int,
         overallStudentCount: Int,
-        lectures: [LectureDetailModel],
+        lectures: [LectureDetailModel]?,
         in context: NSManagedObjectContext
     ) {
         let semesterEntity = CDSemester(context: context)
@@ -155,16 +235,18 @@ class SemesterRepository {
         semesterEntity.semesterStudentCount = Int16(semesterStudentCount)
         semesterEntity.overallRank = Int16(overallRank)
         semesterEntity.overallStudentCount = Int16(overallStudentCount)
-        
-        for lecture in lectures {
+
+        let lectureEntities = lectures?.compactMap { lecture -> CDLecture? in
             let cdLecture = CDLecture(context: context)
             cdLecture.code = lecture.code
             cdLecture.title = lecture.title
             cdLecture.credit = Float(lecture.credit)
             cdLecture.score = lecture.score
-            cdLecture.grade = "\(lecture.grade)"
+            cdLecture.grade = lecture.grade.rawValue
             cdLecture.professorName = lecture.professorName
-            semesterEntity.addToLectures(cdLecture)
+            return cdLecture
         }
+        
+        lectureEntities?.forEach { semesterEntity.addToLectures($0) }
     }
 }
