@@ -162,11 +162,10 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
         let semesterListResponse = await getSemesterListFromRusaint()
         switch semesterListResponse {
         case .success(let semesterList):
-            guard let list = semesterList else { return }
-            saveSemesterListToCoreData(list)
+            saveSemesterListToCoreData(semesterList)
 
             if let (currentYear, currentSemester) = self.currentYearAndSemester(),
-                list.contains(where: { $0.year == currentYear && $0.semester == currentSemester }) {
+               semesterList.contains(where: { $0.year == currentYear && $0.semester == currentSemester }) {
                 self.isLatestSemesterExistInList = true
             }
         case .failure(let error):
@@ -294,7 +293,7 @@ final class MockSemesterListViewModel: BaseViewModel, SemesterListViewModel {
             let currentGrade = await getCurrentSemesterGrade()
             switch currentGrade {
             case .success(let response):
-                if !response.lectures.isEmpty {
+                if let _ = response.lectures {
                     // 만약 최근 학기가 List에 포함이 되어있지 않다면? 성적 처리중인 친구.
                     if let (currentYear, currentSemester) = self.currentYearAndSemester(),
                        !semesterListResult.contains(where: { $0.year == currentYear && $0.semester == currentSemester }) {
@@ -302,6 +301,9 @@ final class MockSemesterListViewModel: BaseViewModel, SemesterListViewModel {
                         semesterListResult.insert(GradeSummaryModel(year: currentYear, semester: currentSemester), at: 0)
                     }
                 }
+//                if !response.lectures.isEmpty {
+//                    
+//                }
             case .failure(let error):
                 self.fetchErrorMessage = "\(error)"
             }
