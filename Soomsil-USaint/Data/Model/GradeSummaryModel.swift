@@ -12,7 +12,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
     public let id = UUID()
     let year: Int
     let semester: String
-    let gpa: Float
+    var gpa: Float
     let earnedCredit: Float
     let semesterRank: Int
     let semesterStudentCount: Int

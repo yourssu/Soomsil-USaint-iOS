@@ -21,7 +21,9 @@ public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
     var fetchErrorMessage: String { get set }
 
 //    func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError>
+    func loadLectureListFromRusaint() async
     func getLectureList() async
+    func setCalculatedGPA()
     
     func takeScreenshot()
     func takeScreenshotWithMasking(screenshotMethod: @escaping () -> Void)
@@ -32,7 +34,7 @@ public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
 
 // MARK: - Default func
 public extension SemesterDetailViewModel {
-    public func calculateGPA() -> Double {
+    internal func calculateGPA() -> Double {
         let lectures = self.gradeSummary.lectures
         var gradeSum: Double = 0.0
         var creditSum: Double = 0.0
@@ -102,6 +104,9 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
 
     init(gradeSummary: GradeSummaryModel) {
         self.gradeSummary = gradeSummary
+        super.init()
+        
+        self.setCalculatedGPA()
     }
     
     @MainActor
@@ -133,7 +138,7 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
     }
     
     @MainActor
-    private func loadLectureListFromRusaint() async {
+    public func loadLectureListFromRusaint() async {
         print("2️⃣loadLectureListFromRusaint: \(gradeSummary)")
         let lectureListResponse = await getSemesterDetailFromRusaint()
         switch lectureListResponse {
@@ -141,6 +146,7 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
             saveLectureListToCoreData(lectureList)
             if let updatedLectures = semesterRepository.getSemester(year: gradeSummary.year, semester: gradeSummary.semester) {
                 self.gradeSummary = updatedLectures
+                self.fetchErrorMessage = "가져오기 성공"
                 print("4️⃣loadLectureListFromRusaint__updatedLectures: \(self.gradeSummary)")
             }
         case .failure(let error):
@@ -159,6 +165,21 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
                 } else {
                     await loadLectureListFromRusaint()
                 }
+            }
+        }
+    }
+    
+    public func setCalculatedGPA() {
+        if self.gradeSummary.gpa == 0 {
+            let calculatedGPA = Float(calculateGPA())
+            print("🌈\(calculatedGPA)")
+            semesterRepository.updateGPA(year: self.gradeSummary.year,
+                                         semester: self.gradeSummary.semester,
+                                         gpa: calculatedGPA)
+            if let semester = semesterRepository.getSemester(year: self.gradeSummary.year,
+                                                             semester: self.gradeSummary.semester) {
+                self.gradeSummary = semester
+                print("7️⃣setCalculatedGPA: \(self.gradeSummary)")
             }
         }
     }
