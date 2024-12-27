@@ -1,6 +1,6 @@
 //
 //  GradeSummaryModel.swift
-//  Soomsil-USaint-iOS 
+//  Soomsil-USaint-iOS
 //
 //  Created by 최지우 on 12/17/24.
 //
@@ -8,8 +8,7 @@
 import Foundation
 import Rusaint
 
-public struct GradeSummaryModel: Identifiable, Hashable {
-    public let id = UUID()
+public struct GradeSummaryModel: Hashable {
     let year: Int
     let semester: String
     var gpa: Float
@@ -19,7 +18,7 @@ public struct GradeSummaryModel: Identifiable, Hashable {
     let overallRank: Int
     let overallStudentCount: Int
     var lectures: [LectureDetailModel]?
-    
+
     init(
         year: Int,
         semester: String,
@@ -81,6 +80,12 @@ public struct GradeSummaryModel: Identifiable, Hashable {
     }
 }
 
+extension GradeSummaryModel: Identifiable {
+    public var id: String {
+        "\(self.year) \(self.semester)"
+    }
+}
+
 public extension GradeSummaryModel {
     static let semesterOrder = ["1 학기", "여름학기", "2 학기", "겨울학기"]
 }
@@ -105,7 +110,7 @@ public extension Array where Element == GradeSummaryModel {
     private func compareReportModelsDescending(_ model1: GradeSummaryModel, _ model2: GradeSummaryModel) -> Bool {
         let year1 = model1.year
         let year2 = model2.year
-        
+
         if year1 != year2 {
             return year1 > year2
         } else {
@@ -114,13 +119,13 @@ public extension Array where Element == GradeSummaryModel {
                 return index1 > index2
             }
         }
-        
+
         return false
     }
     private func compareReportModelsAscending(_ model1: GradeSummaryModel, _ model2: GradeSummaryModel) -> Bool {
         let year1 = model1.year
         let year2 = model2.year
-        
+
         if year1 != year2 {
             return year1 < year2
         } else {
@@ -129,7 +134,7 @@ public extension Array where Element == GradeSummaryModel {
                 return index1 < index2
             }
         }
-        
+
         return false
     }
 }
@@ -185,4 +190,5 @@ public extension CDSemester {
         )
     }
 }
+
 
