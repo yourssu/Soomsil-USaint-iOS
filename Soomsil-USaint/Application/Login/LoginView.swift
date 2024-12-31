@@ -114,7 +114,7 @@ struct LoginView: View {
         do {
             let personalInfo = try await StudentInformationApplicationBuilder().build(session: self.session!).general()
             let name = personalInfo.name.replacingOccurrences(of: " ", with: "")
-            let major = personalInfo.appliedDepartment
+            let major = personalInfo.department
             let schoolYear = "\(personalInfo.grade)학년"
             HomeRepository.shared.updateUserInformation(name: name,
                                                         major: major,
