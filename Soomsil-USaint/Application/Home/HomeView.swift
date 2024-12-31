@@ -21,6 +21,8 @@ struct HomeView<VM: HomeViewModel>: View {
     @State private var session: USaintSession?
     @State private var totalReportCard: TotalReportCardModel = HomeRepository.shared.getTotalReportCard()
     @State private var isLatestSemesterNotYetConfirmed: Bool = true
+    @State private var isNavigating = false
+    @State private var currentSemesterGrade: GradeSummaryModel = GradeSummaryModel(year: 0, semester: "0 학기")
 
     var body: some View {
         if isLaunching {
@@ -196,10 +198,12 @@ struct HomeView<VM: HomeViewModel>: View {
             .frame(height: 23)
             .padding(.vertical, Dimension.DetailPadding.vertical)
             .padding(.horizontal, Dimension.DetailPadding.horizontal)
-
-            // MARK: - FIX
+            
             Button(action: {
-                path.append(StackView(type: .SemesterList))
+                Task {
+                    currentSemesterGrade = await viewModel.loadCurrentSemesterData()
+                    isNavigating = true
+                }
             }, label: {
                 Text("최근 학기 성적 보기")
                     .font(Font.custom("Apple SD Gothic Neo", size: 15))
@@ -212,27 +216,31 @@ struct HomeView<VM: HomeViewModel>: View {
             .padding(.horizontal, Dimension.MainPadding.horizontal)
             .padding(.vertical, Dimension.DetailPadding.vertical)
             .padding(.bottom, 4)
+            .navigationDestination(isPresented: $isNavigating) {
+                SemesterDetailView(path: $path,
+                                   semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: currentSemesterGrade))
+            }
         }
         .background(YDSColor.bgElevated)
     }
-
+    
     private func saveReportCard(session: USaintSession) async {
         do {
             let courseGrades = try await CourseGradesApplicationBuilder().build(session: self.session!).certificatedSummary(courseType: .bachelor)
             let graduationRequirement = try await GraduationRequirementsApplicationBuilder().build(session: self.session!).requirements()
             let requirements = graduationRequirement.requirements.filter { $0.value.name.hasPrefix("학부-졸업학점") }
                 .compactMap { $0.value.requirement ?? 0}
-
+            
             if let graduateCredit = requirements.first {
                 HomeRepository.shared.updateTotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit))
             }
-
+            
             //            DispatchQueue.main.async {
             //                self.totalReportCard = HomeRepository.shared.getTotalReportCard()
             //            }
             self.totalReportCard = HomeRepository.shared.getTotalReportCard()
-
-
+            
+            
         } catch {
             print("Failed to save reportCard: \(error)")
         }
@@ -244,7 +252,7 @@ private enum Dimension {
         static let horizontal: CGFloat = 16
         static let vertical: CGFloat = 12
     }
-
+    
     enum DetailSpacing {
         static let vertical: CGFloat = 0
     }
