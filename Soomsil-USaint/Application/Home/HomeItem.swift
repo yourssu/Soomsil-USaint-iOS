@@ -42,7 +42,7 @@ public enum HomeItem: Hashable {
     var subTitle: String {
         switch self {
         case .grade:
-            "두근두근 지난 학기"
+            "전체 학기"
         case .chapel(let chapelType):
             switch chapelType {
             case .location:
