@@ -20,6 +20,7 @@ struct HomeView<VM: HomeViewModel>: View {
     @State var isFirst: Bool = LocalNotificationManager.shared.getIsFirst()
     @State private var session: USaintSession?
     @State private var totalReportCard: TotalReportCardModel = HomeRepository.shared.getTotalReportCard()
+    @State private var isLatestSemesterNotYetConfirmed: Bool = true
 
     var body: some View {
         if isLaunching {
@@ -196,15 +197,16 @@ struct HomeView<VM: HomeViewModel>: View {
             .padding(.vertical, Dimension.DetailPadding.vertical)
             .padding(.horizontal, Dimension.DetailPadding.horizontal)
 
+            // MARK: - FIX
             Button(action: {
                 path.append(StackView(type: .SemesterList))
             }, label: {
-                Text("전체성적 보기")
+                Text("최근 학기 성적 보기")
                     .font(Font.custom("Apple SD Gothic Neo", size: 15))
-                    .foregroundColor(Color(red: 0.15, green: 0.15, blue: 0.16))
+                    .foregroundColor(isLatestSemesterNotYetConfirmed ? .white : Color(red: 0.15, green: 0.15, blue: 0.16))
                     .frame(height: 39, alignment: .center)
                     .frame(maxWidth: .infinity)
-                    .background(Color(red: 0.95, green: 0.96, blue: 0.97))
+                    .background(isLatestSemesterNotYetConfirmed ? Color(red: 0.51, green: 0.43, blue: 0.93) : Color(red: 0.95, green: 0.96, blue: 0.97))
                     .cornerRadius(4)
             })
             .padding(.horizontal, Dimension.MainPadding.horizontal)
