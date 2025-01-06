@@ -319,14 +319,6 @@ private struct SaintItemView: View {
     }
 }
 
-struct SplashView: View {
-    var body: some View {
-        Image("splash")
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-    }
-}
-
 //struct SaintMainHomeView_Previews: PreviewProvider {
 //    @State var isLoggedIn: Bool = true
 //
