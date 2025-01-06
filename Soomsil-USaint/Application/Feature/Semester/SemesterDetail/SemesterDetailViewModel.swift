@@ -10,7 +10,7 @@ import Rusaint
 
 public protocol SemesterDetailViewModel: BaseViewModel, ObservableObject {
 
-    var gradeSummary: GradeSummaryModel { get set }
+    var gradeSummary: GradeSummary { get set }
     var rowAnimation: Bool { get set }
 
     var isCapturing: Bool { get set }
@@ -98,11 +98,11 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
     @Published var masking: Bool = false
     @Published var fetchErrorMessage: String = ""
     
-    @Published var gradeSummary: GradeSummaryModel
+    @Published var gradeSummary: GradeSummary
     private let semesterRepository = SemesterRepository.shared
     private var session: USaintSession?
 
-    init(gradeSummary: GradeSummaryModel) {
+    init(gradeSummary: GradeSummary) {
         self.gradeSummary = gradeSummary
         super.init()
         
@@ -110,7 +110,7 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
     }
     
     @MainActor
-    private func getSemesterDetailFromRusaint() async -> Result<[LectureDetailModel], RusaintError> {
+    private func getSemesterDetailFromRusaint() async -> Result<[LectureDetail], RusaintError> {
         let userInfo = semesterRepository.getUserLoginInformation()
         do {
             self.session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
@@ -120,7 +120,7 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
                              year: UInt32(self.gradeSummary.year),
                              semester: semesterType(self.gradeSummary.semester),
                              includeDetails: false)
-                return .success(lecturesFromRusaint.toLectureDetailModels())
+                return .success(lecturesFromRusaint.toLectureDetails())
             } else {
                 return .failure(RusaintError.invalidClientError)
             }
@@ -129,7 +129,7 @@ final class DefaultSemesterDetailViewModel: BaseViewModel, SemesterDetailViewMod
         }
     }
     
-    private func saveLectureListToCoreData(_ lectureList: [LectureDetailModel]) {
+    private func saveLectureListToCoreData(_ lectureList: [LectureDetail]) {
         self.semesterRepository.updateLecturesForSemester(year: gradeSummary.year,
                                                           semester: gradeSummary.semester,
                                                           newLectures: lectureList)

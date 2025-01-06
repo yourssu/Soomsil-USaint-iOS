@@ -29,20 +29,20 @@ class SemesterRepository {
     }
 
     // MARK: - TotalReportCard (Core Data)
-    public func getTotalReportCard() -> TotalReportCardModel {
+    public func getTotalReportCard() -> TotalReportCard {
         let context = coreDataStack.taskContext()
         let fetchRequest: NSFetchRequest<CDTotalReportCard> = CDTotalReportCard.fetchRequest()
         do {
             let data = try context.fetch(fetchRequest)
-            return data.toTotalReportCardModel()
+            return data.toTotalReportCard()
         } catch {
             print(error.localizedDescription)
-            return TotalReportCardModel(gpa: 0.00, earnedCredit: 0, graduateCredit: 0)
+            return TotalReportCard(gpa: 0.00, earnedCredit: 0, graduateCredit: 0)
         }
     }
 
     // MARK: - SemesterList (Core Data)
-    public func getSemesterList() -> [GradeSummaryModel] {
+    public func getSemesterList() -> [GradeSummary] {
         let context = coreDataStack.taskContext()
         let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
         do {
@@ -55,7 +55,7 @@ class SemesterRepository {
     }
     
     /// - Returns: GradeSummaryModel? 타입으로 리턴됩니다.
-    public func getSemester(year: Int, semester: String) -> GradeSummaryModel? {
+    public func getSemester(year: Int, semester: String) -> GradeSummary? {
         let context = coreDataStack.taskContext()
         let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
         fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
@@ -76,7 +76,7 @@ class SemesterRepository {
         }
     }
 
-    public func updateSemesterList(_ rusaintSemesterList: [GradeSummaryModel]) {
+    public func updateSemesterList(_ rusaintSemesterList: [GradeSummary]) {
         deleteSemesterList()
         let context = coreDataStack.taskContext()
         for semesterList in rusaintSemesterList {
@@ -100,7 +100,7 @@ class SemesterRepository {
         }
     }
     
-    public func updateLecturesForSemester(year: Int, semester: String, newLectures: [LectureDetailModel]) {
+    public func updateLecturesForSemester(year: Int, semester: String, newLectures: [LectureDetail]) {
         let context = coreDataStack.taskContext()
         let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
         
@@ -160,7 +160,7 @@ class SemesterRepository {
         }
     }
     
-    public func addSemester(_ newSemester: GradeSummaryModel) {
+    public func addSemester(_ newSemester: GradeSummary) {
         let context = coreDataStack.taskContext()
         
         createSemester(year: newSemester.year,
@@ -223,7 +223,7 @@ class SemesterRepository {
         semesterStudentCount: Int,
         overallRank: Int,
         overallStudentCount: Int,
-        lectures: [LectureDetailModel]?,
+        lectures: [LectureDetail]?,
         in context: NSManagedObjectContext
     ) {
         let semesterEntity = CDSemester(context: context)

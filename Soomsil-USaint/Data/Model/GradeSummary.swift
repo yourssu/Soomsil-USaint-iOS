@@ -8,7 +8,7 @@
 import Foundation
 import Rusaint
 
-public struct GradeSummaryModel: Hashable {
+public struct GradeSummary: Hashable {
     let year: Int
     let semester: String
     var gpa: Float
@@ -17,7 +17,7 @@ public struct GradeSummaryModel: Hashable {
     let semesterStudentCount: Int
     let overallRank: Int
     let overallStudentCount: Int
-    var lectures: [LectureDetailModel]?
+    var lectures: [LectureDetail]?
 
     init(
         year: Int,
@@ -28,7 +28,7 @@ public struct GradeSummaryModel: Hashable {
         semesterStudentCount: Int,
         overallRank: Int,
         overallStudentCount: Int,
-        lectures: [LectureDetailModel]?
+        lectures: [LectureDetail]?
     ) {
         self.year = year
         self.semester = semester
@@ -75,22 +75,22 @@ public struct GradeSummaryModel: Hashable {
         hasher.combine(self.id)
     }
 
-    public static func == (lhs: GradeSummaryModel, rhs: GradeSummaryModel) -> Bool {
+    public static func == (lhs: GradeSummary, rhs: GradeSummary) -> Bool {
         lhs.id == rhs.id
     }
 }
 
-extension GradeSummaryModel: Identifiable {
+extension GradeSummary: Identifiable {
     public var id: String {
         "\(self.year) \(self.semester)"
     }
 }
 
-public extension GradeSummaryModel {
+public extension GradeSummary {
     static let semesterOrder = ["1 학기", "여름학기", "2 학기", "겨울학기"]
 }
 
-public extension Array where Element == GradeSummaryModel {
+public extension Array where Element == GradeSummary {
 //    var averageGPA: Double {
 //        var creditSum = 0.0
 //        var gpaSum = 0.0
@@ -107,30 +107,30 @@ public extension Array where Element == GradeSummaryModel {
     func sortedDescending() -> Self {
         self.sorted(by: compareReportModelsDescending)
     }
-    private func compareReportModelsDescending(_ model1: GradeSummaryModel, _ model2: GradeSummaryModel) -> Bool {
+    private func compareReportModelsDescending(_ model1: GradeSummary, _ model2: GradeSummary) -> Bool {
         let year1 = model1.year
         let year2 = model2.year
 
         if year1 != year2 {
             return year1 > year2
         } else {
-            if let index1 = GradeSummaryModel.semesterOrder.firstIndex(of: model1.semester),
-               let index2 = GradeSummaryModel.semesterOrder.firstIndex(of: model2.semester) {
+            if let index1 = GradeSummary.semesterOrder.firstIndex(of: model1.semester),
+               let index2 = GradeSummary.semesterOrder.firstIndex(of: model2.semester) {
                 return index1 > index2
             }
         }
 
         return false
     }
-    private func compareReportModelsAscending(_ model1: GradeSummaryModel, _ model2: GradeSummaryModel) -> Bool {
+    private func compareReportModelsAscending(_ model1: GradeSummary, _ model2: GradeSummary) -> Bool {
         let year1 = model1.year
         let year2 = model2.year
 
         if year1 != year2 {
             return year1 < year2
         } else {
-            if let index1 = GradeSummaryModel.semesterOrder.firstIndex(of: model1.semester),
-               let index2 = GradeSummaryModel.semesterOrder.firstIndex(of: model2.semester) {
+            if let index1 = GradeSummary.semesterOrder.firstIndex(of: model1.semester),
+               let index2 = GradeSummary.semesterOrder.firstIndex(of: model2.semester) {
                 return index1 < index2
             }
         }
@@ -140,9 +140,9 @@ public extension Array where Element == GradeSummaryModel {
 }
 
 public extension Array where Element == CDSemester {
-    func toGradeSummaryModel() -> [GradeSummaryModel] {
+    func toGradeSummaryModel() -> [GradeSummary] {
         self.map {
-            GradeSummaryModel(
+            GradeSummary(
                 year: Int($0.year),
                 semester: $0.semester ?? "",
                 gpa: $0.gpa,
@@ -151,16 +151,16 @@ public extension Array where Element == CDSemester {
                 semesterStudentCount: Int($0.semesterStudentCount),
                 overallRank: Int($0.overallRank),
                 overallStudentCount: Int($0.overallStudentCount),
-                lectures: $0.lectures.toLectureDetailModels()
+                lectures: $0.lectures.toLectureDetails()
             )
         }
     }
 }
 
 public extension Array where Element == Rusaint.SemesterGrade {
-    func toGradeSummaryModels() -> [GradeSummaryModel] {
+    func toGradeSummaryModels() -> [GradeSummary] {
         self.map {
-            GradeSummaryModel(
+            GradeSummary(
                 year: Int($0.year),
                 semester: $0.semester,
                 gpa: $0.gradePointsAvarage,
@@ -176,8 +176,8 @@ public extension Array where Element == Rusaint.SemesterGrade {
 }
 
 public extension CDSemester {
-    func toGradeSummaryModel() -> GradeSummaryModel {
-        GradeSummaryModel(
+    func toGradeSummaryModel() -> GradeSummary {
+        GradeSummary(
             year: Int(self.year),
             semester: self.semester ?? "",
             gpa: self.gpa,
@@ -186,7 +186,7 @@ public extension CDSemester {
             semesterStudentCount: Int(self.semesterStudentCount),
             overallRank: Int(self.overallRank),
             overallStudentCount: Int(self.overallStudentCount),
-            lectures: self.lectures.toLectureDetailModels()
+            lectures: self.lectures.toLectureDetails()
         )
     }
 }

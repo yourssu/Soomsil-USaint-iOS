@@ -243,7 +243,7 @@ struct SemesterRow: View {
     let earnedCredit: Float
     let semesterGPA: Float
     let isLatestSemesterNotYetConfirmed: Bool
-    init(gradeSummaryModel: GradeSummaryModel, _ isLatestSemesterNotYetConfirmed: Bool = false) {
+    init(gradeSummaryModel: GradeSummary, _ isLatestSemesterNotYetConfirmed: Bool = false) {
         self.year = String(gradeSummaryModel.year)
         self.semester = gradeSummaryModel.semester
         self.earnedCredit = gradeSummaryModel.earnedCredit

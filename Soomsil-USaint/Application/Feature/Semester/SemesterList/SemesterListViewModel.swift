@@ -9,7 +9,7 @@ import SwiftUI
 import Rusaint
 
 protocol SemesterListViewModel: BaseViewModel, ObservableObject {
-    var reportList: [GradeSummaryModel] { get set }
+    var reportList: [GradeSummary] { get set }
     var isOnSeasonalSemester: Bool { get set }
     var fetchErrorMessage: String { get set }
     var isLoading: Bool { get set }
@@ -53,7 +53,7 @@ extension SemesterListViewModel {
 }
 
 final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
-    @Published var reportList = [GradeSummaryModel]()
+    @Published var reportList = [GradeSummary]()
     @Published var isOnSeasonalSemester = false
     @Published var isLoading = true
     @Published var fetchErrorMessage: String = ""
@@ -84,7 +84,7 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     }
     
     @MainActor
-    public func getSemesterList() async -> Result<[GradeSummaryModel], RusaintError> {
+    public func getSemesterList() async -> Result<[GradeSummary], RusaintError> {
         let semesterListFromDevice = semesterRepository.getSemesterList()
         if semesterListFromDevice.isEmpty {
             return await getSemesterListFromRusaint()
@@ -93,7 +93,7 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     }
     
     @MainActor
-    public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel], RusaintError> {
+    public func getSemesterListFromRusaint() async -> Result<[GradeSummary], RusaintError> {
         do {
             let response = try await CourseGradesApplicationBuilder().build(session: self.session!).semesters(courseType: CourseType.bachelor)
             let rusaintData = response.toGradeSummaryModels()
@@ -108,7 +108,7 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
      2024년 2학기를 불러오는 함수입니다.
      */
     @MainActor
-    private func getCurrentSemesterGrade() async -> Result<GradeSummaryModel?, RusaintError> {
+    private func getCurrentSemesterGrade() async -> Result<GradeSummary?, RusaintError> {
         semesterRepository.deleteSemester(year: 2024, semester: "2 학기")
         do {
             let response = try await CourseGradesApplicationBuilder().build(session: self.session!).classes(courseType: .bachelor,
@@ -118,8 +118,8 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
             if response.isEmpty {
                 return .success(nil)
             }
-            let currentClassesData = response.toLectureDetailModels()
-            let currentSemester = GradeSummaryModel(year: 2024,
+            let currentClassesData = response.toLectureDetails()
+            let currentSemester = GradeSummary(year: 2024,
                                                     semester: "2 학기",
                                                     gpa: 0,
                                                     earnedCredit: 0,
@@ -134,11 +134,11 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
         }
     }
     
-    private func saveSemesterListToCoreData(_ semesterList: [GradeSummaryModel]) {
+    private func saveSemesterListToCoreData(_ semesterList: [GradeSummary]) {
         self.semesterRepository.updateSemesterList(semesterList)
     }
     
-    private func saveCurrentSemesterToCoreData(_ currentSemester: GradeSummaryModel) {
+    private func saveCurrentSemesterToCoreData(_ currentSemester: GradeSummary) {
         self.semesterRepository.addSemester(currentSemester)
     }
     
@@ -238,13 +238,13 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
 
 final class MockSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     
-    @Published var reportList = [GradeSummaryModel]()
+    @Published var reportList = [GradeSummary]()
     @Published var isOnSeasonalSemester = false
     @Published var isLoading = true
     @Published var fetchErrorMessage: String = ""
     @Published var isLatestSemesterNotYetConfirmed: Bool = false
 
-    public func getSemesterList() async -> Result<[GradeSummaryModel]?, RusaintError> {
+    public func getSemesterList() async -> Result<[GradeSummary]?, RusaintError> {
         return await getSemesterListFromRusaint()
     }
 
@@ -252,7 +252,7 @@ final class MockSemesterListViewModel: BaseViewModel, SemesterListViewModel {
         return .success(())
     }
 
-    public func getSemesterListFromRusaint() async -> Result<[GradeSummaryModel]?, RusaintError> {
+    public func getSemesterListFromRusaint() async -> Result<[GradeSummary]?, RusaintError> {
         .success([
             .init(year: 2024, semester: "1 학기", gpa: 4.1, earnedCredit: 17.5, semesterRank: 3, semesterStudentCount: 30, overallRank: 4, overallStudentCount: 33, lectures: []),
             .init(year: 2023, semester: "2 학기", gpa: 1.9, earnedCredit: 17.5, semesterRank: 3, semesterStudentCount: 30, overallRank: 4, overallStudentCount: 33, lectures: []),
@@ -263,9 +263,9 @@ final class MockSemesterListViewModel: BaseViewModel, SemesterListViewModel {
     /**
      2024년 2학기를 불러오는 함수입니다.
      */
-    func getCurrentSemesterGrade() async -> Result<GradeSummaryModel, RusaintError> {
+    func getCurrentSemesterGrade() async -> Result<GradeSummary, RusaintError> {
         return .success(
-            GradeSummaryModel(year: 2024,
+            GradeSummary(year: 2024,
                               semester: "2학기",
                               gpa: 2.5,
                               earnedCredit: 18,
@@ -287,7 +287,7 @@ final class MockSemesterListViewModel: BaseViewModel, SemesterListViewModel {
 
         switch sessionResult {
         case .success:
-            var semesterListResult = [GradeSummaryModel]()
+            var semesterListResult = [GradeSummary]()
             let listResponse = await getSemesterListFromRusaint()
             switch listResponse {
             case .success(let response):
@@ -304,7 +304,7 @@ final class MockSemesterListViewModel: BaseViewModel, SemesterListViewModel {
                     if let (currentYear, currentSemester) = self.currentYearAndSemester(),
                        !semesterListResult.contains(where: { $0.year == currentYear && $0.semester == currentSemester }) {
                         self.isLatestSemesterNotYetConfirmed = true
-                        semesterListResult.insert(GradeSummaryModel(year: currentYear, semester: currentSemester), at: 0)
+                        semesterListResult.insert(GradeSummary(year: currentYear, semester: currentSemester), at: 0)
                     }
                 }
 //                if !response.lectures.isEmpty {
