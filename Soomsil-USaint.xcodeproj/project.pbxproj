@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0293BD032D2BC509009A49DA /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 0293BD022D2BC509009A49DA /* ComposableArchitecture */; };
 		02C46CED2D0F2DFC00A3E717 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CEC2D0F2DFC00A3E717 /* KeychainAccess */; };
 		02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CF22D0F2E9300A3E717 /* YDS */; };
 		02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46CF42D0F2E9300A3E717 /* YDS-SwiftUI */; };
@@ -52,6 +53,7 @@
 				02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */,
 				02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */,
 				02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */,
+				0293BD032D2BC509009A49DA /* ComposableArchitecture in Frameworks */,
 				02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -102,6 +104,7 @@
 				02C46D8E2D0F45B200A3E717 /* RxCocoa */,
 				02C46D902D0F45B200A3E717 /* RxRelay */,
 				7BA4D7D22D17FAE700CF6689 /* Rusaint */,
+				0293BD022D2BC509009A49DA /* ComposableArchitecture */,
 			);
 			productName = "Rusaint-iOS";
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
@@ -136,6 +139,7 @@
 				02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */,
 				02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
+				0293BD012D2BC509009A49DA /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
@@ -387,6 +391,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		0293BD012D2BC509009A49DA /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.17.0;
+			};
+		};
 		02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
@@ -422,6 +434,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		0293BD022D2BC509009A49DA /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0293BD012D2BC509009A49DA /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
 		02C46CEC2D0F2DFC00A3E717 /* KeychainAccess */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
