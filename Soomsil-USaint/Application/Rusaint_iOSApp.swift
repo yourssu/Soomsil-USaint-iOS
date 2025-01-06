@@ -71,8 +71,8 @@ public func compareAndFetchCurrentSemester() async {
                                                                                                             includeDetails: false)
 
 
-            let currentClassesData = response.toLectureDetailModels()
-            let currentSemester = GradeSummaryModel(year: 2024,
+            let currentClassesData = response.toLectureDetails()
+            let currentSemester = GradeSummary(year: 2024,
                                                     semester: "2 학기",
                                                     gpa: 0,
                                                     earnedCredit: 0,
@@ -102,11 +102,11 @@ public func compareAndFetchCurrentSemester() async {
     }
 }
 
-private func compareSemesters(_ oldSemester: GradeSummaryModel, _ newSemester: GradeSummaryModel) -> [String] {
-    let oldLectures = oldSemester.lectures?.reduce(into: [String: LectureDetailModel]()) { result, lecture in
+private func compareSemesters(_ oldSemester: GradeSummary, _ newSemester: GradeSummary) -> [String] {
+    let oldLectures = oldSemester.lectures?.reduce(into: [String: LectureDetail]()) { result, lecture in
         result[lecture.code] = lecture
     }
-    let newLectures = newSemester.lectures?.reduce(into: [String: LectureDetailModel]()) { result, lecture in
+    let newLectures = newSemester.lectures?.reduce(into: [String: LectureDetail]()) { result, lecture in
         result[lecture.code] = lecture
     }
     var gradeChangedLectures: [String] = []

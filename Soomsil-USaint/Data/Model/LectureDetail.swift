@@ -8,7 +8,7 @@
 import Foundation
 import Rusaint
 
-public struct LectureDetailModel {
+public struct LectureDetail {
     let code: String
     let title: String
     let credit: Double
@@ -97,9 +97,9 @@ enum Grade: String {
 //}
 
 public extension Array where Element == Rusaint.ClassGrade {
-    func toLectureDetailModels() -> [LectureDetailModel] {
+    func toLectureDetails() -> [LectureDetail] {
         self.map {
-            LectureDetailModel(code: $0.code,
+            LectureDetail(code: $0.code,
                                title: $0.className,
                                credit: Double($0.gradePoints),
                                score: classScoreToString($0.score),
@@ -126,10 +126,10 @@ public extension Array where Element == Rusaint.ClassGrade {
  NSSet -> [LectureDetailModel] 변환하는 확장입니다.
  */
 public extension Optional where Wrapped == NSSet {
-    func toLectureDetailModels() -> [LectureDetailModel]? {
+    func toLectureDetails() -> [LectureDetail]? {
         guard let lectureSet = self as? Set<CDLecture> else { return nil }
         return lectureSet.map { lecture in
-            LectureDetailModel(
+            LectureDetail(
                 code: lecture.code ?? "",
                 title: lecture.title ?? "",
                 credit: Double(lecture.credit),

@@ -9,7 +9,7 @@ import Foundation
 
 enum StackViewType: Hashable {
     case SemesterList
-    case SemesterDetail(GradeSummaryModel)
+    case SemesterDetail(GradeSummary)
     case Setting
     case WebViewTerm
     case WebViewPrivacy

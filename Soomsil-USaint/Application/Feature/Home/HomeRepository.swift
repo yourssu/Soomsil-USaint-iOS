@@ -112,15 +112,15 @@ class HomeRepository {
         detail.graduateCredit = graduateCredit
     }
 
-    func getTotalReportCard() -> TotalReportCardModel {
+    func getTotalReportCard() -> TotalReportCard {
         let context = coreDataStack.taskContext()
         let fetchRequest: NSFetchRequest<CDTotalReportCard> = CDTotalReportCard.fetchRequest()
         do {
             let data = try context.fetch(fetchRequest)
-            return data.toTotalReportCardModel()
+            return data.toTotalReportCard()
         } catch {
             print(error.localizedDescription)
-            return TotalReportCardModel(gpa: 0.00, earnedCredit: 0, graduateCredit: 0)
+            return TotalReportCard(gpa: 0.00, earnedCredit: 0, graduateCredit: 0)
         }
     }
 

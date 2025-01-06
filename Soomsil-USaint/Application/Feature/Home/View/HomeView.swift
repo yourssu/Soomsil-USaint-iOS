@@ -19,7 +19,7 @@ struct HomeView<VM: HomeViewModel>: View {
     @Binding var isLoggedIn: Bool
     @State var isFirst: Bool = LocalNotificationManager.shared.getIsFirst()
     @State private var session: USaintSession?
-    @State private var totalReportCard: TotalReportCardModel = HomeRepository.shared.getTotalReportCard()
+    @State private var totalReportCard: TotalReportCard = HomeRepository.shared.getTotalReportCard()
     @State private var isLatestSemesterNotYetConfirmed: Bool = true
 
     var body: some View {
@@ -149,7 +149,7 @@ struct HomeView<VM: HomeViewModel>: View {
     }
 
     @ViewBuilder
-    private func GradeItemGroup(reportCard: TotalReportCardModel) -> some View {
+    private func GradeItemGroup(reportCard: TotalReportCard) -> some View {
         Button(action: {
             path.append(StackView(type: .SemesterList))
         }, label: {
