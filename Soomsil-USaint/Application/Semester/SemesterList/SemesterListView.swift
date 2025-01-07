@@ -256,9 +256,9 @@ struct SemesterRow: View {
                 HStack {
                     Text("\(year)년 \(semester)")
                         .font(YDSFont.subtitle2)
-                    if isLatestSemesterNotYetConfirmed {
-                        YDSChip(text: "성적 처리 기간", isSelected: true)
-                    }
+//                    if isLatestSemesterNotYetConfirmed {
+//                        YDSChip(text: "성적 처리 기간", isSelected: true)
+//                    }
                 }
                 Text("\(String(format: "%.1f", earnedCredit))학점")
                     .font(YDSFont.body1)
