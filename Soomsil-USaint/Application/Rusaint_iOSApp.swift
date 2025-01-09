@@ -7,36 +7,39 @@
 
 import SwiftUI
 import BackgroundTasks
+
+import ComposableArchitecture
 import Rusaint
 
 @main
 struct Rusaint_iOSApp: App {
 
-    @Environment(\.scenePhase) var scenePhase
-    let viewModel = DefaultSaintHomeViewModel()
-    @State private var isLoggedIn: Bool = HomeRepository.shared.hasCachedUserInformation
-    @State private var notificationPermission: Bool = false
+//    @Environment(\.scenePhase) var scenePhase
+//    let viewModel = DefaultSaintHomeViewModel()
+//    @State private var isLoggedIn: Bool = HomeRepository.shared.hasCachedUserInformation
+//    @State private var notificationPermission: Bool = false
 
     var body: some Scene {
         WindowGroup {
-            HomeView(viewModel: viewModel, isLoggedIn: $isLoggedIn)
-                .onChange(of: scenePhase) { newPhase in
-                    notificationPermission = LocalNotificationManager.shared.getNotificationPermission()
-                    if newPhase == .background && notificationPermission {
-                        scheduleCurrentSemester()
-                        Task {
-                            await compareAndFetchCurrentSemester()
-                        }
-                    }
-                }
+//            HomeView(viewModel: viewModel, isLoggedIn: $isLoggedIn)
+//                .onChange(of: scenePhase) { newPhase in
+//                    notificationPermission = LocalNotificationManager.shared.getNotificationPermission()
+//                    if newPhase == .background && notificationPermission {
+//                        scheduleCurrentSemester()
+//                        Task {
+//                            await compareAndFetchCurrentSemester()
+//                        }
+//                    }
+//                }
+            AppView(store: Store(initialState: AppReducer.State()) { AppReducer() })
         }
-        .backgroundTask(.appRefresh("soomsilUSaint.com")) {
-            notificationPermission = LocalNotificationManager.shared.getNotificationPermission()
-            if await notificationPermission {
-                scheduleCurrentSemester()
-                await compareAndFetchCurrentSemester()
-            }
-        }
+//        .backgroundTask(.appRefresh("soomsilUSaint.com")) {
+//            notificationPermission = LocalNotificationManager.shared.getNotificationPermission()
+//            if await notificationPermission {
+//                scheduleCurrentSemester()
+//                await compareAndFetchCurrentSemester()
+//            }
+//        }
     }
 }
 
