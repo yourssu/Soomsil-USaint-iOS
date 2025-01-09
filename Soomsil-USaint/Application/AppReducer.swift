@@ -23,13 +23,13 @@ struct AppReducer {
     }
     
     enum Action {
-        case `init`
+        case initialize
     }
     
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .`init`:
+            case .initialize:
                 state = .loggedOut
                 return .none
             }

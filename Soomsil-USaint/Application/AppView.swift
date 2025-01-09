@@ -12,6 +12,9 @@ import ComposableArchitecture
 struct AppView: View {
     @Perception.Bindable var store: StoreOf<AppReducer>
     
+    // TODO: 삭제 예정
+    @State var isLoggedIn = HomeRepository.shared.hasCachedUserInformation
+    
     var body: some View {
         switch store.state {
         case .initial:
@@ -19,15 +22,15 @@ struct AppView: View {
                 .task {
                     do {
                         try await Task.sleep(for: .seconds(3))
-                        store.send(.`init`)
+                        store.send(.initialize)
                     } catch {
                         print(error.localizedDescription)
                     }
                 }
         case .loggedIn:
-            Text("Home")
+            HomeView(viewModel: DefaultSaintHomeViewModel(), isLoggedIn: $isLoggedIn)
         case .loggedOut:
-            Text("Login")
+            LoginView(isLoggedIn: $isLoggedIn)
         }
     }
 }
