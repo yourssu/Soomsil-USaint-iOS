@@ -207,7 +207,7 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
             // 이전학기 호출 (CoreData -> Rusaint)
             await loadSemesterListData()
             // 현재학기 호출 (Rusaint)
-            await loadCurrentSemesterData()
+//            await loadCurrentSemesterData()
             
             reportList = semesterRepository.getSemesterList()
         case .failure(let error):
@@ -226,7 +226,7 @@ final class DefaultSemesterListViewModel: BaseViewModel, SemesterListViewModel {
             // 이전학기 호출 (Rusaint)
             await loadSemesterListFromRusaint()
             // 현재학기 호출 (Rusaint)
-            await loadCurrentSemesterData()
+//            await loadCurrentSemesterData()
             
             reportList = semesterRepository.getSemesterList()
         case .failure(let error):
