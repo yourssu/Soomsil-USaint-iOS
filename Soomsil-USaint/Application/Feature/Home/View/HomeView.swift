@@ -6,16 +6,20 @@
 //
 
 import SwiftUI
-import YDS_SwiftUI
+
+import ComposableArchitecture
 import Rusaint
+import YDS_SwiftUI
 
 // swiftlint:disable identifier_name
 
 struct HomeView<VM: HomeViewModel>: View {
+    @Perception.Bindable var store: StoreOf<HomeReducer>
+    
     @State var path: [StackView] = []
     @StateObject var viewModel: VM
 
-    @State var isLaunching: Bool = true
+//    @State var isLaunching: Bool = true
     @Binding var isLoggedIn: Bool
     @State var isFirst: Bool = LocalNotificationManager.shared.getIsFirst()
     @State private var session: USaintSession?
@@ -23,19 +27,19 @@ struct HomeView<VM: HomeViewModel>: View {
     @State private var isLatestSemesterNotYetConfirmed: Bool = true
 
     var body: some View {
-        if isLaunching {
-            SplashView()
-                .onAppear() {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                        isLaunching = false
-                    }
-                }
-        }
-        else if !isLoggedIn {
-            NavigationStack {
-                LoginView(isLoggedIn: $isLoggedIn)
-            }
-        } else {
+//        if isLaunching {
+//            SplashView()
+//                .onAppear() {
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//                        isLaunching = false
+//                    }
+//                }
+//        }
+//        else if !isLoggedIn {
+//            NavigationStack {
+//                LoginView(isLoggedIn: $isLoggedIn)
+//            }
+//        } else {
             NavigationStack(path: $path) {
                 VStack {
                     HStack {
@@ -62,6 +66,7 @@ struct HomeView<VM: HomeViewModel>: View {
                         })
                         LocalNotificationManager.shared.saveIsFirst(true)
                     }
+                    store.send(.onAppear)
 
                 }
                 .task {
@@ -84,7 +89,7 @@ struct HomeView<VM: HomeViewModel>: View {
                     }
                 }
             }
-        }
+//        }
     }
 
     private func loadUserInfoAndTotalReposrtCard() async {
