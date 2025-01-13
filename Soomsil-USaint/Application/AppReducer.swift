@@ -24,8 +24,11 @@ struct AppReducer {
     
     enum Action {
         case initialize
+        case backgroundTask
         case home(HomeReducer.Action)
     }
+    
+    @Dependency(\.localNotificationClient) var localNotificationClient
     
     var body: some Reducer<State, Action> {
         Reduce { state, action in
@@ -33,6 +36,12 @@ struct AppReducer {
             case .initialize:
                 state = .loggedIn(HomeReducer.State())
                 return .none
+            case .backgroundTask:
+                return .run { send in
+                    @Shared(.appStorage("isFirstTest2")) var isFirst = true
+                    print("App - \(isFirst)")
+                    try await localNotificationClient.setLecturePushNotification("\(isFirst)")
+                }
             default:
                 return .none
             }

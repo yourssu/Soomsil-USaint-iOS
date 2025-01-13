@@ -13,7 +13,7 @@ import ComposableArchitecture
 struct HomeReducer {
     @ObservableState
     struct State {
-        @Shared(.appStorage("isFirstTest")) var isFirst = true
+        @Shared(.appStorage("isFirstTest2")) var isFirst = true
     }
     
     enum Action {
@@ -26,9 +26,9 @@ struct HomeReducer {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                debugPrint("Before: \(state.isFirst)")
+                debugPrint("Home - Before: \(state.isFirst)")
                 state.$isFirst.withLock { $0 = false }
-                debugPrint("After: \(state.isFirst)")
+                debugPrint("Home - After: \(state.isFirst)")
                 return .none
             }
         }

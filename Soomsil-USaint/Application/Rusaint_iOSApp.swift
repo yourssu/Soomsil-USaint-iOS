@@ -18,6 +18,7 @@ struct Rusaint_iOSApp: App {
 //    let viewModel = DefaultSaintHomeViewModel()
 //    @State private var isLoggedIn: Bool = HomeRepository.shared.hasCachedUserInformation
 //    @State private var notificationPermission: Bool = false
+    let store = Store(initialState: AppReducer.State()) { AppReducer() }
 
     var body: some Scene {
         WindowGroup {
@@ -31,7 +32,15 @@ struct Rusaint_iOSApp: App {
 //                        }
 //                    }
 //                }
-            AppView(store: Store(initialState: AppReducer.State()) { AppReducer() })
+            VStack {
+                Button("Test") {
+                    scheduleCurrentSemester()
+                }
+                AppView(store: store)
+            }
+        }
+        .backgroundTask(.appRefresh("soomsilUSaint.com")) {
+            await store.send(.backgroundTask)
         }
 //        .backgroundTask(.appRefresh("soomsilUSaint.com")) {
 //            notificationPermission = LocalNotificationManager.shared.getNotificationPermission()
