@@ -69,9 +69,9 @@ struct HomeView<VM: HomeViewModel>: View {
                     store.send(.onAppear)
 
                 }
-                .task {
-                    await loadUserInfoAndTotalReposrtCard()
-                }
+//                .task {
+//                    await loadUserInfoAndTotalReposrtCard()
+//                }
                 .registerYDSToast()
                 .animation(.easeInOut, value: viewModel.isLogedIn())
                 .navigationDestination(for: StackView.self) { stackView in
