@@ -37,10 +37,10 @@ struct AppReducer {
                 state = .loggedIn(HomeReducer.State())
                 return .none
             case .backgroundTask:
+                debugPrint("AppReducer: backgroundTask")
                 return .run { send in
-                    @Shared(.appStorage("isFirstTest2")) var isFirst = true
-                    print("App - \(isFirst)")
-                    try await localNotificationClient.setLecturePushNotification("\(isFirst)")
+                    @Shared(.appStorage("permission")) var permission = true
+                    try await localNotificationClient.setLecturePushNotification("\(permission)")
                 }
             default:
                 return .none

@@ -61,13 +61,12 @@ struct HomeView<VM: HomeViewModel>: View {
                 }
                 .background(.white)
                 .onAppear {
-                    if !isFirst {
-                        LocalNotificationManager().requestAuthorization(completion: { _ in
-                        })
-                        LocalNotificationManager.shared.saveIsFirst(true)
-                    }
                     store.send(.onAppear)
-
+//                    if !isFirst {
+//                        LocalNotificationManager().requestAuthorization(completion: { _ in
+//                        })
+//                        LocalNotificationManager.shared.saveIsFirst(true)
+//                    }
                 }
 //                .task {
 //                    await loadUserInfoAndTotalReposrtCard()

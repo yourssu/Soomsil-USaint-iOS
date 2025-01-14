@@ -14,7 +14,7 @@ import Rusaint
 @main
 struct Rusaint_iOSApp: App {
 
-//    @Environment(\.scenePhase) var scenePhase
+    @Environment(\.scenePhase) var scenePhase
 //    let viewModel = DefaultSaintHomeViewModel()
 //    @State private var isLoggedIn: Bool = HomeRepository.shared.hasCachedUserInformation
 //    @State private var notificationPermission: Bool = false
@@ -32,15 +32,17 @@ struct Rusaint_iOSApp: App {
 //                        }
 //                    }
 //                }
-            VStack {
-                Button("Test") {
-                    scheduleCurrentSemester()
+            AppView(store: store)
+                .onChange(of: scenePhase) { phase in
+                    debugPrint("ScenePhase: \(phase)")
+                    if phase == .background {
+                        scheduleCurrentSemester()
+                    }
                 }
-                AppView(store: store)
-            }
         }
         .backgroundTask(.appRefresh("soomsilUSaint.com")) {
-            await store.send(.backgroundTask)
+            LocalNotificationManager.shared.pushLectureNotification(lectureTitle: "Test2")
+//            await store.send(.backgroundTask)
         }
 //        .backgroundTask(.appRefresh("soomsilUSaint.com")) {
 //            notificationPermission = LocalNotificationManager.shared.getNotificationPermission()
@@ -61,7 +63,7 @@ func scheduleCurrentSemester() {
 
     do {
         try BGTaskScheduler.shared.submit(request)
-        print("")
+        print("Scheduler Scheduled")
     } catch(let error) {
         print("Scheduler Error: \(error)")
     }

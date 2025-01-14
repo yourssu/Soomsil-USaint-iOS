@@ -21,7 +21,7 @@ struct AppView: View {
             SplashView()
                 .task {
                     do {
-                        try await Task.sleep(for: .seconds(3))
+                        try await Task.sleep(for: .seconds(2))
                         store.send(.initialize)
                     } catch {
                         print(error.localizedDescription)
