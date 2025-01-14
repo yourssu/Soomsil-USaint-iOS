@@ -293,6 +293,8 @@
 		};
 		02C46CD22D0F138800A3E717 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 02C46CC02D0F138700A3E717 /* Soomsil-USaint */;
+			baseConfigurationReferenceRelativePath = secretConfig.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -331,6 +333,8 @@
 		};
 		02C46CD32D0F138800A3E717 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReferenceAnchor = 02C46CC02D0F138700A3E717 /* Soomsil-USaint */;
+			baseConfigurationReferenceRelativePath = secretConfig.xcconfig;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

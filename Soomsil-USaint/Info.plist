@@ -6,6 +6,10 @@
 	<array>
 		<string>soomsilUSaint.com</string>
 	</array>
+	<key>SAINT_ID</key>
+	<string>$(SAINT_ID)</string>
+	<key>SAINT_PW</key>
+	<string>$(SAINT_PW)</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
