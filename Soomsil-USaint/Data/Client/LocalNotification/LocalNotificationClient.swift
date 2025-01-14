@@ -10,9 +10,6 @@ import UIKit
 import ComposableArchitecture
 
 struct LocalNotificationClient {
-    // TODO: 논의가 필요한 부분 -> UserDefaults 대신 @Shared를 통해 permission과 isFirst를 사용하는 것이 어떤가요?
-    // isFirst는 Home에서만 사용해서 옮기는 것도 가능하지만, permission은 Home, Setting, backgroundTask에서 사용하니까 일단 전역으로 두는게 좋을까요?
-    
     var requestPushAuthorization: @Sendable () async throws -> Bool
     var getPushAuthorizationStatus: @Sendable () async -> Bool
     var setLecturePushNotification: @Sendable (String) async throws -> Void
@@ -56,13 +53,5 @@ extension LocalNotificationClient: DependencyKey {
         }
     )
     
-    static let testValue: LocalNotificationClient = Self(
-        requestPushAuthorization: {
-            return true
-        }, getPushAuthorizationStatus: {
-            return true
-        }, setLecturePushNotification: { lectureTitle in
-            debugPrint(lectureTitle)
-        }
-    )
+    static let testValue: LocalNotificationClient = previewValue
 }
