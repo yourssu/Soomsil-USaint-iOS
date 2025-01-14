@@ -8,16 +8,16 @@
 import SwiftUI
 
 protocol HomeViewModel: ObservableObject {
-    var person: PersonalInfo? { get set }
+    var person: StudentInfo? { get set }
     func isLogedIn() -> Bool
     func hasCachedUserInformation() -> Bool
     func syncCachedUserInformation()
-    func getCachedUserInformation() -> PersonalInfo?
+    func getCachedUserInformation() -> StudentInfo?
     func hasFeature(_ item: HomeItem) -> Bool
 }
 
 final class DefaultSaintHomeViewModel: HomeViewModel {
-    @Published var person: PersonalInfo?
+    @Published var person: StudentInfo?
     private let homeRepository = HomeRepository.shared
 
     func isLogedIn() -> Bool {
@@ -29,11 +29,11 @@ final class DefaultSaintHomeViewModel: HomeViewModel {
     func syncCachedUserInformation() {
         self.person = getCachedUserInformation()
     }
-    func getCachedUserInformation() -> PersonalInfo? {
+    func getCachedUserInformation() -> StudentInfo? {
         let userInfo = homeRepository.getUserInformation() 
         switch userInfo {
         case let .success(info):
-            return PersonalInfo(name: info.name, major: info.major, schoolYear: info.schoolYear)
+            return StudentInfo(name: info.name, major: info.major, schoolYear: info.schoolYear)
         case .failure:
             break
         }
@@ -52,7 +52,7 @@ final class DefaultSaintHomeViewModel: HomeViewModel {
 }
 
 final class TestSaintMainHomeViewModel: HomeViewModel {
-    @Published var person: PersonalInfo?
+    @Published var person: StudentInfo?
 
     func isLogedIn() -> Bool {
         return self.person != nil
@@ -63,8 +63,8 @@ final class TestSaintMainHomeViewModel: HomeViewModel {
     func syncCachedUserInformation() {
         self.person = getCachedUserInformation()
     }
-    func getCachedUserInformation() -> PersonalInfo? {
-        PersonalInfo(name: "이조은", major: "글로벌미디어학부", schoolYear: "24")
+    func getCachedUserInformation() -> StudentInfo? {
+        StudentInfo(name: "이조은", major: "글로벌미디어학부", schoolYear: "24")
     }
     func hasFeature(_ item: HomeItem) -> Bool {
         switch item {
