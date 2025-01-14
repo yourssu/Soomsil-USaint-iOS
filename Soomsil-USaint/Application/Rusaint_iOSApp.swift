@@ -41,8 +41,7 @@ struct Rusaint_iOSApp: App {
                 }
         }
         .backgroundTask(.appRefresh("soomsilUSaint.com")) {
-            LocalNotificationManager.shared.pushLectureNotification(lectureTitle: "Test2")
-//            await store.send(.backgroundTask)
+            await store.send(.backgroundTask)
         }
 //        .backgroundTask(.appRefresh("soomsilUSaint.com")) {
 //            notificationPermission = LocalNotificationManager.shared.getNotificationPermission()

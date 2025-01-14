@@ -36,7 +36,7 @@ extension LocalNotificationClient: DependencyKey {
             content.body = "[\(lectureTitle)] 과목의 성적이 공개되었어요."
             content.sound = .default
             
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 2, repeats: false)
             let request = UNNotificationRequest(identifier: lectureTitle, content: content, trigger: trigger)
             
             try await UNUserNotificationCenter.current().add(request)

@@ -39,8 +39,8 @@ struct AppReducer {
             case .backgroundTask:
                 debugPrint("AppReducer: backgroundTask")
                 return .run { send in
-                    @Shared(.appStorage("permission")) var permission = true
-                    try await localNotificationClient.setLecturePushNotification("\(permission)")
+                    @Shared(.appStorage("isFirst")) var isFirst = true
+                    try await localNotificationClient.setLecturePushNotification("\(isFirst)")
                 }
             default:
                 return .none
