@@ -42,7 +42,6 @@ struct StudentClient {
     var setStudentInfo: @Sendable () async throws -> Void
     var deleteStudentInfo: @Sendable () async throws -> Void
 }
-// 에러처리 수정
 
 extension DependencyValues {
     var studentClient: StudentClient {
@@ -55,7 +54,7 @@ extension StudentClient: DependencyKey {
     static var liveValue: StudentClient = Self(
         getSaintInfo: {
             guard let id = keychain["saintID"], let password = keychain["saintPW"]
-            else { throw StudentError.accessKeychainError}
+            else { throw StudentError.accessKeychainError }
             return SaintInfo(id: id, password: password)
         },
         setSaintInfo: { info  in
@@ -64,7 +63,7 @@ extension StudentClient: DependencyKey {
         },
         createSaintSession: {
             guard let id = keychain["saintID"], let password = keychain["saintPW"]
-            else { throw StudentError.accessKeychainError}
+            else { throw StudentError.accessKeychainError }
             let session = try await USaintSessionBuilder().withPassword(id: id, password: password)
             return session
         },
@@ -75,7 +74,7 @@ extension StudentClient: DependencyKey {
         },
         setStudentInfo: {
             guard let id = keychain["saintID"], let password = keychain["saintPW"]
-            else { return }
+            else { throw StudentError.accessKeychainError }
 
             let session = try await USaintSessionBuilder().withPassword(id: id, password: password)
             let studentInfo = try await StudentInformationApplicationBuilder().build(session: session).general()
