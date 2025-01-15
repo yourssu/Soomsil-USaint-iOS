@@ -15,8 +15,8 @@ struct GradeClient {
     var fetchAllSemesterGrades: @Sendable () async throws -> [SemesterGrade]
     var fetchGrades: @Sendable (_ year: Int, _ semester: SemesterType) async throws -> [ClassGrade]
     
-    var getAllSemesterGrades: () async throws -> [GradeSummary]
-    var getGrades: (_ year: Int, _ semester: String) async throws -> GradeSummary?
+    var getAllSemesterGrades: () async throws -> [CDSemester]
+    var getGrades: (_ year: Int, _ semester: String) async throws -> CDSemester?
     var updateAllSemesterGrades: (_ rusaintSemesterGrades: [GradeSummary]) async throws -> Void
     var updateGrades: (_ year: Int, _ semester: String, _ newLectures: [LectureDetail]) async throws -> Void
     var updateGPA: (_ year: Int, _ semester: String, _ gpa: Float) async throws -> Void
@@ -57,7 +57,7 @@ extension GradeClient: DependencyKey {
             let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
             
             let fetchedEntity = try context.fetch(fetchRequest)
-            return fetchedEntity.toGradeSummaryModel()
+            return fetchedEntity
         },
         getGrades: { year, semester in
             let context = coreDataStack.taskContext()
@@ -68,7 +68,7 @@ extension GradeClient: DependencyKey {
             ])
             
             if let fetchedEntity = try? context.fetch(fetchRequest).first {
-                return fetchedEntity.toGradeSummaryModel()
+                return fetchedEntity
             } else {
                 return nil
             }
