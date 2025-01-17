@@ -237,15 +237,3 @@ private func createSemester(
     }
     lectureEntities?.forEach { semesterEntity.addToLectures($0) }
 }
-
-// TODO: 테스트용 코드(StudentClient 구현 완료시, 제거)
-private func fetchSession() async -> USaintSession {
-    let response: USaintSession
-    do {
-        response = try await USaintSessionBuilder()
-            .withPassword(id: "", password: "")
-    } catch {
-        response = USaintSession(noPointer: .init())
-    }
-    return response
-}
