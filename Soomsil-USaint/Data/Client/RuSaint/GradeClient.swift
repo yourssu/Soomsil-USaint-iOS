@@ -176,64 +176,39 @@ extension GradeClient: DependencyKey {
                 try context.save()
             }
         )
+        func createSemester(
+            year: Int,
+            semester: String,
+            gpa: Float,
+            earnedCredit: Float,
+            semesterRank: Int,
+            semesterStudentCount: Int,
+            overallRank: Int,
+            overallStudentCount: Int,
+            lectures: [LectureDetail]?,
+            in context: NSManagedObjectContext
+        ) {
+            let semesterEntity = CDSemester(context: context)
+            semesterEntity.year = Int16(year)
+            semesterEntity.semester = semester
+            semesterEntity.gpa = gpa
+            semesterEntity.earnedCredit = earnedCredit
+            semesterEntity.semesterRank = Int16(semesterRank)
+            semesterEntity.semesterStudentCount = Int16(semesterStudentCount)
+            semesterEntity.overallRank = Int16(overallRank)
+            semesterEntity.overallStudentCount = Int16(overallStudentCount)
+            
+            let lectureEntities = lectures?.compactMap { lecture -> CDLecture? in
+                let cdLecture = CDLecture(context: context)
+                cdLecture.code = lecture.code
+                cdLecture.title = lecture.title
+                cdLecture.credit = Float(lecture.credit)
+                cdLecture.score = lecture.score
+                cdLecture.grade = lecture.grade.rawValue
+                cdLecture.professorName = lecture.professorName
+                return cdLecture
+            }
+            lectureEntities?.forEach { semesterEntity.addToLectures($0) }
+        }
     }()
-    
-    static let previewValue = GradeClient {
-        return
-    } fetchGrades: { year, semester in
-        return
-    } getAllSemesterGrades: {
-        return
-    } getGrades: { year, semester in
-        return
-    } updateAllSemesterGrades: { rusaintSemesterGrades in
-        return
-    } updateGrades: { year, semester, newLectures in
-        return
-    } updateGPA: { year, semester, gpa in
-        return
-    } addGrades: { newSemester in
-        return
-    } deleteAllSemesterGrades: {
-        return
-    } deleteGrades: { year, semester in
-        return
-    }
-    
-    static let testValue: GradeClient = previewValue
-}
-
-private func createSemester(
-    year: Int,
-    semester: String,
-    gpa: Float,
-    earnedCredit: Float,
-    semesterRank: Int,
-    semesterStudentCount: Int,
-    overallRank: Int,
-    overallStudentCount: Int,
-    lectures: [LectureDetail]?,
-    in context: NSManagedObjectContext
-) {
-    let semesterEntity = CDSemester(context: context)
-    semesterEntity.year = Int16(year)
-    semesterEntity.semester = semester
-    semesterEntity.gpa = gpa
-    semesterEntity.earnedCredit = earnedCredit
-    semesterEntity.semesterRank = Int16(semesterRank)
-    semesterEntity.semesterStudentCount = Int16(semesterStudentCount)
-    semesterEntity.overallRank = Int16(overallRank)
-    semesterEntity.overallStudentCount = Int16(overallStudentCount)
-    
-    let lectureEntities = lectures?.compactMap { lecture -> CDLecture? in
-        let cdLecture = CDLecture(context: context)
-        cdLecture.code = lecture.code
-        cdLecture.title = lecture.title
-        cdLecture.credit = Float(lecture.credit)
-        cdLecture.score = lecture.score
-        cdLecture.grade = lecture.grade.rawValue
-        cdLecture.professorName = lecture.professorName
-        return cdLecture
-    }
-    lectureEntities?.forEach { semesterEntity.addToLectures($0) }
 }
