@@ -27,12 +27,14 @@ struct AppView: View {
                         print(error.localizedDescription)
                     }
                 }
+        case .loggedOut:
+            if let store = store.scope(state: \.loggedOut, action: \.login) {
+                LoginView(store: store)
+            }
         case .loggedIn:
             if let store = store.scope(state: \.loggedIn, action: \.home) {
                 HomeView(store: store, viewModel: DefaultSaintHomeViewModel(), isLoggedIn: $isLoggedIn)
             }
-        case .loggedOut:
-            LoginView(isLoggedIn: $isLoggedIn)
         }
     }
 }
