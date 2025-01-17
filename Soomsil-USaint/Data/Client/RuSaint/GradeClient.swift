@@ -211,4 +211,46 @@ extension GradeClient: DependencyKey {
             lectureEntities?.forEach { semesterEntity.addToLectures($0) }
         }
     }()
+    
+    static let previewVale: GradeClient = GradeClient {
+        [
+            Rusaint.SemesterGrade(year: 2024,
+                               semester: "2 학기",
+                               attemptedCredits: 2.0,
+                               earnedCredits: 2.0,
+                               pfEarnedCredits: 2.0,
+                               gradePointsAvarage: 0.0,
+                               gradePointsSum: 0.0,
+                               arithmeticMean: 0.0,
+                               semesterRank: Rusaint.UnsignedIntPair(first: 0, second: 0),
+                               generalRank: Rusaint.UnsignedIntPair(first: 12, second: 94),
+                               academicProbation: false,
+                               consult: false,
+                               flunked: false)
+        ]
+    } fetchGrades: { year, semester in
+        [
+            Rusaint.ClassGrade(year: "2024", semester: "2 학기", code: "", className: "", gradePoints: 0.0, score: .empty, rank: "", professor: "", detail: nil)
+        ]
+    } getAllSemesterGrades: {
+        [
+            CDSemester()
+        ]
+    } getGrades: { year, semester in
+        CDSemester()
+    } updateAllSemesterGrades: { rusaintSemesterGrades in
+        return
+    } updateGrades: { year, semester, newLectures in
+        return
+    } updateGPA: { year, semester, gpa in
+        return
+    } addGrades: { newSemester in
+        return
+    } deleteAllSemesterGrades: {
+        return
+    } deleteGrades: { year, semester in
+        return
+    }
+
+    static let testValue: GradeClient = previewVale
 }
