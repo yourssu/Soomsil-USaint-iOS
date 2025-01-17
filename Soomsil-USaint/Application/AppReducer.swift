@@ -14,7 +14,7 @@ struct AppReducer {
     @ObservableState
     enum State {
         case initial
-        case loggedOut
+        case loggedOut(LoginReducer.State)
         case loggedIn(HomeReducer.State)
         
         init() {
@@ -25,6 +25,7 @@ struct AppReducer {
     enum Action {
         case initialize
         case backgroundTask
+        case login(LoginReducer.Action)
         case home(HomeReducer.Action)
     }
     
@@ -34,7 +35,7 @@ struct AppReducer {
         Reduce { state, action in
             switch action {
             case .initialize:
-                state = .loggedIn(HomeReducer.State())
+                state = .loggedOut(LoginReducer.State())
                 return .none
             case .backgroundTask:
                 debugPrint("AppReducer: backgroundTask")
@@ -45,6 +46,9 @@ struct AppReducer {
             default:
                 return .none
             }
+        }
+        .ifCaseLet(\.loggedOut, action: \.login) {
+            LoginReducer()
         }
         .ifCaseLet(\.loggedIn, action: \.home) {
             HomeReducer()
