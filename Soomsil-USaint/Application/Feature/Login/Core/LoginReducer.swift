@@ -59,6 +59,7 @@ struct LoginReducer {
                 YDSToast("로그인 성공하였습니다.", haptic: .success)
                 return .none
             case .loginResponse(.failure(let error)):
+                debugPrint(error)
                 return .run { send in
                     await send(.deleteResponse(Result {
                         try await studentClient.deleteStudentInfo()

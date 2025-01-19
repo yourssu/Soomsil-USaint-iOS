@@ -19,13 +19,8 @@ struct AppView: View {
         switch store.state {
         case .initial:
             SplashView()
-                .task {
-                    do {
-                        try await Task.sleep(for: .seconds(2))
-                        store.send(.initialize)
-                    } catch {
-                        print(error.localizedDescription)
-                    }
+                .onAppear {
+                    store.send(.initialize)
                 }
         case .loggedOut:
             if let store = store.scope(state: \.loggedOut, action: \.login) {

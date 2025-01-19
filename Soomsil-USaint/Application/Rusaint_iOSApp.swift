@@ -13,13 +13,10 @@ import Rusaint
 
 @main
 struct Rusaint_iOSApp: App {
-
     @Environment(\.scenePhase) var scenePhase
-//    let viewModel = DefaultSaintHomeViewModel()
-//    @State private var isLoggedIn: Bool = HomeRepository.shared.hasCachedUserInformation
-//    @State private var notificationPermission: Bool = false
+    
     let store = Store(initialState: AppReducer.State()) { AppReducer() }
-
+    
     var body: some Scene {
         WindowGroup {
 //            HomeView(viewModel: viewModel, isLoggedIn: $isLoggedIn)

@@ -24,17 +24,29 @@ struct AppReducer {
     
     enum Action {
         case initialize
+        case initResponse(Result<Void, Error>)
         case backgroundTask
         case login(LoginReducer.Action)
         case home(HomeReducer.Action)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
+    @Dependency(\.studentClient) var studentClient
     
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .initialize:
+                return .run { send in
+                    await send(.initResponse(Result {
+                        let _ = try await studentClient.getSaintInfo()
+                    }))
+                }
+            case .initResponse(.success):
+                state = .loggedIn(HomeReducer.State())
+                return .none
+            case .initResponse(.failure(let error)):
+                debugPrint(error)
                 state = .loggedOut(LoginReducer.State())
                 return .none
             case .backgroundTask:
@@ -43,6 +55,9 @@ struct AppReducer {
                     @Shared(.appStorage("isFirst")) var isFirst = true
                     try await localNotificationClient.setLecturePushNotification("\(isFirst)")
                 }
+            case .login(.loginResponse(.success)):
+                state = .loggedIn(HomeReducer.State())
+                return .none
             default:
                 return .none
             }
