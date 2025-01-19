@@ -28,12 +28,11 @@ struct LoginView: View {
     var body: some View {
         // MARK: iOS 16 이하 대응 - WithPerceptionTracking로 감싸지 않을 경우, Perceptible state was accessed but is not being tracked. 메모리 관련 경고 발생
         WithPerceptionTracking {
-            VStack {
+            VStack(spacing: 4) {
                 title
                 form
                 Spacer()
             }
-            .padding(Dimension.padding)
             .background {
                 Color.clear.tapToHideKeyboard()
             }
@@ -53,7 +52,7 @@ struct LoginView: View {
 private extension LoginView {
     var title: some View {
         Text("로그인")
-            .font(YDSFont.title3)
+            .font(YDSFont.subtitle2)
     }
     
     var form: some View {
@@ -72,7 +71,8 @@ private extension LoginView {
             } label: {
                 Text("로그인")
                     .foregroundStyle(YDSColor.buttonBright)
-                    .font(YDSFont.button4).frame(maxWidth: .infinity, minHeight: Dimension.Button.minHeight)
+                    .font(YDSFont.button4)
+                    .frame(maxWidth: .infinity, minHeight: Dimension.Button.minHeight)
                     .background(YDSColor.buttonPoint, in: RoundedRectangle(cornerRadius: 5))
             }
             .buttonStyle(.plain)
@@ -85,6 +85,7 @@ private extension LoginView {
             }
             .foregroundStyle(YDSColor.textPointed)
         }
+        .padding(Dimension.padding)
     }
 }
 
