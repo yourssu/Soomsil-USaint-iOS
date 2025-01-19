@@ -8,6 +8,7 @@
 import Foundation
 
 import ComposableArchitecture
+import YDS_SwiftUI
 
 @Reducer
 struct LoginReducer {
@@ -21,23 +22,51 @@ struct LoginReducer {
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case onAppear
+        case initResponse(Result<SaintInfo, Error>)
         case loginPressed
         case loginResponse(Result<Void, Error>)
+        case deleteResponse(Result<Void, Error>)
     }
+    
+    @Dependency(\.studentClient) var studentClient
     
     var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce { state, action in
             switch action {
-            case .loginPressed:
-                state.isLoading = true
+            case .onAppear:
                 return .run { send in
-                    await send(.loginResponse(Result {
-                        try await Task.sleep(for: .seconds(1))
+                    await send(.initResponse(Result {
+                        return try await studentClient.getSaintInfo()
                     }))
                 }
-            case .loginResponse:
+            case .initResponse(.success(let saintInfo)):
+                state.id = saintInfo.id
+                state.password = saintInfo.password
+                return .none
+            case .loginPressed:
+                state.isLoading = true
+                let saintInfo = SaintInfo(id: state.id, password: state.password)
+                return .run { send in
+                    await send(.loginResponse(Result {
+                        try await studentClient.setSaintInfo(saintInfo: saintInfo)
+                        try await studentClient.setStudentInfo()
+                        // TODO: ReportCard 정보 저장 (saveReportCard(session: session))
+                    }))
+                }
+            case .loginResponse(.success):
                 state.isLoading = false
+                YDSToast("로그인 성공하였습니다.", haptic: .success)
+                return .none
+            case .loginResponse(.failure(let error)):
+                return .run { send in
+                    await send(.deleteResponse(Result {
+                        try await studentClient.deleteStudentInfo()
+                    }))
+                }
+            case .deleteResponse:
+                state.isLoading = false
+                YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
                 return .none
             default:
                 return .none
@@ -45,59 +74,6 @@ struct LoginReducer {
         }
     }
 }
-// 1. Button Action
-//                    Task {
-//                        isLoading = true
-//                        do {
-//                            self.session =  try await USaintSessionBuilder().withPassword(id: id, password: password)
-//                            if self.session != nil {
-//
-//                                await saveUserInfo(id: id, password: password, session: session!)
-//                                await saveReportCard(session: session!)
-//
-//                                isLoggedIn = true
-//                                isLoading = false
-//                                YDSToast("로그인 성공하였습니다.", haptic: .success)
-//
-//                            } else {
-//                                YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
-//                                HomeRepository.shared.deleteAllData()
-//                            }
-//                        } catch {
-//                            isLoading = false
-//
-//                            YDSToast("로그인에 실패하였습니다. 다시 시도해주세요!", duration: .long, haptic: .failed)
-//                            HomeRepository.shared.deleteAllData()
-//                        }
-//                    }
-
-//    private func initial() {
-//        let info = HomeRepository.shared.getUserInformation()
-//        switch info {
-//        case .success(let success):
-//            self.id = success.id
-//            self.password = success.password
-//        case .failure:
-//            self.id = ""
-//            self.password = ""
-//        }
-//    }
-//
-//    private func saveUserInfo(id: String, password: String, session: USaintSession) async {
-//        HomeRepository.shared.updateUserInformation(id: id, password: password)
-//
-//        do {
-//            let personalInfo = try await StudentInformationApplicationBuilder().build(session: self.session!).general()
-//            let name = personalInfo.name.replacingOccurrences(of: " ", with: "")
-//            let major = personalInfo.department
-//            let schoolYear = "\(personalInfo.grade)학년"
-//            HomeRepository.shared.updateUserInformation(name: name,
-//                                                        major: major,
-//                                                        schoolYear: schoolYear)
-//        } catch {
-//            print("Failed to save userInfo: \(error)")
-//        }
-//    }
 
 //    private func saveReportCard(session: USaintSession) async {
 //        do {
