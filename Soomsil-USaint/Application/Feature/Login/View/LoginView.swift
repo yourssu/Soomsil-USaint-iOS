@@ -63,7 +63,7 @@ private extension LoginView {
             
             Text("유세인트 비밀번호")
                 .font(YDSFont.body1)
-            YDSPasswordTextField(text: $store.password)
+            SecureTextField(text: $store.password)
                 .padding(.bottom, Dimension.largeSpace)
             
             Button {
