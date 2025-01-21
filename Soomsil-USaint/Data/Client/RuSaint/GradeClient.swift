@@ -212,7 +212,7 @@ extension GradeClient: DependencyKey {
         }
     }()
     
-    static let previewVale: GradeClient = GradeClient {
+    static let previewValue: GradeClient = GradeClient {
         [
             Rusaint.SemesterGrade(year: 2024,
                                semester: "2 학기",
@@ -252,5 +252,5 @@ extension GradeClient: DependencyKey {
         return
     }
 
-    static let testValue: GradeClient = previewVale
+    static let testValue: GradeClient = previewValue
 }
