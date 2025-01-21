@@ -76,9 +76,11 @@ extension GradeClient: DependencyKey {
                     return nil
                 }
             },
-            // TODO: 해당 함수 호출 전, delete 먼저 수행해야 함.
             updateAllSemesterGrades: { grades in
                 let context = coreDataStack.taskContext()
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: CDSemester.fetchRequest())
+                try context.execute(deleteRequest)
+                
                 for grade in grades {
                     createSemester(year: grade.year,
                                    semester: grade.semester,
