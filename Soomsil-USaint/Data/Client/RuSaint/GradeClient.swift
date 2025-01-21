@@ -9,6 +9,7 @@ import CoreData
 import ComposableArchitecture
 import Rusaint
 
+@DependencyClient
 struct GradeClient {
     static let coreDataStack: CoreDataStack = .shared
     
