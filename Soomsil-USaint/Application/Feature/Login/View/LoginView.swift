@@ -8,7 +8,6 @@
 import SwiftUI
 
 import ComposableArchitecture
-import Rusaint
 import YDS_SwiftUI
 
 private enum Dimension {
