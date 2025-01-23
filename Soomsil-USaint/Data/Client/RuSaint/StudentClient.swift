@@ -108,8 +108,8 @@ extension StudentClient: DependencyKey {
             keychain["saintPW"] = password
         },
         createSaintSession: {
-            guard let id = keychain["saintID"], let password = keychain["saintPW"]
-            else { throw StudentError.accessKeychainError}
+            guard let id = Bundle.main.object(forInfoDictionaryKey: "SAINT_ID") as? String else { throw StudentError.accessSecretConfigError }
+            guard let password = Bundle.main.object(forInfoDictionaryKey: "SAINT_PW") as? String else { throw StudentError.accessSecretConfigError }
             let session = try await USaintSessionBuilder().withPassword(id: id, password: password)
             return session
         },
