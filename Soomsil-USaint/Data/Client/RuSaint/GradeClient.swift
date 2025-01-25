@@ -12,16 +12,20 @@ import Rusaint
 @DependencyClient
 struct GradeClient {
     static let coreDataStack: CoreDataStack = .shared
-    
+
+    var fetchTotalReportCard:  @Sendable () async throws -> TotalReportCard?
     var fetchAllSemesterGrades: @Sendable () async throws -> [SemesterGrade]
     var fetchGrades: @Sendable (_ year: Int, _ semester: SemesterType) async throws -> [ClassGrade]
-    
+
+    var getTotalReportCard: () async throws -> TotalReportCard
     var getAllSemesterGrades: () async throws -> [CDSemester]
     var getGrades: (_ year: Int, _ semester: String) async throws -> CDSemester?
+    var updateTotalReportCard: (_ gpa: Float, _ earnedCredit: Float, _ graduateCredit: Float) async throws -> Void
     var updateAllSemesterGrades: (_ rusaintSemesterGrades: [GradeSummary]) async throws -> Void
     var updateGrades: (_ year: Int, _ semester: String, _ newLectures: [LectureDetail]) async throws -> Void
     var updateGPA: (_ year: Int, _ semester: String, _ gpa: Float) async throws -> Void
     var addGrades: (_ newSemester: GradeSummary) async throws -> Void
+    var deleteTotalReportCard: () async throws -> Void
     var deleteAllSemesterGrades: () async throws -> Void
     var deleteGrades: (_ year: Int, _ semester: String) async throws -> Void
 }
@@ -36,9 +40,20 @@ extension DependencyValues {
 extension GradeClient: DependencyKey {
     static var liveValue: GradeClient = {
         @Dependency(\.studentClient) var studentClient: StudentClient
-        
+
         return GradeClient(
-            fetchAllSemesterGrades: {
+            fetchTotalReportCard: {
+                let session = try await studentClient.createSaintSession()
+                let courseGrades = try await CourseGradesApplicationBuilder().build(session: session).certificatedSummary(courseType: .bachelor)
+                let graduationRequirement = try await GraduationRequirementsApplicationBuilder().build(session: session).requirements()
+                let requirements = graduationRequirement.requirements.filter { $0.value.name.hasPrefix("학부-졸업학점") }
+                    .compactMap { $0.value.requirement ?? 0}
+                if let graduateCredit = requirements.first {
+                    let totalReportCard = TotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit))
+                    return totalReportCard
+                }
+                return nil
+            }, fetchAllSemesterGrades: {
                 let session = try await studentClient.createSaintSession()
                 let response = try await CourseGradesApplicationBuilder()
                     .build(session: session)
@@ -55,10 +70,17 @@ extension GradeClient: DependencyKey {
                              includeDetails: false)
                 return response
             },
+            getTotalReportCard: {
+                let context = coreDataStack.taskContext()
+                let fetchRequest: NSFetchRequest<CDTotalReportCard> = CDTotalReportCard.fetchRequest()
+
+                let fetchedEntity = try context.fetch(fetchRequest)
+                return fetchedEntity.toTotalReportCard()
+            },
             getAllSemesterGrades: {
                 let context = coreDataStack.taskContext()
                 let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
-                
+
                 let fetchedEntity = try context.fetch(fetchRequest)
                 return fetchedEntity
             },
@@ -69,18 +91,24 @@ extension GradeClient: DependencyKey {
                     NSPredicate(format: "year == %d", year),
                     NSPredicate(format: "semester == %@", semester)
                 ])
-                
+
                 if let fetchedEntity = try? context.fetch(fetchRequest).first {
                     return fetchedEntity
                 } else {
                     return nil
                 }
             },
+            updateTotalReportCard: { gpa, earnedCredit, graduateCredit in
+                let context = coreDataStack.taskContext()
+                createTotalReportCard(gpa: gpa, earnedCredit: earnedCredit, graduateCredit: graduateCredit, in: context)
+
+                try context.save()
+            },
             updateAllSemesterGrades: { grades in
                 let context = coreDataStack.taskContext()
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: CDSemester.fetchRequest())
                 try context.execute(deleteRequest)
-                
+
                 for grade in grades {
                     createSemester(year: grade.year,
                                    semester: grade.semester,
@@ -98,15 +126,15 @@ extension GradeClient: DependencyKey {
             updateGrades: { year, semester, newLectures in
                 let context = coreDataStack.taskContext()
                 let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
-                
+
                 fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
                     NSPredicate(format: "year == %d", year),
                     NSPredicate(format: "semester == %@", semester)
                 ])
-                
+
                 if let semesterEntity = try context.fetch(fetchRequest).first {
                     semesterEntity.removeFromLectures(semesterEntity.lectures ?? [])
-                    
+
                     let newLectureEntities = newLectures.map { lecture in
                         let cdLecture = CDLecture(context: context)
                         cdLecture.code = lecture.code
@@ -117,7 +145,7 @@ extension GradeClient: DependencyKey {
                         cdLecture.professorName = lecture.professorName
                         return cdLecture
                     }
-                    
+
                     newLectureEntities.forEach { semesterEntity.addToLectures($0) }
                     context.performAndWait {
                         do {
@@ -135,7 +163,7 @@ extension GradeClient: DependencyKey {
                     NSPredicate(format: "year == %d", year),
                     NSPredicate(format: "semester == %@", semester)
                 ])
-                
+
                 if let fetchedEntity = try context.fetch(fetchRequest).first {
                     fetchedEntity.gpa = gpa
                     try context.save()
@@ -143,7 +171,7 @@ extension GradeClient: DependencyKey {
             },
             addGrades: { newSemester in
                 let context = coreDataStack.taskContext()
-                
+
                 createSemester(year: newSemester.year,
                                semester: newSemester.semester,
                                gpa: newSemester.gpa,
@@ -154,13 +182,20 @@ extension GradeClient: DependencyKey {
                                overallStudentCount: newSemester.overallStudentCount,
                                lectures: newSemester.lectures ?? nil,
                                in: context)
-                
+
+                try context.save()
+            },
+            deleteTotalReportCard: {
+                let context = coreDataStack.taskContext()
+                let deleteRequest = NSBatchDeleteRequest(fetchRequest: CDTotalReportCard.fetchRequest())
+
+                try context.execute(deleteRequest)
                 try context.save()
             },
             deleteAllSemesterGrades: {
                 let context = coreDataStack.taskContext()
                 let deleteRequest = NSBatchDeleteRequest(fetchRequest: CDSemester.fetchRequest())
-                
+
                 try context.execute(deleteRequest)
                 try context.save()
             },
@@ -171,7 +206,7 @@ extension GradeClient: DependencyKey {
                     NSPredicate(format: "year == %d", year),
                     NSPredicate(format: "semester == %@", semester)
                 ])
-                
+
                 let fetchedEntity = try context.fetch(fetchRequest)
                 for entity in fetchedEntity {
                     context.delete(entity)
@@ -179,6 +214,7 @@ extension GradeClient: DependencyKey {
                 try context.save()
             }
         )
+
         func createSemester(
             year: Int,
             semester: String,
@@ -200,7 +236,7 @@ extension GradeClient: DependencyKey {
             semesterEntity.semesterStudentCount = Int16(semesterStudentCount)
             semesterEntity.overallRank = Int16(overallRank)
             semesterEntity.overallStudentCount = Int16(overallStudentCount)
-            
+
             let lectureEntities = lectures?.compactMap { lecture -> CDLecture? in
                 let cdLecture = CDLecture(context: context)
                 cdLecture.code = lecture.code
@@ -213,47 +249,71 @@ extension GradeClient: DependencyKey {
             }
             lectureEntities?.forEach { semesterEntity.addToLectures($0) }
         }
+
+        func createTotalReportCard(
+            gpa: Float,
+            earnedCredit: Float,
+            graduateCredit: Float,
+            in context: NSManagedObjectContext
+        ) {
+            let detail = CDTotalReportCard(context: context)
+            detail.gpa = gpa
+            detail.earnedCredit = earnedCredit
+            detail.graduateCredit = graduateCredit
+        }
     }()
-    
-    static let previewValue: GradeClient = GradeClient {
-        [
-            Rusaint.SemesterGrade(year: 2024,
-                               semester: "2 학기",
-                               attemptedCredits: 2.0,
-                               earnedCredits: 2.0,
-                               pfEarnedCredits: 2.0,
-                               gradePointsAvarage: 0.0,
-                               gradePointsSum: 0.0,
-                               arithmeticMean: 0.0,
-                               semesterRank: Rusaint.UnsignedIntPair(first: 0, second: 0),
-                               generalRank: Rusaint.UnsignedIntPair(first: 12, second: 94),
-                               academicProbation: false,
-                               consult: false,
-                               flunked: false)
-        ]
-    } fetchGrades: { year, semester in
-        [
-            Rusaint.ClassGrade(year: "2024", semester: "2 학기", code: "", className: "", gradePoints: 0.0, score: .empty, rank: "", professor: "", detail: nil)
-        ]
-    } getAllSemesterGrades: {
-        [
+
+    static let previewValue: GradeClient = Self(
+        fetchTotalReportCard: {
+            TotalReportCard(gpa: 4.34, earnedCredit: 108, graduateCredit: 133)
+        }, fetchAllSemesterGrades:  {
+            [
+                SemesterGrade(
+                    year: 2024,
+                    semester: "",
+                    attemptedCredits: 22.0,
+                    earnedCredits: 4.3,
+                    pfEarnedCredits: 3.0,
+                    gradePointsAvarage: 3.0,
+                    gradePointsSum: 2.0,
+                    arithmeticMean: 2.0,
+                    semesterRank: U32Pair(first: 57, second: 100),
+                    generalRank: U32Pair(first: 38, second: 200),
+                    academicProbation: false,
+                    consult: false,
+                    flunked: false
+                )
+            ]
+        }, fetchGrades: { year, semester in
+            [
+                Rusaint.ClassGrade(year: "2024", semester: "2 학기", code: "", className: "", gradePoints: 0.0, score: .empty, rank: "", professor: "", detail: nil)
+            ]
+        }, getTotalReportCard: {
+            TotalReportCard(gpa: 4.34, earnedCredit: 108, graduateCredit: 133)
+        }, getAllSemesterGrades: {
+            [
+                CDSemester()
+            ]
+        }, getGrades: { year, semester in
             CDSemester()
-        ]
-    } getGrades: { year, semester in
-        CDSemester()
-    } updateAllSemesterGrades: { rusaintSemesterGrades in
-        return
-    } updateGrades: { year, semester, newLectures in
-        return
-    } updateGPA: { year, semester, gpa in
-        return
-    } addGrades: { newSemester in
-        return
-    } deleteAllSemesterGrades: {
-        return
-    } deleteGrades: { year, semester in
-        return
-    }
+        }, updateTotalReportCard: {gpa,earnedCredit,graduateCredit in 
+            return
+        }, updateAllSemesterGrades: { rusaintSemesterGrades in
+            return
+        }, updateGrades: { year, semester, newLectures in
+            return
+        }, updateGPA: { year, semester, gpa in
+            return
+        }, addGrades: { newSemester in
+            return
+        }, deleteTotalReportCard: {
+            return
+        }, deleteAllSemesterGrades: {
+            return
+        }, deleteGrades: { year, semester in
+            return
+        }
+    )
 
     static let testValue: GradeClient = previewValue
 }
