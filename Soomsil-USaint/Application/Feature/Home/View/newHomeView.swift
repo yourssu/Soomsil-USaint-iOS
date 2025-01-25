@@ -7,27 +7,43 @@
 
 import SwiftUI
 
+import ComposableArchitecture
 import YDS_SwiftUI
 
 struct newHomeView: View {
-    @State private var testStudent = StudentInfo(name: "이조은", major: "글로벌미디어학부", schoolYear: "3학년")
+    @Perception.Bindable var store: StoreOf<HomeReducer>
+
+    @State private var testStudent: StudentInfo = StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "5학년")
     @State private var testReportCard = TotalReportCard(gpa: 4.2, earnedCredit: 133, graduateCredit: 133)
 
+    // MARK: - Home
     var body: some View {
-        VStack {
-            title
+        WithPerceptionTracking {
             VStack {
-                Student(student: $testStudent)
-                GradeInfo(reportCard: $testReportCard)
-                Spacer()
+                title
+                VStack {
+                    Student(student: $testStudent) {
+                        store.send(.settingPressed)
+                    }
+                    GradeInfo(reportCard: $testReportCard) {
+                        store.send(.semesterListPressed)
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
             }
-            .padding(.horizontal, 16)
+            .background(Color(red: 0.95, green: 0.96, blue: 0.97))
+            .onAppear {
+                store.send(.onAppear)
+            }
         }
-        .background(Color(red: 0.95, green: 0.96, blue: 0.97))
     }
 
+    // MARK: - StudentInfo
     struct Student: View {
         @Binding var student: StudentInfo
+
+        let onSettingPressed: () -> Void
 
         var body: some View {
             HStack {
@@ -45,7 +61,7 @@ struct newHomeView: View {
                 .padding(.leading)
                 Spacer()
                 Button(action: {
-                    // MARK: - SettingView로 이동
+                    onSettingPressed()
                 }, label: {
                     Image("ic_setting_fill")
                 })
@@ -55,12 +71,15 @@ struct newHomeView: View {
         }
     }
 
+    // MARK: - GradeSection
     struct GradeInfo: View {
         @Binding var reportCard: TotalReportCard
 
+        let onSemesterListPressed: () -> Void
+
         var body: some View {
             Button(action: {
-                // MARK: - SemesterList로 이동
+                onSemesterListPressed()
             }, label: {
                 VStack {
                     VStack(spacing: 0) {
@@ -97,13 +116,13 @@ struct newHomeView: View {
                         .frame(height: 72)
 
                         VStack(spacing: 0) {
-                            credit(title: "평균학점", earned: reportCard.gpa, graduated: 4.50, isInt: false)
+                            CreditLine(title: "평균학점", earned: reportCard.gpa, graduated: 4.50, isInt: false)
                             Divider()
                                 .padding(.horizontal, 13)
-                            credit(title: "취득학점", earned: reportCard.earnedCredit, graduated: reportCard.graduateCredit, isInt: true)
+                            CreditLine(title: "취득학점", earned: reportCard.earnedCredit, graduated: reportCard.graduateCredit, isInt: true)
 
                             Button(action: {
-                                // MARK: -SettingView로 이동
+                                onSemesterListPressed()
                             }, label: {
                                 Text("전체 학기 성적 보기")
                                     .font(Font.custom("Apple SD Gothic Neo", size: 15))
@@ -125,9 +144,15 @@ struct newHomeView: View {
                 .cornerRadius(8)
             })
         }
+    }
 
-        @ViewBuilder
-        private func credit(title: String, earned: Float, graduated: Float, isInt: Bool) -> some View {
+    struct CreditLine: View {
+        let title: String
+        let earned: Float
+        let graduated: Float
+        let isInt: Bool
+
+        var body: some View {
             HStack {
                 Text(title).font(YDSFont.body1)
                 Spacer()
@@ -159,5 +184,7 @@ private extension newHomeView {
 }
 
 #Preview {
-    newHomeView()
+    newHomeView(store: Store(initialState: HomeReducer.State()) {
+        HomeReducer()
+    })
 }
