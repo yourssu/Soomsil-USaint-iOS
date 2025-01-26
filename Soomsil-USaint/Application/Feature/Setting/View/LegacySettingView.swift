@@ -39,7 +39,7 @@ struct LegacySettingView: View {
                 .font(YDSFont.title2)
                 .padding(.top, 8)
                 .padding(.leading, 16)
-            ButtonList(title: "계정관리", items: [itemAction(
+            ListRowView(title: "계정관리", items: [itemAction(
                 text: "로그아웃",
                 action: { activeAlert = .logout }
             )])
@@ -80,7 +80,7 @@ struct LegacySettingView: View {
                 .padding(20)
                 .frame(height: 48)
             }
-            ButtonList(title: "약관", items: [itemAction(
+            ListRowView(title: "약관", items: [itemAction(
                 text: "이용약관",
                 action: { path.append(StackView(type: .WebViewTerm)) }
             ),itemAction(

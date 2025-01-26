@@ -26,7 +26,7 @@ struct SettingView: View {
         
         var body: some View {
             VStack(alignment: .leading) {
-                ButtonList(
+                ListRowView(
                     title: "계정관리",
                     items: [
                         itemAction(
@@ -56,7 +56,7 @@ struct SettingView: View {
                     .padding(20)
                     .frame(height: 48)
                 }
-                ButtonList(
+                ListRowView(
                     title: "약관",
                     items: [
                         itemAction(
@@ -83,13 +83,13 @@ private extension SettingView {
     }
 }
 
-// MARK: - ButtonList
+// MARK: - List
 struct itemAction {
     let text: String
     let action: () -> Void
 }
 
-struct ButtonList: View {
+struct ListRowView: View {
     let title: String
     let items: [itemAction]
 
@@ -110,7 +110,7 @@ struct ButtonList: View {
                 .frame(height: 48)
 
             ForEach(items.indices, id: \.self) { index in
-                ButtonItem(
+                ItemModel(
                     text: items[index].text,
                     action: items[index].action,
                     isPressed: $pressedStates[index]
@@ -120,7 +120,7 @@ struct ButtonList: View {
     }
 }
 
-struct ButtonItem: View {
+struct ItemModel: View {
     let text: String
     let action: () -> Void
     @Binding var isPressed: Bool
