@@ -29,7 +29,8 @@ struct LoginReducer {
     }
     
     @Dependency(\.studentClient) var studentClient
-    
+    @Dependency(\.gradeClient) var gradeClient
+
     var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce { state, action in
@@ -51,7 +52,7 @@ struct LoginReducer {
                     await send(.loginResponse(Result {
                         try await studentClient.setSaintInfo(saintInfo: saintInfo)
                         try await studentClient.setStudentInfo()
-                        // TODO: ReportCard 정보 저장 (saveReportCard(session: session))
+                        try await gradeClient.setTotalReportCard()
                     }))
                 }
             case .loginResponse(.success):
