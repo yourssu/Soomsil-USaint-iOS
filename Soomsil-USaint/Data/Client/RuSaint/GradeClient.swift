@@ -13,14 +13,13 @@ import Rusaint
 struct GradeClient {
     static let coreDataStack: CoreDataStack = .shared
 
-    var fetchTotalReportCard:  @Sendable () async throws -> TotalReportCard?
+    var setTotalReportCard:  @Sendable () async throws -> Void
     var fetchAllSemesterGrades: @Sendable () async throws -> [SemesterGrade]
     var fetchGrades: @Sendable (_ year: Int, _ semester: SemesterType) async throws -> [ClassGrade]
 
     var getTotalReportCard: () async throws -> TotalReportCard
     var getAllSemesterGrades: () async throws -> [CDSemester]
     var getGrades: (_ year: Int, _ semester: String) async throws -> CDSemester?
-    var updateTotalReportCard: (_ gpa: Float, _ earnedCredit: Float, _ graduateCredit: Float) async throws -> Void
     var updateAllSemesterGrades: (_ rusaintSemesterGrades: [GradeSummary]) async throws -> Void
     var updateGrades: (_ year: Int, _ semester: String, _ newLectures: [LectureDetail]) async throws -> Void
     var updateGPA: (_ year: Int, _ semester: String, _ gpa: Float) async throws -> Void
@@ -42,17 +41,26 @@ extension GradeClient: DependencyKey {
         @Dependency(\.studentClient) var studentClient: StudentClient
 
         return GradeClient(
-            fetchTotalReportCard: {
+            setTotalReportCard: {
                 let session = try await studentClient.createSaintSession()
                 let courseGrades = try await CourseGradesApplicationBuilder().build(session: session).certificatedSummary(courseType: .bachelor)
                 let graduationRequirement = try await GraduationRequirementsApplicationBuilder().build(session: session).requirements()
                 let requirements = graduationRequirement.requirements.filter { $0.value.name.hasPrefix("학부-졸업학점") }
                     .compactMap { $0.value.requirement ?? 0}
                 if let graduateCredit = requirements.first {
-                    let totalReportCard = TotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit))
-                    return totalReportCard
+                    let context = coreDataStack.taskContext()
+                    createTotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit), in: context)
+
+                    context.performAndWait {
+                        do {
+                            try context.save()
+                        } catch {
+                            print("update [TotalReportCard] error : \(error)")
+                        }
+                    }
                 }
-                return nil
+                
+                return
             }, fetchAllSemesterGrades: {
                 let session = try await studentClient.createSaintSession()
                 let response = try await CourseGradesApplicationBuilder()
@@ -74,8 +82,14 @@ extension GradeClient: DependencyKey {
                 let context = coreDataStack.taskContext()
                 let fetchRequest: NSFetchRequest<CDTotalReportCard> = CDTotalReportCard.fetchRequest()
 
-                let fetchedEntity = try context.fetch(fetchRequest)
-                return fetchedEntity.toTotalReportCard()
+                do {
+                    let data = try context.fetch(fetchRequest)
+                    print("===== \(data.toTotalReportCard())")
+                    return data.toTotalReportCard()
+                } catch {
+                    print(error.localizedDescription)
+                    return TotalReportCard(gpa: 0.00, earnedCredit: 0, graduateCredit: 0)
+                }
             },
             getAllSemesterGrades: {
                 let context = coreDataStack.taskContext()
@@ -97,12 +111,6 @@ extension GradeClient: DependencyKey {
                 } else {
                     return nil
                 }
-            },
-            updateTotalReportCard: { gpa, earnedCredit, graduateCredit in
-                let context = coreDataStack.taskContext()
-                createTotalReportCard(gpa: gpa, earnedCredit: earnedCredit, graduateCredit: graduateCredit, in: context)
-
-                try context.save()
             },
             updateAllSemesterGrades: { grades in
                 let context = coreDataStack.taskContext()
@@ -264,8 +272,8 @@ extension GradeClient: DependencyKey {
     }()
 
     static let previewValue: GradeClient = Self(
-        fetchTotalReportCard: {
-            TotalReportCard(gpa: 4.34, earnedCredit: 108, graduateCredit: 133)
+        setTotalReportCard: {
+            return
         }, fetchAllSemesterGrades:  {
             [
                 SemesterGrade(
@@ -296,8 +304,6 @@ extension GradeClient: DependencyKey {
             ]
         }, getGrades: { year, semester in
             CDSemester()
-        }, updateTotalReportCard: {gpa,earnedCredit,graduateCredit in 
-            return
         }, updateAllSemesterGrades: { rusaintSemesterGrades in
             return
         }, updateGrades: { year, semester, newLectures in

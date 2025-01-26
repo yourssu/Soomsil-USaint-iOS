@@ -22,10 +22,10 @@ struct newHomeView: View {
             VStack {
                 title
                 VStack {
-                    Student(student: $testStudent) {
+                    Student(student: store.studentInfo) {
                         store.send(.settingPressed)
                     }
-                    GradeInfo(reportCard: $testReportCard) {
+                    GradeInfo(reportCard: store.totalReportCard) {
                         store.send(.semesterListPressed)
                     }
                     Spacer()
@@ -41,7 +41,7 @@ struct newHomeView: View {
 
     // MARK: - StudentInfo
     struct Student: View {
-        @Binding var student: StudentInfo
+        var student: StudentInfo
 
         let onSettingPressed: () -> Void
 
@@ -73,7 +73,7 @@ struct newHomeView: View {
 
     // MARK: - GradeSection
     struct GradeInfo: View {
-        @Binding var reportCard: TotalReportCard
+        var reportCard: TotalReportCard
 
         let onSemesterListPressed: () -> Void
 
@@ -184,7 +184,7 @@ private extension newHomeView {
 }
 
 #Preview {
-    newHomeView(store: Store(initialState: HomeReducer.State()) {
+    newHomeView(store: Store(initialState: HomeReducer.State(studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "6학년"))) {
         HomeReducer()
     })
 }
