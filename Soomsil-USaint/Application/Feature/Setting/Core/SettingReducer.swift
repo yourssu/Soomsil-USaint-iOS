@@ -16,6 +16,7 @@ struct SettingReducer {
     struct State {
         @Shared(.appStorage("permission")) var permission = false
         var alert: ActiveAlert? = nil
+        var path = StackState<Path.State>()
     }
     
     enum Action: BindableAction {
@@ -27,6 +28,12 @@ struct SettingReducer {
         case requestPushAuthorizationResponse(Result<Bool, Error>)
         case termsOfServiceButtonTapped
         case privacyPolicyButtonTapped
+        case path(StackActionOf<Path>)
+    }
+    
+    @Reducer(state: .equatable)
+    enum Path {
+        case navigateToTermsWebView(WebReducer)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -72,14 +79,15 @@ struct SettingReducer {
                 YDSToast("logoutButtonTapped 성공하였습니다.", haptic: .success)
                 return .none
             case .termsOfServiceButtonTapped:
-                YDSToast("termsOfServiceButtonTapped 성공하였습니다.", haptic: .success)
+                state.path.append(.navigateToTermsWebView(WebReducer.State(url: URL(string: "https://auth.yourssu.com/terms/service.html")!)))
                 return .none
             case .privacyPolicyButtonTapped:
-                YDSToast("privacyPolicyButtonTapped 성공하였습니다.", haptic: .success)
+                state.path.append(.navigateToTermsWebView(WebReducer.State(url: URL(string: "https://auth.yourssu.com/terms/information.html")!)))
                 return .none
             default:
                 return .none
             }
         }
+        .forEach(\.path, action: \.path)
     }
 }
