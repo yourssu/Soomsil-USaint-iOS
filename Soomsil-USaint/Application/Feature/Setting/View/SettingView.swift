@@ -16,55 +16,61 @@ struct SettingView: View {
     
     var body: some View {
         WithPerceptionTracking {
-            VStack(spacing: 4) {
-                title
-                SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
-                    switch tappedItem {
-                    case .logout:
-                        store.send(.logoutButtonTapped)
-                    case .toggleAuthorization(let granted):
-                        store.send(.togglePushAuthorization(granted))
-                    case .termsOfService:
-                        store.send(.termsOfServiceButtonTapped)
-                    case .privacyPolicy:
-                        store.send(.privacyPolicyButtonTapped)
+            NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+                VStack(spacing: 4) {
+                    title
+                    SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
+                        switch tappedItem {
+                        case .logout:
+                            store.send(.logoutButtonTapped)
+                        case .toggleAuthorization(let granted):
+                            store.send(.togglePushAuthorization(granted))
+                        case .termsOfService:
+                            store.send(.termsOfServiceButtonTapped)
+                        case .privacyPolicy:
+                            store.send(.privacyPolicyButtonTapped)
+                        }
                     }
                 }
-            }
-            .registerYDSToast()
-            .alert(item: $store.alert) { alertType in
-                switch alertType {
-                case .logout:
-                    return Alert(
-                        title: Text("로그아웃 하시겠습니까?"),
-                        message: nil,
-                        primaryButton: .default(
-                            Text("취소")
-                        ),
-                        secondaryButton: .destructive(
-                            Text("로그아웃"),
-                            action: {
-                                store.send(.logoutButtonTapped)
-                            }
+                .registerYDSToast()
+                .alert(item: $store.alert) { alertType in
+                    switch alertType {
+                    case .logout:
+                        return Alert(
+                            title: Text("로그아웃 하시겠습니까?"),
+                            message: nil,
+                            primaryButton: .default(
+                                Text("취소")
+                            ),
+                            secondaryButton: .destructive(
+                                Text("로그아웃"),
+                                action: {
+                                    store.send(.logoutButtonTapped)
+                                }
+                            )
                         )
-                    )
-                case .permission:
-                    return Alert(
-                        title: Text("알림 설정"),
-                        message: Text("알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요."),
-                        primaryButton: .default(
-                            Text("취소")
-                        ),
-                        secondaryButton: .default(
-                            Text("설정"),
-                            action: {
-                                store.send(.configureSettingTapped)
-                            }
+                    case .permission:
+                        return Alert(
+                            title: Text("알림 설정"),
+                            message: Text("알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요."),
+                            primaryButton: .default(
+                                Text("취소")
+                            ),
+                            secondaryButton: .default(
+                                Text("설정"),
+                                action: {
+                                    store.send(.configureSettingTapped)
+                                }
+                            )
                         )
-                    )
+                    }
+                }
+            } destination: { store in
+                switch store.case {
+                case .navigateToTermsWebView(let store):
+                    WebView(store: store)
                 }
             }
-            
         }
     }
     
