@@ -84,7 +84,6 @@ extension GradeClient: DependencyKey {
 
                 do {
                     let data = try context.fetch(fetchRequest)
-                    print("===== \(data.toTotalReportCard())")
                     return data.toTotalReportCard()
                 } catch {
                     print(error.localizedDescription)
