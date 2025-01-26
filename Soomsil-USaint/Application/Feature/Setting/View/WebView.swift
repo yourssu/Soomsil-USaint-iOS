@@ -53,6 +53,5 @@ struct RepresentableWebView: UIViewRepresentable {
         WebView(store: Store(initialState: WebReducer.State(url: URL(string: "https://www.google.com")!), reducer: {
             WebReducer()
         }))
-
     }
 }

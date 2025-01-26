@@ -13,7 +13,7 @@ import ComposableArchitecture
 struct WebReducer {
     
     @ObservableState
-    struct State {
+    struct State: Equatable {
         let url: URL
     }
     
