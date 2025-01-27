@@ -36,11 +36,6 @@ struct SettingReducer {
         }
     }
     
-    @Reducer(state: .equatable)
-    enum Path {
-        case navigateToTermsWebView(WebReducer)
-    }
-    
     @Dependency(\.localNotificationClient) var localNotificationClient
     
     var body: some ReducerOf<Self> {
@@ -116,10 +111,13 @@ struct SettingReducer {
                     }))
                 }
             case .termsOfServiceButtonTapped:
-                state.path.append(.navigateToTermsWebView(WebReducer.State(url: URL(string: "https://auth.yourssu.com/terms/service.html")!)))
+                state.path.append(
+                    .navigateToTermsWebView(WebReducer.State(
+                        url: URL(string: "https://auth.yourssu.com/terms/service.html")!)))
                 return .none
             case .privacyPolicyButtonTapped:
-                state.path.append(.navigateToTermsWebView(WebReducer.State(url: URL(string: "https://auth.yourssu.com/terms/information.html")!)))
+                state.path.append(.navigateToTermsWebView(WebReducer.State(
+                    url: URL(string: "https://auth.yourssu.com/terms/information.html")!)))
                 return .none
             default:
                 return .none
@@ -127,5 +125,12 @@ struct SettingReducer {
         }
         .ifLet(\.$alert, action: \.alert)
         .forEach(\.path, action: \.path)
+    }
+}
+
+extension SettingReducer {
+    @Reducer
+    enum Path {
+        case navigateToTermsWebView(WebReducer)
     }
 }
