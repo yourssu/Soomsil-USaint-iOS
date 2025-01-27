@@ -81,7 +81,6 @@ struct SettingView: View {
                             .padding(.vertical, 20)
                             .tint(YDSColor.buttonPoint)
                             .onChange(of: isPushAuthorizationEnabled) { newValue in
-                                print("newValue: \(newValue)")
                                 listItemTapped(.toggleAuthorization(newValue))
                             }
                     }

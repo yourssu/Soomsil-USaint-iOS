@@ -65,6 +65,7 @@ struct SettingReducer {
             case .alert(.presented(.logout)):
                 // TODO: logout logic
                 debugPrint("alert logout")
+                YDSToast("로그아웃", haptic: .success)
                 return .none
             case .togglePushAuthorization(true):
                 return .run { send in
