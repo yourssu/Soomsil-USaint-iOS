@@ -12,7 +12,6 @@ import YDS_SwiftUI
 
 struct SettingView: View {
     @Perception.Bindable var store: StoreOf<SettingReducer>
-    @State private var activeAlert: ActiveAlert?
     
     var body: some View {
         WithPerceptionTracking {
@@ -33,44 +32,16 @@ struct SettingView: View {
                     }
                 }
                 .registerYDSToast()
-                .alert(item: $store.alert) { alertType in
-                    switch alertType {
-                    case .logout:
-                        return Alert(
-                            title: Text("로그아웃 하시겠습니까?"),
-                            message: nil,
-                            primaryButton: .default(
-                                Text("취소")
-                            ),
-                            secondaryButton: .destructive(
-                                Text("로그아웃"),
-                                action: {
-                                    store.send(.logoutButtonTapped)
-                                }
-                            )
-                        )
-                    case .permission:
-                        return Alert(
-                            title: Text("알림 설정"),
-                            message: Text("알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요."),
-                            primaryButton: .default(
-                                Text("취소")
-                            ),
-                            secondaryButton: .default(
-                                Text("설정"),
-                                action: {
-                                    store.send(.configureSettingTapped)
-                                }
-                            )
-                        )
-                    }
-                }
+
             } destination: { store in
                 switch store.case {
                 case .navigateToTermsWebView(let store):
                     WebView(store: store)
                 }
             }
+            .alert(
+                $store.scope(state: \.alert, action: \.alert)
+            )
         }
     }
     
@@ -137,7 +108,6 @@ struct SettingView: View {
                 Spacer()
             }
         }
-        
     }
 }
 
@@ -145,20 +115,6 @@ private extension SettingView {
     var title: some View {
         Text("설정")
             .font(YDSFont.subtitle2)
-    }
-}
-
-enum ActiveAlert: Identifiable {
-    case logout
-    case permission
-    
-    var id: String {
-        switch self {
-        case .logout:
-            return "logout"
-        case .permission:
-            return "permission"
-        }
     }
 }
 

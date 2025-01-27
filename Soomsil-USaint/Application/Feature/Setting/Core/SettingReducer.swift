@@ -15,7 +15,7 @@ struct SettingReducer {
     @ObservableState
     struct State {
         @Shared(.appStorage("permission")) var permission = false
-        var alert: ActiveAlert? = nil
+        @Presents var alert: AlertState<Action.Alert>?
         var path = StackState<Path.State>()
     }
     
@@ -24,11 +24,16 @@ struct SettingReducer {
         case logoutButtonTapped
         case togglePushAuthorization(Bool)
         case pushAuthorizationResponse(Result<Bool, Error>)
-        case configureSettingTapped
         case requestPushAuthorizationResponse(Result<Bool, Error>)
         case termsOfServiceButtonTapped
         case privacyPolicyButtonTapped
         case path(StackActionOf<Path>)
+        case alert(PresentationAction<Alert>)
+        
+        enum Alert: Equatable {
+            case logout
+            case configurePushAuthorization
+        }
     }
     
     @Reducer(state: .equatable)
@@ -42,6 +47,25 @@ struct SettingReducer {
         BindingReducer()
         Reduce { state, action in
             switch action {
+            case .logoutButtonTapped:
+                state.alert = AlertState {
+                    TextState("로그아웃 하시겠습니까?")
+                } actions: {
+                    ButtonState(
+                        role: .destructive,
+                        action: .logout) {
+                            TextState("로그아웃")
+                        }
+                    ButtonState(
+                        role: .cancel) {
+                            TextState("취소")
+                        }
+                }
+                return .none
+            case .alert(.presented(.logout)):
+                // TODO: logout logic
+                debugPrint("alert logout")
+                return .none
             case .togglePushAuthorization(true):
                 return .run { send in
                     await send(.pushAuthorizationResponse(Result {
@@ -54,15 +78,24 @@ struct SettingReducer {
             case .pushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
                 if !granted {
-                    state.alert = .permission
+                    state.alert = AlertState {
+                        TextState("알림 설정")
+                    } actions: {
+                        ButtonState(
+                            role: .destructive,
+                            action: .configurePushAuthorization
+                        ) {
+                            TextState("설정")
+                        }
+                        ButtonState(
+                            role: .cancel) {
+                                TextState("취소")
+                            }
+                    } message: {
+                        TextState("알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요.")
+                    }
                 }
                 return .none
-            case .configureSettingTapped:
-                return .run { send in
-                    await send(.requestPushAuthorizationResponse(Result {
-                        return try await localNotificationClient.requestPushAuthorization()
-                    }))
-                }
             case .requestPushAuthorizationResponse(.success(let granted)):
                 if !granted {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -74,10 +107,13 @@ struct SettingReducer {
                     }
                 }
                 return .none
-                        
-            case .logoutButtonTapped:
-                YDSToast("logoutButtonTapped 성공하였습니다.", haptic: .success)
-                return .none
+            case .alert(.presented(.configurePushAuthorization)):
+                debugPrint("alert permission")
+                return .run { send in
+                    await send(.requestPushAuthorizationResponse(Result {
+                        try await localNotificationClient.requestPushAuthorization()
+                    }))
+                }
             case .termsOfServiceButtonTapped:
                 state.path.append(.navigateToTermsWebView(WebReducer.State(url: URL(string: "https://auth.yourssu.com/terms/service.html")!)))
                 return .none
@@ -88,6 +124,7 @@ struct SettingReducer {
                 return .none
             }
         }
+        .ifLet(\.$alert, action: \.alert)
         .forEach(\.path, action: \.path)
     }
 }
