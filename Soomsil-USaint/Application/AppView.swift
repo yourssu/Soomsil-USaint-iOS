@@ -10,7 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct AppView: View {
-    @Perception.Bindable var store: StoreOf<AppReducer>
+    @Bindable var store: StoreOf<AppReducer>
     
     // TODO: 삭제 예정
     @State var isLoggedIn = HomeRepository.shared.hasCachedUserInformation

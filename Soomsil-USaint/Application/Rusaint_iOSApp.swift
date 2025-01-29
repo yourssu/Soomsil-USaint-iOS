@@ -30,9 +30,9 @@ struct Rusaint_iOSApp: App {
 //                    }
 //                }
             AppView(store: store)
-                .onChange(of: scenePhase) { phase in
-                    debugPrint("ScenePhase: \(phase)")
-                    if phase == .background {
+                .onChange(of: scenePhase) { oldPhase, newPhase in
+                    debugPrint("ScenePhase: \(oldPhase) to \(newPhase)")
+                    if newPhase == .background {
                         scheduleCurrentSemester()
                     }
                 }

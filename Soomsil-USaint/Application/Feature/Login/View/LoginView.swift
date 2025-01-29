@@ -22,30 +22,27 @@ private enum Dimension {
 }
 
 struct LoginView: View {
-    @Perception.Bindable var store: StoreOf<LoginReducer>
+    @Bindable var store: StoreOf<LoginReducer>
     
     var body: some View {
-        // MARK: iOS 16 이하 대응 - WithPerceptionTracking로 감싸지 않을 경우, Perceptible state was accessed but is not being tracked. 메모리 관련 경고 발생
-        WithPerceptionTracking {
-            VStack(spacing: 4) {
-                title
-                LoginForm(id: $store.id, password: $store.password) {
-                    store.send(.loginPressed)
-                }
-                Spacer()
+        VStack(spacing: 4) {
+            title
+            LoginForm(id: $store.id, password: $store.password) {
+                store.send(.loginPressed)
             }
-            .background {
-                Color.clear.tapToHideKeyboard()
+            Spacer()
+        }
+        .background {
+            Color.clear.tapToHideKeyboard()
+        }
+        .overlay {
+            if store.isLoading {
+                CircleLoadingView()
             }
-            .overlay {
-                if store.isLoading {
-                    CircleLoadingView()
-                }
-            }
-            .registerYDSToast()
-            .onAppear {
-                store.send(.onAppear)
-            }
+        }
+        .registerYDSToast()
+        .onAppear {
+            store.send(.onAppear)
         }
     }
     
