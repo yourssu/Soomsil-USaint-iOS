@@ -28,7 +28,6 @@ struct AppReducer {
         case backgroundTask
         case login(LoginReducer.Action)
         case home(HomeReducer.Action)
-        case logout
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -58,10 +57,6 @@ struct AppReducer {
                 }
             case .login(.loginResponse(.success)):
                 state = .loggedIn(HomeReducer.State())
-                return .none
-            case .logout:
-                debugPrint("AppReducer: logout")
-                state = .loggedOut(LoginReducer.State())
                 return .none
             default:
                 return .none
