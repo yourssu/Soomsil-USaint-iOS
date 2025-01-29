@@ -5,6 +5,7 @@
 //  Created by 이조은 on 12/15/24.
 //
 
+import SwiftData
 import SwiftUI
 import BackgroundTasks
 
@@ -37,6 +38,7 @@ struct Rusaint_iOSApp: App {
                     }
                 }
         }
+        .modelContainer(SwiftDataClient.container)
         .backgroundTask(.appRefresh("soomsilUSaint.com")) {
             await store.send(.backgroundTask)
         }

@@ -9,9 +9,10 @@ import UIKit
 
 import ComposableArchitecture
 
+@DependencyClient
 struct LocalNotificationClient {
     var requestPushAuthorization: @Sendable () async throws -> Bool
-    var getPushAuthorizationStatus: @Sendable () async -> Bool
+    var getPushAuthorizationStatus: @Sendable () async throws -> Bool
     var setLecturePushNotification: @Sendable (String) async throws -> Void
 }
 

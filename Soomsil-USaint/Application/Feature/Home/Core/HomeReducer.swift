@@ -50,7 +50,7 @@ struct HomeReducer {
                         if (isFirst) {
                             return try await localNotificationClient.requestPushAuthorization()
                         } else {
-                            return await localNotificationClient.getPushAuthorizationStatus()
+                            return try await localNotificationClient.getPushAuthorizationStatus()
                         }
                     }))
                     await send(.initStudentReponse(Result {
