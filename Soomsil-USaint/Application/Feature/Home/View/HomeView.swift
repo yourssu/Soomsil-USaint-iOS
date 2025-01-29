@@ -76,7 +76,7 @@ struct HomeView<VM: HomeViewModel>: View {
                 .navigationDestination(for: StackView.self) { stackView in
                     switch stackView.type {
                     case .Setting:
-                        SettingView(path: $path, isLoggedIn: $isLoggedIn)
+                        LegacySettingView(path: $path, isLoggedIn: $isLoggedIn)
                     case .SemesterList:
                         SemesterListView(path: $path, semesterListViewModel: DefaultSemesterListViewModel())
                     case .SemesterDetail(let gradeSummary):
