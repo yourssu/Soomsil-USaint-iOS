@@ -181,7 +181,7 @@ private extension HomeView {
 }
 
 #Preview {
-    HomeView(store: Store(initialState: HomeReducer.State(studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "6학년"))) {
+    HomeView(store: Store(initialState: HomeReducer.State(studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "6학년"), totalReportCard: TotalReportCard(gpa: 3.4, earnedCredit: 34.5, graduateCredit: 124.0))) {
         HomeReducer()
     })
 }
