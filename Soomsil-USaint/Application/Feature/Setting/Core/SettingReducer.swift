@@ -17,7 +17,7 @@ struct SettingReducer {
         @Shared(.appStorage("permission")) var permission = false
         @Presents var alert: AlertState<Action.Alert>?
         var path = StackState<Path.State>()
-        var app = AppReducer.State()
+        var app: AppReducer.State?
 //        @Presents var app: AppReducer.State?
     }
     
@@ -42,9 +42,9 @@ struct SettingReducer {
     @Dependency(\.localNotificationClient) var localNotificationClient
     
     var body: some ReducerOf<Self> {
-        Scope(state: \.app, action: \.app) {
-            AppReducer()
-        }
+//        Scope(state: \.app, action: \.app) {
+//            AppReducer()
+//        }
         BindingReducer()
         Reduce { state, action in
             switch action {
@@ -67,11 +67,11 @@ struct SettingReducer {
                 // TODO: logout logic
                 debugPrint("settingReducer: logout")
                 YDSToast("로그아웃", haptic: .success)
-                return .run { send in
-                    await send(.app(.logout))
-                }
-//                state.app = .loggedOut(LoginReducer.State())
-//                return .none
+//                return .run { send in
+//                    await send(.app(.logout))
+//                }
+                state.app = .loggedOut(LoginReducer.State())
+                return .none
                 
             case .togglePushAuthorization(true):
                 return .run { send in
@@ -133,6 +133,9 @@ struct SettingReducer {
             default:
                 return .none
             }
+        }
+        .ifLet(\.app, action: \.app) {
+            AppReducer()
         }
         .ifLet(\.$alert, action: \.alert)
         .forEach(\.path, action: \.path)
