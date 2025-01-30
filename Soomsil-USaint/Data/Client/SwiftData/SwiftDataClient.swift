@@ -13,6 +13,7 @@ import ComposableArchitecture
 @DependencyClient
 struct SwiftDataClient {
     var fetchTotalReportCard: () throws -> TotalReportCardTestModel?
+    var createTotalReportCard: (TotalReportCardTestModel) throws -> Void
     
     static let container: ModelContainer = {
         let schema = Schema([Lecture.self, Semester.self, TotalReportCardTestModel.self])
@@ -35,6 +36,9 @@ extension SwiftDataClient: DependencyKey {
             let context = ModelContext(container)
             let descripter = FetchDescriptor<TotalReportCardTestModel>()
             return try context.fetch(descripter).first;
+        }, createTotalReportCard: { totalReportCard in
+            let context = ModelContext(container)
+            context.insert(totalReportCard)
         }
     )
 }
