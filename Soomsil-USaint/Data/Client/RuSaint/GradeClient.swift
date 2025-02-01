@@ -13,18 +13,19 @@ import Rusaint
 struct GradeClient {
     static let coreDataStack: CoreDataStack = .shared
 
-    var setTotalReportCard:  @Sendable () async throws -> Void
+    var fetchTotalReportCard:  @Sendable () async throws -> TotalReportCard
     var fetchAllSemesterGrades: @Sendable () async throws -> [SemesterGrade]
     var fetchGrades: @Sendable (_ year: Int, _ semester: SemesterType) async throws -> [ClassGrade]
 
-    var getTotalReportCard: () async throws -> TotalReportCard
+    var getTotalReportCard: @Sendable () async throws -> TotalReportCard
     var getAllSemesterGrades: () async throws -> [CDSemester]
     var getGrades: (_ year: Int, _ semester: String) async throws -> CDSemester?
+    var updateTotalReportCard: @Sendable (_ totalReportCard: TotalReportCard) async throws -> Void
     var updateAllSemesterGrades: (_ rusaintSemesterGrades: [GradeSummary]) async throws -> Void
     var updateGrades: (_ year: Int, _ semester: String, _ newLectures: [LectureDetail]) async throws -> Void
     var updateGPA: (_ year: Int, _ semester: String, _ gpa: Float) async throws -> Void
     var addGrades: (_ newSemester: GradeSummary) async throws -> Void
-    var deleteTotalReportCard: () async throws -> Void
+    var deleteTotalReportCard: @Sendable () async throws -> Void
     var deleteAllSemesterGrades: () async throws -> Void
     var deleteGrades: (_ year: Int, _ semester: String) async throws -> Void
 }
@@ -41,26 +42,20 @@ extension GradeClient: DependencyKey {
         @Dependency(\.studentClient) var studentClient: StudentClient
 
         return GradeClient(
-            setTotalReportCard: {
+            fetchTotalReportCard: {
                 let session = try await studentClient.createSaintSession()
                 let courseGrades = try await CourseGradesApplicationBuilder().build(session: session).certificatedSummary(courseType: .bachelor)
                 let graduationRequirement = try await GraduationRequirementsApplicationBuilder().build(session: session).requirements()
                 let requirements = graduationRequirement.requirements.filter { $0.value.name.hasPrefix("학부-졸업학점") }
                     .compactMap { $0.value.requirement ?? 0}
-                if let graduateCredit = requirements.first {
-                    let context = coreDataStack.taskContext()
-                    createTotalReportCard(gpa: courseGrades.gradePointsAvarage, earnedCredit: courseGrades.earnedCredits, graduateCredit: Float(graduateCredit), in: context)
-
-                    context.performAndWait {
-                        do {
-                            try context.save()
-                        } catch {
-                            print("update [TotalReportCard] error : \(error)")
-                        }
-                    }
+                guard let graduateCredit = requirements.first else {
+                    throw RusaintError.invalidClientError
                 }
-                
-                return
+                return TotalReportCard(
+                    gpa: courseGrades.gradePointsAvarage,
+                    earnedCredit: courseGrades.earnedCredits,
+                    graduateCredit: Float(graduateCredit)
+                )
             }, fetchAllSemesterGrades: {
                 let session = try await studentClient.createSaintSession()
                 let response = try await CourseGradesApplicationBuilder()
@@ -109,6 +104,17 @@ extension GradeClient: DependencyKey {
                     return fetchedEntity
                 } else {
                     return nil
+                }
+            }, updateTotalReportCard: { totalReportCard in
+                let context = coreDataStack.taskContext()
+                createTotalReportCard(gpa: totalReportCard.gpa, earnedCredit: totalReportCard.earnedCredit, graduateCredit: Float(totalReportCard.graduateCredit), in: context)
+
+                context.performAndWait {
+                    do {
+                        try context.save()
+                    } catch {
+                        print("update [TotalReportCard] error : \(error)")
+                    }
                 }
             },
             updateAllSemesterGrades: { grades in
@@ -271,8 +277,8 @@ extension GradeClient: DependencyKey {
     }()
 
     static let previewValue: GradeClient = Self(
-        setTotalReportCard: {
-            return
+        fetchTotalReportCard: {
+            return TotalReportCard(gpa: 4.11, earnedCredit: 112, graduateCredit: 188)
         }, fetchAllSemesterGrades:  {
             [
                 SemesterGrade(
@@ -303,6 +309,8 @@ extension GradeClient: DependencyKey {
             ]
         }, getGrades: { year, semester in
             CDSemester()
+        }, updateTotalReportCard: { totalReportCard in
+            return
         }, updateAllSemesterGrades: { rusaintSemesterGrades in
             return
         }, updateGrades: { year, semester, newLectures in

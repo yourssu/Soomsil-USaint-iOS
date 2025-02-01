@@ -52,8 +52,9 @@ struct LoginReducer {
                     await send(.loginResponse(Result {
                         try await studentClient.setSaintInfo(saintInfo: saintInfo)
                         try await studentClient.setStudentInfo()
-                        try await gradeClient.setTotalReportCard()
-                        
+                        let rusaintReport = try await gradeClient.fetchTotalReportCard()
+                        try await gradeClient.updateTotalReportCard(rusaintReport)
+
                         let studentInfo = try await studentClient.getStudentInfo()
                         let report = try await gradeClient.getTotalReportCard()
                         

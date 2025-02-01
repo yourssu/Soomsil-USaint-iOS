@@ -40,6 +40,11 @@ struct AppReducer {
             case .initialize:
                 return .run { send in
                     await send(.initResponse(Result {
+                        let _ = try await studentClient.getSaintInfo()
+                        try await gradeClient.deleteTotalReportCard()
+                        let rusaintReport = try await gradeClient.fetchTotalReportCard()
+                        try await gradeClient.updateTotalReportCard(rusaintReport)
+
                         let info = try await studentClient.getStudentInfo()
                         let report = try await gradeClient.getTotalReportCard()
                         return (info, report)
