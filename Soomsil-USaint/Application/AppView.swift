@@ -28,7 +28,7 @@ struct AppView: View {
             }
         case .loggedIn:
             if let store = store.scope(state: \.loggedIn, action: \.home) {
-                HomeView(store: store, viewModel: DefaultSaintHomeViewModel(), isLoggedIn: $isLoggedIn)
+                HomeView(store: store)
             }
         }
     }
