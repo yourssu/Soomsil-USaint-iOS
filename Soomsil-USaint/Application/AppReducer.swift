@@ -15,7 +15,7 @@ struct AppReducer {
     enum State {
         case initial
         case loggedOut(LoginReducer.State)
-        case loggedIn(HomeReducer.State)
+        case loggedIn(RootReducer.State)
         
         init() {
             self = .initial
@@ -27,7 +27,7 @@ struct AppReducer {
         case initResponse(Result<(StudentInfo, TotalReportCard), Error>)
         case backgroundTask
         case login(LoginReducer.Action)
-        case home(HomeReducer.Action)
+        case root(RootReducer.Action)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -44,14 +44,18 @@ struct AppReducer {
                         try await gradeClient.deleteTotalReportCard()
                         let rusaintReport = try await gradeClient.fetchTotalReportCard()
                         try await gradeClient.updateTotalReportCard(rusaintReport)
-
+                        
                         let info = try await studentClient.getStudentInfo()
                         let report = try await gradeClient.getTotalReportCard()
                         return (info, report)
                     }))
                 }
             case .initResponse(.success(let (info, report))):
-                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
+                state = .loggedIn(
+                    RootReducer.State(
+                        home: HomeReducer.State(studentInfo: info, totalReportCard: report)
+                    )
+                )
                 return .none
             case .initResponse(.failure(let error)):
                 debugPrint(error)
@@ -64,7 +68,11 @@ struct AppReducer {
                     try await localNotificationClient.setLecturePushNotification("\(isFirst)")
                 }
             case .login(.loginResponse(.success(let (info, report)))):
-                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
+                state = .loggedIn(
+                    RootReducer.State(
+                        home: HomeReducer.State(studentInfo: info, totalReportCard: report)
+                    )
+                )
                 return .none
             default:
                 return .none
@@ -73,8 +81,8 @@ struct AppReducer {
         .ifCaseLet(\.loggedOut, action: \.login) {
             LoginReducer()
         }
-        .ifCaseLet(\.loggedIn, action: \.home) {
-            HomeReducer()
+        .ifCaseLet(\.loggedIn, action: \.root) {
+            RootReducer()
         }
     }
 }
