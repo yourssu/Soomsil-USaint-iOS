@@ -15,24 +15,30 @@ struct HomeReducer {
     struct State {
         @Shared(.appStorage("isFirst")) var isFirst = true
         @Shared(.appStorage("permission")) var permission = false
+        
+        var studentInfo: StudentInfo
+        var totalReportCard: TotalReportCard
     }
     
-    enum Action {
+    enum Action: BindableAction {
+        case binding(BindingAction<State>)
         case onAppear
         case checkPushAuthorizationResponse(Result<Bool, Error>)
-        case sendTestPushResponse(Result<Void, Error>)
+        case settingPressed
+        case semesterListPressed
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
+    @Dependency(\.studentClient) var studentClient
+    @Dependency(\.gradeClient) var gradeClient
     
     var body: some Reducer<State, Action> {
+        BindingReducer()
         Reduce { state, action in
             switch action {
             case .onAppear:
                 let isFirst = state.isFirst
-                debugPrint("Home - Before: \(state.isFirst)")
                 state.$isFirst.withLock { $0 = false }
-                debugPrint("Home - After: \(state.isFirst)")
                 return .run { send in
                     await send(.checkPushAuthorizationResponse(Result {
                         if (isFirst) {
@@ -44,15 +50,17 @@ struct HomeReducer {
                 }
             case .checkPushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
-                return .run { send in
-                    await send(.sendTestPushResponse(Result {
-                        try await localNotificationClient.setLecturePushNotification("Test")
-                    }))
-                }
+                return .none
             case .checkPushAuthorizationResponse(.failure(let error)):
                 debugPrint("Home Reducer: CheckPushAuthorization Error - \(error)")
                 return .none
-            case .sendTestPushResponse:
+            case .settingPressed:
+                debugPrint("== SettingView로 이동 ==")
+                return .none
+            case .semesterListPressed:
+                debugPrint("== SemesterList로 이동 ==")
+                return .none
+            case .binding(_):
                 return .none
             }
         }

@@ -24,13 +24,14 @@ struct AppReducer {
     
     enum Action {
         case initialize
-        case initResponse(Result<Void, Error>)
+        case initResponse(Result<(StudentInfo, TotalReportCard), Error>)
         case backgroundTask
         case login(LoginReducer.Action)
         case home(HomeReducer.Action)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
+    @Dependency(\.gradeClient) var gradeClient
     @Dependency(\.studentClient) var studentClient
     
     var body: some Reducer<State, Action> {
@@ -40,10 +41,17 @@ struct AppReducer {
                 return .run { send in
                     await send(.initResponse(Result {
                         let _ = try await studentClient.getSaintInfo()
+                        try await gradeClient.deleteTotalReportCard()
+                        let rusaintReport = try await gradeClient.fetchTotalReportCard()
+                        try await gradeClient.updateTotalReportCard(rusaintReport)
+
+                        let info = try await studentClient.getStudentInfo()
+                        let report = try await gradeClient.getTotalReportCard()
+                        return (info, report)
                     }))
                 }
-            case .initResponse(.success):
-                state = .loggedIn(HomeReducer.State())
+            case .initResponse(.success(let (info, report))):
+                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
                 return .none
             case .initResponse(.failure(let error)):
                 debugPrint(error)
@@ -55,8 +63,8 @@ struct AppReducer {
                     @Shared(.appStorage("isFirst")) var isFirst = true
                     try await localNotificationClient.setLecturePushNotification("\(isFirst)")
                 }
-            case .login(.loginResponse(.success)):
-                state = .loggedIn(HomeReducer.State())
+            case .login(.loginResponse(.success(let (info, report)))):
+                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
                 return .none
             default:
                 return .none
