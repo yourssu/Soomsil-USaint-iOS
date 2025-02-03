@@ -60,8 +60,8 @@ struct OldHomeView<VM: HomeViewModel>: View {
                     .background(Color(red: 0.95, green: 0.96, blue: 0.97))
                 }
                 .background(.white)
-//                .onAppear {
-//                    store.send(.onAppear)
+                .onAppear {
+                    store.send(.onAppear)
 //                    if !isFirst {
 //                        LocalNotificationManager().requestAuthorization(completion: { _ in
 //                        })
@@ -70,7 +70,7 @@ struct OldHomeView<VM: HomeViewModel>: View {
 //                }
 //                .task {
 //                    await loadUserInfoAndTotalReposrtCard()
-//                }
+                }
                 .registerYDSToast()
                 .animation(.easeInOut, value: viewModel.isLogedIn())
 //                .navigationDestination(for: StackView.self) { stackView in
