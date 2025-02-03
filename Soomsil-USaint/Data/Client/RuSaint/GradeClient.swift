@@ -107,7 +107,7 @@ extension GradeClient: DependencyKey {
                 }
             }, updateTotalReportCard: { totalReportCard in
                 let context = coreDataStack.taskContext()
-                createTotalReportCard(gpa: totalReportCard.gpa, earnedCredit: totalReportCard.earnedCredit, graduateCredit: Float(totalReportCard.graduateCredit), in: context)
+                context.createTotalReportCard(gpa: totalReportCard.gpa, earnedCredit: totalReportCard.earnedCredit, graduateCredit: Float(totalReportCard.graduateCredit))
 
                 context.performAndWait {
                     do {
@@ -123,7 +123,7 @@ extension GradeClient: DependencyKey {
                 try context.execute(deleteRequest)
 
                 for grade in grades {
-                    createSemester(year: grade.year,
+                    context.createSemester(year: grade.year,
                                    semester: grade.semester,
                                    gpa: grade.gpa,
                                    earnedCredit: grade.earnedCredit,
@@ -131,8 +131,7 @@ extension GradeClient: DependencyKey {
                                    semesterStudentCount: grade.semesterStudentCount,
                                    overallRank: grade.overallRank,
                                    overallStudentCount: grade.overallStudentCount,
-                                   lectures: grade.lectures ?? nil,
-                                   in: context)
+                                   lectures: grade.lectures ?? nil)
                 }
                 try context.save()
             },
@@ -185,7 +184,8 @@ extension GradeClient: DependencyKey {
             addGrades: { newSemester in
                 let context = coreDataStack.taskContext()
 
-                createSemester(year: newSemester.year,
+
+                context.createSemester(year: newSemester.year,
                                semester: newSemester.semester,
                                gpa: newSemester.gpa,
                                earnedCredit: newSemester.earnedCredit,
@@ -193,8 +193,7 @@ extension GradeClient: DependencyKey {
                                semesterStudentCount: newSemester.semesterStudentCount,
                                overallRank: newSemester.overallRank,
                                overallStudentCount: newSemester.overallStudentCount,
-                               lectures: newSemester.lectures ?? nil,
-                               in: context)
+                               lectures: newSemester.lectures ?? nil)
 
                 try context.save()
             },
@@ -227,53 +226,6 @@ extension GradeClient: DependencyKey {
                 try context.save()
             }
         )
-
-        func createSemester(
-            year: Int,
-            semester: String,
-            gpa: Float,
-            earnedCredit: Float,
-            semesterRank: Int,
-            semesterStudentCount: Int,
-            overallRank: Int,
-            overallStudentCount: Int,
-            lectures: [LectureDetail]?,
-            in context: NSManagedObjectContext
-        ) {
-            let semesterEntity = CDSemester(context: context)
-            semesterEntity.year = Int16(year)
-            semesterEntity.semester = semester
-            semesterEntity.gpa = gpa
-            semesterEntity.earnedCredit = earnedCredit
-            semesterEntity.semesterRank = Int16(semesterRank)
-            semesterEntity.semesterStudentCount = Int16(semesterStudentCount)
-            semesterEntity.overallRank = Int16(overallRank)
-            semesterEntity.overallStudentCount = Int16(overallStudentCount)
-
-            let lectureEntities = lectures?.compactMap { lecture -> CDLecture? in
-                let cdLecture = CDLecture(context: context)
-                cdLecture.code = lecture.code
-                cdLecture.title = lecture.title
-                cdLecture.credit = Float(lecture.credit)
-                cdLecture.score = lecture.score
-                cdLecture.grade = lecture.grade.rawValue
-                cdLecture.professorName = lecture.professorName
-                return cdLecture
-            }
-            lectureEntities?.forEach { semesterEntity.addToLectures($0) }
-        }
-
-        func createTotalReportCard(
-            gpa: Float,
-            earnedCredit: Float,
-            graduateCredit: Float,
-            in context: NSManagedObjectContext
-        ) {
-            let detail = CDTotalReportCard(context: context)
-            detail.gpa = gpa
-            detail.earnedCredit = earnedCredit
-            detail.graduateCredit = graduateCredit
-        }
     }()
 
     static let previewValue: GradeClient = Self(
