@@ -16,8 +16,8 @@ struct SettingReducer {
     struct State {
         @Shared(.appStorage("permission")) var permission = false
         @Presents var alert: AlertState<Action.Alert>?
-        var path = StackState<Path.State>()
-        var appState: AppReducer.State?
+//        var path = StackState<Path.State>()
+//        var appState: AppReducer.State?
     }
     
     enum Action: BindableAction {
@@ -28,9 +28,9 @@ struct SettingReducer {
         case requestPushAuthorizationResponse(Result<Bool, Error>)
         case termsOfServiceButtonTapped
         case privacyPolicyButtonTapped
-        case path(StackActionOf<Path>)
+//        case path(StackActionOf<Path>)
         case alert(PresentationAction<Alert>)
-        case appState(AppReducer.Action)
+//        case appState(AppReducer.Action)
         
         enum Alert: Equatable {
             case logout
@@ -60,9 +60,7 @@ struct SettingReducer {
                 }
                 return .none
             case .alert(.presented(.logout)):
-                debugPrint("settingReducer: logout")
-                YDSToast("로그아웃", haptic: .success)
-                state.appState = .loggedOut(LoginReducer.State())
+//                YDSToast("로그아웃", haptic: .success)
                 return .none
             case .togglePushAuthorization(true):
                 return .run { send in
@@ -112,30 +110,30 @@ struct SettingReducer {
                         try await localNotificationClient.requestPushAuthorization()
                     }))
                 }
-            case .termsOfServiceButtonTapped:
-                state.path.append(
-                    .navigateToTermsWebView(WebReducer.State(
-                        url: URL(string: "https://auth.yourssu.com/terms/service.html")!)))
-                return .none
-            case .privacyPolicyButtonTapped:
-                state.path.append(.navigateToTermsWebView(WebReducer.State(
-                    url: URL(string: "https://auth.yourssu.com/terms/information.html")!)))
-                return .none
+//            case .termsOfServiceButtonTapped:
+//                state.path.append(
+//                    .navigateToTermsWebView(WebReducer.State(
+//                        url: URL(string: "https://auth.yourssu.com/terms/service.html")!)))
+//                return .none
+//            case .privacyPolicyButtonTapped:
+//                state.path.append(.navigateToTermsWebView(WebReducer.State(
+//                    url: URL(string: "https://auth.yourssu.com/terms/information.html")!)))
+//                return .none
             default:
                 return .none
             }
         }
-        .ifLet(\.appState, action: \.appState) {
-            AppReducer()
-        }
+//        .ifLet(\.appState, action: \.appState) {
+//            AppReducer()
+//        }
         .ifLet(\.$alert, action: \.alert)
-        .forEach(\.path, action: \.path)
+//        .forEach(\.path, action: \.path)
     }
 }
 
-extension SettingReducer {
-    @Reducer
-    enum Path {
-        case navigateToTermsWebView(WebReducer)
-    }
-}
+//extension SettingReducer {
+//    @Reducer
+//    enum Path {
+//        case navigateToTermsWebView(WebReducer)
+//    }
+//}

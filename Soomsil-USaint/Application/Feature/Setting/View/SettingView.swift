@@ -15,10 +15,10 @@ struct SettingView: View {
     
     var body: some View {
         WithPerceptionTracking {
-            if let store = store.scope(state: \.appState, action: \.appState) {
-                AppView(store: store)
-            } else {
-                NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+//            if let store = store.scope(state: \.appState, action: \.appState) {
+//                AppView(store: store)
+//            } else {
+//                NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
                     VStack(spacing: 4) {
                         title
                         SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
@@ -36,16 +36,16 @@ struct SettingView: View {
                     }
                     .registerYDSToast()
 
-                } destination: { store in
-                    switch store.case {
-                    case .navigateToTermsWebView(let store):
-                        WebView(store: store)
-                    }
-                }
+//                } destination: { store in
+//                    switch store.case {
+//                    case .navigateToTermsWebView(let store):
+//                        WebView(store: store)
+//                    }
+//                }
                 .alert(
                     $store.scope(state: \.alert, action: \.alert)
                 )
-            }
+//            }
         }
     }
     
