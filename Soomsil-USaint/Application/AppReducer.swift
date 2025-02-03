@@ -36,6 +36,7 @@ struct AppReducer {
     
     var body: some Reducer<State, Action> {
         Reduce { state, action in
+            debugPrint(action)
             switch action {
             case .initialize:
                 return .run { send in
@@ -73,6 +74,9 @@ struct AppReducer {
                         home: HomeReducer.State(studentInfo: info, totalReportCard: report)
                     )
                 )
+                return .none
+            case .root(.path(.element(id: _, action: .setting(.alert(.presented(.logout)))))):
+                state = .loggedOut(LoginReducer.State())
                 return .none
             default:
                 return .none

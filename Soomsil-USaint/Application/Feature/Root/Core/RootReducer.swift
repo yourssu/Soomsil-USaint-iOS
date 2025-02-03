@@ -35,19 +35,26 @@ struct RootReducer {
             HomeReducer()
         }
         Reduce { state, action in
+            debugPrint(action)
             switch action {
             case .home(.settingPressed):
                 state.path.append(.setting(SettingReducer.State()))
                 return .none
             case .path(let action):
-                print(action)
-                return .none
-//                switch (action) {
-//                case .element(id: _, action: .home(.settingPressed)):
-//                    return .none
-//                default:
-//                    return .none
-//                }
+                switch action {
+                case .element(id: _, action: .setting(.termsOfServiceButtonTapped)):
+                    state.path.append(.web(WebReducer.State(
+                        url: URL(string: "https://auth.yourssu.com/terms/service.html")!
+                    )))
+                    return .none
+                case .element(id: _, action: .setting(.privacyPolicyButtonTapped)):
+                    state.path.append(.web(WebReducer.State(
+                        url: URL(string: "https://auth.yourssu.com/terms/information.html")!
+                    )))
+                    return .none
+                default:
+                    return .none
+                }
             default:
                 return .none
             }
