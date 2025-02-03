@@ -21,9 +21,6 @@ struct RootReducer {
     
     @ObservableState
     struct State {
-        @Shared(.appStorage("isFirst")) var isFirst = true
-        @Shared(.appStorage("permission")) var permission = false
-        
         var path = StackState<Path.State>()
         var home: HomeReducer.State
     }
@@ -31,9 +28,6 @@ struct RootReducer {
     enum Action {
         case path(StackActionOf<Path>)
         case home(HomeReducer.Action)
-        
-        case onAppear
-        case checkPushAuthorizationResponse(Result<Bool, Error>)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -44,24 +38,6 @@ struct RootReducer {
         }
         Reduce { state, action in
             switch action {
-            case .onAppear:
-                let isFirst = state.isFirst
-                state.$isFirst.withLock { $0 = false }
-                return .run { send in
-                    await send(.checkPushAuthorizationResponse(Result {
-                        if (isFirst) {
-                            return try await localNotificationClient.requestPushAuthorization()
-                        } else {
-                            return await localNotificationClient.getPushAuthorizationStatus()
-                        }
-                    }))
-                }
-            case .checkPushAuthorizationResponse(.success(let granted)):
-                state.$permission.withLock { $0 = granted }
-                return .none
-            case .checkPushAuthorizationResponse(.failure(let error)):
-                debugPrint("Home Reducer: CheckPushAuthorization Error - \(error)")
-                return .none
             case .home(.settingPressed):
                 state.path.append(.setting(SettingReducer.State()))
                 return .none
