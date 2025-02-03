@@ -26,6 +26,9 @@ struct RootView: View {
                     WebView(store: store)
                 }
             }
+            .onAppear {
+                store.send(.onAppear)
+            }
         }
     }
 }

@@ -30,9 +30,6 @@ struct HomeView: View {
                 .padding(.horizontal, 16)
             }
             .background(Color(red: 0.95, green: 0.96, blue: 0.97))
-            .onAppear {
-                store.send(.onAppear)
-            }
         }
     }
 

@@ -60,14 +60,14 @@ struct OldHomeView<VM: HomeViewModel>: View {
                     .background(Color(red: 0.95, green: 0.96, blue: 0.97))
                 }
                 .background(.white)
-                .onAppear {
-                    store.send(.onAppear)
+//                .onAppear {
+//                    store.send(.onAppear)
 //                    if !isFirst {
 //                        LocalNotificationManager().requestAuthorization(completion: { _ in
 //                        })
 //                        LocalNotificationManager.shared.saveIsFirst(true)
 //                    }
-                }
+//                }
 //                .task {
 //                    await loadUserInfoAndTotalReposrtCard()
 //                }
