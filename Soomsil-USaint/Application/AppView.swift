@@ -12,9 +12,6 @@ import ComposableArchitecture
 struct AppView: View {
     @Perception.Bindable var store: StoreOf<AppReducer>
     
-    // TODO: 삭제 예정
-    @State var isLoggedIn = HomeRepository.shared.hasCachedUserInformation
-    
     var body: some View {
         switch store.state {
         case .initial:
@@ -27,8 +24,8 @@ struct AppView: View {
                 LoginView(store: store)
             }
         case .loggedIn:
-            if let store = store.scope(state: \.loggedIn, action: \.home) {
-                HomeView(store: store)
+            if let store = store.scope(state: \.loggedIn, action: \.root) {
+                RootView(store: store)
             }
         }
     }
