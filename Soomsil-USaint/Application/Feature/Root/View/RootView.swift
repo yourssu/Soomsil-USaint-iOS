@@ -13,16 +13,18 @@ struct RootView: View {
     @Perception.Bindable var store: StoreOf<RootReducer>
     
     var body: some View {
-        NavigationStack(
-            path: $store.scope(state: \.path, action: \.path)
-        ) {
-            HomeView(store: store.scope(state: \.home, action: \.home))
-        } destination: { store in
-            switch store.case {
-            case .setting(let store):
-                SettingView(store: store)
-            case .web(let store):
-                WebView(store: store)
+        WithPerceptionTracking {
+            NavigationStack(
+                path: $store.scope(state: \.path, action: \.path)
+            ) {
+                HomeView(store: store.scope(state: \.home, action: \.home))
+            } destination: { store in
+                switch store.case {
+                case .setting(let store):
+                    SettingView(store: store)
+                case .web(let store):
+                    WebView(store: store)
+                }
             }
         }
     }

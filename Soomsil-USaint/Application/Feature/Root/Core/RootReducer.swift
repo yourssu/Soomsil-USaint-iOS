@@ -35,7 +35,22 @@ struct RootReducer {
             HomeReducer()
         }
         Reduce { state, action in
-            return .none
+            switch action {
+            case .home(.settingPressed):
+                state.path.append(.setting(SettingReducer.State()))
+                return .none
+            case .path(let action):
+                print(action)
+                return .none
+//                switch (action) {
+//                case .element(id: _, action: .home(.settingPressed)):
+//                    return .none
+//                default:
+//                    return .none
+//                }
+            default:
+                return .none
+            }
         }
         .forEach(\.path, action: \.path)
     }

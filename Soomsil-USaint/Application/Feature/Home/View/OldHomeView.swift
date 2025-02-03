@@ -73,20 +73,20 @@ struct OldHomeView<VM: HomeViewModel>: View {
 //                }
                 .registerYDSToast()
                 .animation(.easeInOut, value: viewModel.isLogedIn())
-                .navigationDestination(for: StackView.self) { stackView in
-                    switch stackView.type {
-                    case .Setting:
-                        SettingView(path: $path, isLoggedIn: $isLoggedIn)
-                    case .SemesterList:
-                        SemesterListView(path: $path, semesterListViewModel: DefaultSemesterListViewModel())
-                    case .SemesterDetail(let gradeSummary):
-                        SemesterDetailView(path: $path, semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: gradeSummary))
-                    case .WebViewTerm:
-                        WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/service.html")
-                    case .WebViewPrivacy:
-                        WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/information.html")
-                    }
-                }
+//                .navigationDestination(for: StackView.self) { stackView in
+//                    switch stackView.type {
+//                    case .Setting:
+//                        SettingView(path: $path, isLoggedIn: $isLoggedIn)
+//                    case .SemesterList:
+//                        SemesterListView(path: $path, semesterListViewModel: DefaultSemesterListViewModel())
+//                    case .SemesterDetail(let gradeSummary):
+//                        SemesterDetailView(path: $path, semesterDetailViewModel: DefaultSemesterDetailViewModel(gradeSummary: gradeSummary))
+//                    case .WebViewTerm:
+//                        WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/service.html")
+//                    case .WebViewPrivacy:
+//                        WebViewContainer(path: $path, urlToLoad: "https://auth.yourssu.com/terms/information.html")
+//                    }
+//                }
             }
 //        }
     }
