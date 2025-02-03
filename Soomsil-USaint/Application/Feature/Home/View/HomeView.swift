@@ -12,7 +12,9 @@ import YDS_SwiftUI
 
 struct HomeView: View {
     @Perception.Bindable var store: StoreOf<HomeReducer>
-
+    
+    @State var isFirst = true
+    
     // MARK: - Home
     var body: some View {
         WithPerceptionTracking {
@@ -30,6 +32,12 @@ struct HomeView: View {
                 .padding(.horizontal, 16)
             }
             .background(Color(red: 0.95, green: 0.96, blue: 0.97))
+            .onAppear {
+                if isFirst {
+                    isFirst = false
+                    store.send(.onAppear)
+                }
+            }
         }
     }
 
