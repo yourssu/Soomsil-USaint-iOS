@@ -43,7 +43,6 @@ struct RootReducer {
             HomeReducer()
         }
         Reduce { state, action in
-            debugPrint(action)
             switch action {
             case .onAppear:
                 let isFirst = state.isFirst

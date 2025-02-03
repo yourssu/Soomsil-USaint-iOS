@@ -36,7 +36,6 @@ struct AppReducer {
     
     var body: some Reducer<State, Action> {
         Reduce { state, action in
-            debugPrint(action)
             switch action {
             case .initialize:
                 return .run { send in
