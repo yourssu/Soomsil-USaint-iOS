@@ -18,8 +18,8 @@ struct GradeClient {
     var fetchGrades: @Sendable (_ year: Int, _ semester: SemesterType) async throws -> [ClassGrade]
 
     var getTotalReportCard: @Sendable () async throws -> TotalReportCard
-    var getAllSemesterGrades: () async throws -> [CDSemester]
-    var getGrades: (_ year: Int, _ semester: String) async throws -> CDSemester?
+    var getAllSemesterGrades: () async throws -> [GradeSummary]
+    var getGrades: (_ year: Int, _ semester: String) async throws -> GradeSummary?
     var updateTotalReportCard: @Sendable (_ totalReportCard: TotalReportCard) async throws -> Void
     var updateAllSemesterGrades: (_ rusaintSemesterGrades: [GradeSummary]) async throws -> Void
     var updateGrades: (_ year: Int, _ semester: String, _ newLectures: [LectureDetail]) async throws -> Void
@@ -90,7 +90,7 @@ extension GradeClient: DependencyKey {
                 let fetchRequest: NSFetchRequest<CDSemester> = CDSemester.fetchRequest()
 
                 let fetchedEntity = try context.fetch(fetchRequest)
-                return fetchedEntity
+                return fetchedEntity.toGradeSummaryModel()
             },
             getGrades: { year, semester in
                 let context = coreDataStack.taskContext()
@@ -101,7 +101,7 @@ extension GradeClient: DependencyKey {
                 ])
 
                 if let fetchedEntity = try? context.fetch(fetchRequest).first {
-                    return fetchedEntity
+                    return fetchedEntity.toGradeSummaryModel()
                 } else {
                     return nil
                 }
@@ -257,10 +257,11 @@ extension GradeClient: DependencyKey {
             TotalReportCard(gpa: 4.34, earnedCredit: 108, graduateCredit: 133)
         }, getAllSemesterGrades: {
             [
-                CDSemester()
+                GradeSummary(year: 2024, semester: "2 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")]),
+                 GradeSummary(year: 2024, semester: "1 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "이조은")])
             ]
         }, getGrades: { year, semester in
-            CDSemester()
+            GradeSummary(year: 2024, semester: "2 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")])
         }, updateTotalReportCard: { totalReportCard in
             return
         }, updateAllSemesterGrades: { rusaintSemesterGrades in
