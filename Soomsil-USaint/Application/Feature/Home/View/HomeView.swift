@@ -13,30 +13,35 @@ import YDS_SwiftUI
 struct HomeView: View {
     @Perception.Bindable var store: StoreOf<HomeReducer>
     
-    @State var isFirst = true
-    
-    // MARK: - Home
     var body: some View {
         WithPerceptionTracking {
-            VStack {
-                title
+            NavigationStack(
+                path: $store.scope(state: \.path, action: \.path)
+            ) {
                 VStack {
-                    Student(student: store.studentInfo) {
-                        store.send(.settingPressed)
+                    title
+                    VStack {
+                        Student(student: store.studentInfo) {
+                            store.send(.settingPressed)
+                        }
+                        GradeInfo(reportCard: store.totalReportCard) {
+                            store.send(.semesterListPressed)
+                        }
+                        Spacer()
                     }
-                    GradeInfo(reportCard: store.totalReportCard) {
-                        store.send(.semesterListPressed)
-                    }
-                    Spacer()
+                    .padding(.horizontal, 16)
                 }
-                .padding(.horizontal, 16)
+                .background(Color(red: 0.95, green: 0.96, blue: 0.97))
+            } destination: { store in
+                switch store.case {
+                case .setting(let store):
+                    SettingView(store: store)
+                case .web(let store):
+                    WebView(store: store)
+                }
             }
-            .background(Color(red: 0.95, green: 0.96, blue: 0.97))
             .onAppear {
-                if isFirst {
-                    isFirst = false
-                    store.send(.onAppear)
-                }
+                store.send(.onAppear)
             }
         }
     }

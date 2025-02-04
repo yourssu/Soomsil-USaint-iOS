@@ -15,7 +15,7 @@ struct AppReducer {
     enum State {
         case initial
         case loggedOut(LoginReducer.State)
-        case loggedIn(RootReducer.State)
+        case loggedIn(HomeReducer.State)
         
         init() {
             self = .initial
@@ -27,7 +27,7 @@ struct AppReducer {
         case initResponse(Result<(StudentInfo, TotalReportCard), Error>)
         case backgroundTask
         case login(LoginReducer.Action)
-        case root(RootReducer.Action)
+        case home(HomeReducer.Action)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -51,11 +51,7 @@ struct AppReducer {
                     }))
                 }
             case .initResponse(.success(let (info, report))):
-                state = .loggedIn(
-                    RootReducer.State(
-                        home: HomeReducer.State(studentInfo: info, totalReportCard: report)
-                    )
-                )
+                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
                 return .none
             case .initResponse(.failure(let error)):
                 debugPrint(error)
@@ -68,13 +64,9 @@ struct AppReducer {
                     try await localNotificationClient.setLecturePushNotification("\(isFirst)")
                 }
             case .login(.loginResponse(.success(let (info, report)))):
-                state = .loggedIn(
-                    RootReducer.State(
-                        home: HomeReducer.State(studentInfo: info, totalReportCard: report)
-                    )
-                )
+                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
                 return .none
-            case .root(.path(.element(id: _, action: .setting(.alert(.presented(.logout)))))):
+            case .home(.path(.element(id: _, action: .setting(.alert(.presented(.logout)))))):
                 state = .loggedOut(LoginReducer.State())
                 return .none
             default:
@@ -84,8 +76,8 @@ struct AppReducer {
         .ifCaseLet(\.loggedOut, action: \.login) {
             LoginReducer()
         }
-        .ifCaseLet(\.loggedIn, action: \.root) {
-            RootReducer()
+        .ifCaseLet(\.loggedIn, action: \.home) {
+            HomeReducer()
         }
     }
 }
