@@ -11,10 +11,20 @@ import ComposableArchitecture
 
 @Reducer
 struct HomeReducer {
+    @Reducer
+    enum Path {
+        case setting(SettingReducer)
+//        case semesterList
+//        case semesterDetail
+        case web(WebReducer)
+    }
+    
     @ObservableState
     struct State {
         @Shared(.appStorage("isFirst")) var isFirst = true
         @Shared(.appStorage("permission")) var permission = false
+        
+        var path = StackState<Path.State>()
         
         var studentInfo: StudentInfo
         var totalReportCard: TotalReportCard
@@ -22,6 +32,7 @@ struct HomeReducer {
     
     enum Action: BindableAction {
         case binding(BindingAction<State>)
+        case path(StackActionOf<Path>)
         case onAppear
         case checkPushAuthorizationResponse(Result<Bool, Error>)
         case settingPressed
@@ -36,6 +47,21 @@ struct HomeReducer {
         BindingReducer()
         Reduce { state, action in
             switch action {
+            case .path(let action):
+                switch action {
+                case .element(id: _, action: .setting(.termsOfServiceButtonTapped)):
+                    state.path.append(.web(WebReducer.State(
+                        url: URL(string: "https://auth.yourssu.com/terms/service.html")!
+                    )))
+                    return .none
+                case .element(id: _, action: .setting(.privacyPolicyButtonTapped)):
+                    state.path.append(.web(WebReducer.State(
+                        url: URL(string: "https://auth.yourssu.com/terms/information.html")!
+                    )))
+                    return .none
+                default:
+                    return .none
+                }
             case .onAppear:
                 let isFirst = state.isFirst
                 state.$isFirst.withLock { $0 = false }
@@ -55,14 +81,12 @@ struct HomeReducer {
                 debugPrint("Home Reducer: CheckPushAuthorization Error - \(error)")
                 return .none
             case .settingPressed:
-                debugPrint("== SettingView로 이동 ==")
+                state.path.append(.setting(SettingReducer.State()))
                 return .none
-            case .semesterListPressed:
-                debugPrint("== SemesterList로 이동 ==")
-                return .none
-            case .binding(_):
+            default:
                 return .none
             }
         }
+        .forEach(\.path, action: \.path)
     }
 }
