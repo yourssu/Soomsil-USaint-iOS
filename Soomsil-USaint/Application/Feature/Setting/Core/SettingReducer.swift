@@ -56,7 +56,7 @@ struct SettingReducer {
                 }
                 return .none
             case .alert(.presented(.logout)):
-//                YDSToast("로그아웃", haptic: .success)
+                YDSToast("로그아웃 완료", haptic: .success)
                 return .none
             case .togglePushAuthorization(true):
                 return .run { send in
@@ -86,6 +86,8 @@ struct SettingReducer {
                     } message: {
                         TextState("알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요.")
                     }
+                } else {
+                    YDSToast("알림권한 허용", haptic: .success)
                 }
                 return .none
             case .requestPushAuthorizationResponse(.success(let granted)):
