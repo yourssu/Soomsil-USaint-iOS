@@ -66,6 +66,7 @@ struct SettingReducer {
                 }
             case .togglePushAuthorization(false):
                 state.$permission.withLock { $0 = false }
+                YDSToast("알림권한 거부", haptic: .success)
                 return .none
             case .pushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
