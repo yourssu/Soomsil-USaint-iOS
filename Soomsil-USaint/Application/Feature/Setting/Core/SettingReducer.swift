@@ -16,8 +16,6 @@ struct SettingReducer {
     struct State {
         @Shared(.appStorage("permission")) var permission = false
         @Presents var alert: AlertState<Action.Alert>?
-//        var path = StackState<Path.State>()
-//        var appState: AppReducer.State?
     }
     
     enum Action: BindableAction {
@@ -28,9 +26,7 @@ struct SettingReducer {
         case requestPushAuthorizationResponse(Result<Bool, Error>)
         case termsOfServiceButtonTapped
         case privacyPolicyButtonTapped
-//        case path(StackActionOf<Path>)
         case alert(PresentationAction<Alert>)
-//        case appState(AppReducer.Action)
         
         enum Alert: Equatable {
             case logout
@@ -110,30 +106,10 @@ struct SettingReducer {
                         try await localNotificationClient.requestPushAuthorization()
                     }))
                 }
-//            case .termsOfServiceButtonTapped:
-//                state.path.append(
-//                    .navigateToTermsWebView(WebReducer.State(
-//                        url: URL(string: "https://auth.yourssu.com/terms/service.html")!)))
-//                return .none
-//            case .privacyPolicyButtonTapped:
-//                state.path.append(.navigateToTermsWebView(WebReducer.State(
-//                    url: URL(string: "https://auth.yourssu.com/terms/information.html")!)))
-//                return .none
             default:
                 return .none
             }
         }
-//        .ifLet(\.appState, action: \.appState) {
-//            AppReducer()
-//        }
         .ifLet(\.$alert, action: \.alert)
-//        .forEach(\.path, action: \.path)
     }
 }
-
-//extension SettingReducer {
-//    @Reducer
-//    enum Path {
-//        case navigateToTermsWebView(WebReducer)
-//    }
-//}

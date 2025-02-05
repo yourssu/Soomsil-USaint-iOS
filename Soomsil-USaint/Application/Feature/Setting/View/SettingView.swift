@@ -15,37 +15,25 @@ struct SettingView: View {
     
     var body: some View {
         WithPerceptionTracking {
-//            if let store = store.scope(state: \.appState, action: \.appState) {
-//                AppView(store: store)
-//            } else {
-//                NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-                    VStack(spacing: 4) {
-                        title
-                        SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
-                            switch tappedItem {
-                            case .logout:
-                                store.send(.logoutButtonTapped)
-                            case .toggleAuthorization(let granted):
-                                store.send(.togglePushAuthorization(granted))
-                            case .termsOfService:
-                                store.send(.termsOfServiceButtonTapped)
-                            case .privacyPolicy:
-                                store.send(.privacyPolicyButtonTapped)
-                            }
-                        }
+            VStack(spacing: 4) {
+                title
+                SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
+                    switch tappedItem {
+                    case .logout:
+                        store.send(.logoutButtonTapped)
+                    case .toggleAuthorization(let granted):
+                        store.send(.togglePushAuthorization(granted))
+                    case .termsOfService:
+                        store.send(.termsOfServiceButtonTapped)
+                    case .privacyPolicy:
+                        store.send(.privacyPolicyButtonTapped)
                     }
-                    .registerYDSToast()
-
-//                } destination: { store in
-//                    switch store.case {
-//                    case .navigateToTermsWebView(let store):
-//                        WebView(store: store)
-//                    }
-//                }
-                .alert(
-                    $store.scope(state: \.alert, action: \.alert)
-                )
-//            }
+                }
+            }
+            .registerYDSToast()
+            .alert(
+                $store.scope(state: \.alert, action: \.alert)
+            )
         }
     }
     
