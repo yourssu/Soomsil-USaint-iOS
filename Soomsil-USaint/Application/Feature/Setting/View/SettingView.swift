@@ -56,37 +56,50 @@ struct SettingView: View {
                     ]
                 )
                 
-                ListRowView(title: "알림",
-                            items: [
-                                ItemModel(text: "성적 알림 받기",
-                                          rightItem: .toggle(
-                                            isPushAuthorizationEnabled: $isPushAuthorizationEnabled
-                                          ),
-                                          action: {
-                                              // TODO: onChange 호출시 액션 전달
-                                          }
-                                         )
-                            ])
+                ListRowView(
+                    title: "알림",
+                    items: [
+                        ItemModel(text: "성적 알림 받기",
+                                  rightItem: .toggle(
+                                    isPushAuthorizationEnabled: $isPushAuthorizationEnabled
+                                  ),
+                                  action: {
+                                      // TODO: onChange 호출시 액션 전달
+                                  }
+                                 )
+                    ])
                 
                 ListRowView(
                     title: "약관",
                     items: [
-                        ItemModel(text: "이용약관",
-                                  rightItem: .none,
-                                  action: {
-                                      listItemTapped(.termsOfService)
-                                  }
-                                 ),
-                        ItemModel(text: "개인정보 처리 방침",
-                                  rightItem: .none,
-                                  action: {
-                                      listItemTapped(.privacyPolicy)
-                                  }
-                                 )
+                        ItemModel(
+                            text: "이용약관",
+                            rightItem: .none,
+                            action: {
+                                listItemTapped(.termsOfService)
+                            }
+                        ),
+                        ItemModel(
+                            text: "개인정보 처리 방침",
+                            rightItem: .none,
+                            action: {
+                                listItemTapped(.privacyPolicy)
+                            }
+                        )
                     ]
                 )
-                Spacer()
+                
+                ListRowView(
+                    title: "버전정보",
+                    items: [
+                        ItemModel(
+                            text: "v 3.0.2",
+                            rightItem: .none,
+                            action: {}
+                        )
+                    ])
             }
+            Spacer()
         }
     }
 }
