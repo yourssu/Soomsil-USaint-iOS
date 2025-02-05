@@ -29,8 +29,8 @@ struct SettingReducer {
         case alert(PresentationAction<Alert>)
         
         enum Alert: Equatable {
-            case logout
-            case configurePushAuthorization
+            case confirmLogoutTapped
+            case configurePushAuthorizationTapped
         }
     }
     
@@ -46,7 +46,7 @@ struct SettingReducer {
                 } actions: {
                     ButtonState(
                         role: .destructive,
-                        action: .logout) {
+                        action: .confirmLogoutTapped) {
                             TextState("로그아웃")
                         }
                     ButtonState(
@@ -55,7 +55,7 @@ struct SettingReducer {
                         }
                 }
                 return .none
-            case .alert(.presented(.logout)):
+            case .alert(.presented(.confirmLogoutTapped)):
                 YDSToast("로그아웃 완료", haptic: .success)
                 return .none
             case .togglePushAuthorization(true):
@@ -75,7 +75,7 @@ struct SettingReducer {
                     } actions: {
                         ButtonState(
                             role: .destructive,
-                            action: .configurePushAuthorization
+                            action: .configurePushAuthorizationTapped
                         ) {
                             TextState("설정")
                         }
@@ -101,7 +101,7 @@ struct SettingReducer {
                     }
                 }
                 return .none
-            case .alert(.presented(.configurePushAuthorization)):
+            case .alert(.presented(.configurePushAuthorizationTapped)):
                 debugPrint("alert permission")
                 return .run { send in
                     await send(.requestPushAuthorizationResponse(Result {
