@@ -93,7 +93,7 @@ struct SettingView: View {
                     title: "버전정보",
                     items: [
                         ItemModel(
-                            text: "v 3.0.2",
+                            text: currentAppVersion(),
                             rightItem: .none,
                             action: {}
                         )
@@ -108,6 +108,17 @@ private extension SettingView {
     var title: some View {
         Text("설정")
             .font(YDSFont.subtitle2)
+    }
+}
+
+private extension SettingView.SettingList {
+    func currentAppVersion() -> String {
+      if let info: [String: Any] = Bundle.main.infoDictionary,
+          let currentVersion: String
+            = info["CFBundleShortVersionString"] as? String {
+            return currentVersion
+      }
+      return "-"
     }
 }
 
