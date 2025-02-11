@@ -64,7 +64,6 @@ struct SettingView: View {
                                     isPushAuthorizationEnabled: $isPushAuthorizationEnabled
                                   ),
                                   action: {
-                                      // TODO: onChange 호출시 액션 전달
                                       listItemTapped(.toggleAuthorization(isPushAuthorizationEnabled))
                                   }
                                  )

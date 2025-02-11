@@ -63,8 +63,8 @@ struct ItemModel: View {
                             switch rightItem {
                             case .none:
                                 action()
-                            case .toggle(let isPushAuthorizationEnabled):
-                                return
+                            case .toggle(_):
+                                break
                             }
                         }
                 )
@@ -79,13 +79,9 @@ struct ItemModel: View {
                     .padding(.vertical, 20)
                     .tint(YDSColor.buttonPoint)
                     .frame(height: 48)
-                    // TODO: onChange 액션 추가
-                    .onChange(of: isPushAuthorizationEnabled) {
+                    .onChange(of: isPushAuthorizationEnabled.wrappedValue) { newValue in
                         action()
                     }
-//                    .onReceive(isPushAuthorizationEnabled.projectedValue) { newValue in
-//                                action()
-//                            }
             }
         }
     }
