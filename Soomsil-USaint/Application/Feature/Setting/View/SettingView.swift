@@ -16,7 +16,6 @@ struct SettingView: View {
     var body: some View {
         WithPerceptionTracking {
             VStack(spacing: 4) {
-                title
                 SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
                     switch tappedItem {
                     case .logout:
@@ -35,6 +34,7 @@ struct SettingView: View {
                 $store.scope(state: \.alert, action: \.alert)
             )
         }
+        .navigationTitle("설정")
     }
     
     struct SettingList: View {
@@ -104,21 +104,14 @@ struct SettingView: View {
     }
 }
 
-private extension SettingView {
-    var title: some View {
-        Text("설정")
-            .font(YDSFont.subtitle2)
-    }
-}
-
 private extension SettingView.SettingList {
     func currentAppVersion() -> String {
-      if let info: [String: Any] = Bundle.main.infoDictionary,
-          let currentVersion: String
+        if let info: [String: Any] = Bundle.main.infoDictionary,
+           let currentVersion: String
             = info["CFBundleShortVersionString"] as? String {
             return currentVersion
-      }
-      return "-"
+        }
+        return "-"
     }
 }
 
