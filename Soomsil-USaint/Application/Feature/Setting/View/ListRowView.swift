@@ -31,6 +31,10 @@ struct ListRowView: View {
                 .padding(20)
                 .frame(height: 48)
             
+            Divider()
+                .frame(height: 0.34)
+                .background(YDSColor.borderThin)
+            
             ForEach(items.indices, id: \.self) { index in
                 HStack {
                     items[index]
