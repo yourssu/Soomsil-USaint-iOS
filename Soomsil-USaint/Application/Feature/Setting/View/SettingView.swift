@@ -15,38 +15,26 @@ struct SettingView: View {
     
     var body: some View {
         WithPerceptionTracking {
-//            if let store = store.scope(state: \.appState, action: \.appState) {
-//                AppView(store: store)
-//            } else {
-//                NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-                    VStack(spacing: 4) {
-                        title
-                        SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
-                            switch tappedItem {
-                            case .logout:
-                                store.send(.logoutButtonTapped)
-                            case .toggleAuthorization(let granted):
-                                store.send(.togglePushAuthorization(granted))
-                            case .termsOfService:
-                                store.send(.termsOfServiceButtonTapped)
-                            case .privacyPolicy:
-                                store.send(.privacyPolicyButtonTapped)
-                            }
-                        }
+            VStack(spacing: 4) {
+                SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
+                    switch tappedItem {
+                    case .logout:
+                        store.send(.logoutButtonTapped)
+                    case .toggleAuthorization(let granted):
+                        store.send(.togglePushAuthorization(granted))
+                    case .termsOfService:
+                        store.send(.termsOfServiceButtonTapped)
+                    case .privacyPolicy:
+                        store.send(.privacyPolicyButtonTapped)
                     }
-                    .registerYDSToast()
-
-//                } destination: { store in
-//                    switch store.case {
-//                    case .navigateToTermsWebView(let store):
-//                        WebView(store: store)
-//                    }
-//                }
-                .alert(
-                    $store.scope(state: \.alert, action: \.alert)
-                )
-//            }
+                }
+            }
+            .registerYDSToast()
+            .alert(
+                $store.scope(state: \.alert, action: \.alert)
+            )
         }
+        .navigationTitle("설정")
     }
     
     struct SettingList: View {
@@ -59,134 +47,79 @@ struct SettingView: View {
                 ListRowView(
                     title: "계정관리",
                     items: [
-                        itemAction(
-                            text: "로그아웃",
-                            action: {
-                                listItemTapped(.logout)
-                            }
-                        )
+                        ItemModel(text: "로그아웃",
+                                  rightItem: .none,
+                                  action: {
+                                      listItemTapped(.logout)
+                                  }
+                                 )
                     ]
                 )
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("알림")
-                        .font(YDSFont.subtitle3)
-                        .foregroundColor(YDSColor.textSecondary)
-                        .padding(20)
-                        .frame(height: 48)
-                    HStack {
-                        Text("성적 알림 받기")
-                            .font(YDSFont.button3)
-                            .foregroundColor(YDSColor.textSecondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        
-                        Toggle("", isOn: $isPushAuthorizationEnabled)
-                            .labelsHidden()
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 20)
-                            .tint(YDSColor.buttonPoint)
-                            .onChange(of: isPushAuthorizationEnabled) { newValue in
-                                listItemTapped(.toggleAuthorization(newValue))
-                            }
-                    }
-                    .padding(20)
-                    .frame(height: 48)
-                }
+                
+                ListRowView(
+                    title: "알림",
+                    items: [
+                        ItemModel(text: "성적 알림 받기",
+                                  rightItem: .toggle(
+                                    isPushAuthorizationEnabled: $isPushAuthorizationEnabled
+                                  ),
+                                  action: {
+                                      listItemTapped(.toggleAuthorization(isPushAuthorizationEnabled))
+                                  }
+                                 )
+                    ])
+                
                 ListRowView(
                     title: "약관",
                     items: [
-                        itemAction(
+                        ItemModel(
                             text: "이용약관",
+                            rightItem: .none,
                             action: {
                                 listItemTapped(.termsOfService)
                             }
                         ),
-                        itemAction(
+                        ItemModel(
                             text: "개인정보 처리 방침",
+                            rightItem: .none,
                             action: {
                                 listItemTapped(.privacyPolicy)
                             }
                         )
                     ]
                 )
-                Spacer()
+                
+                ListRowView(
+                    title: "버전정보",
+                    items: [
+                        ItemModel(
+                            text: currentAppVersion(),
+                            rightItem: .none,
+                            action: {}
+                        )
+                    ])
             }
+            Spacer()
         }
     }
 }
 
-private extension SettingView {
-    var title: some View {
-        Text("설정")
-            .font(YDSFont.subtitle2)
+private extension SettingView.SettingList {
+    func currentAppVersion() -> String {
+        if let info: [String: Any] = Bundle.main.infoDictionary,
+           let currentVersion: String
+            = info["CFBundleShortVersionString"] as? String {
+            return currentVersion
+        }
+        return "-"
     }
 }
 
-// MARK: - List
 enum listItem {
     case logout
     case toggleAuthorization(Bool)
     case termsOfService
     case privacyPolicy
-}
-
-struct itemAction {
-    let text: String
-    let action: () -> Void
-}
-
-struct ListRowView: View {
-    let title: String
-    let items: [itemAction]
-    
-    @State private var pressedStates: [Bool]
-    
-    init(title: String, items: [itemAction]) {
-        self.title = title
-        self.items = items
-        self._pressedStates = State(initialValue: Array(repeating: false, count: items.count))
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(YDSFont.subtitle3)
-                .foregroundColor(YDSColor.textSecondary)
-                .padding(20)
-                .frame(height: 48)
-            
-            ForEach(items.indices, id: \.self) { index in
-                ItemModel(
-                    text: items[index].text,
-                    action: items[index].action,
-                    isPressed: $pressedStates[index]
-                )
-            }
-        }
-    }
-}
-
-struct ItemModel: View {
-    let text: String
-    let action: () -> Void
-    @Binding var isPressed: Bool
-    
-    var body: some View {
-        Text(text)
-            .font(YDSFont.button3)
-            .foregroundColor(YDSColor.textSecondary)
-            .padding(20)
-            .frame(height: 48)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(isPressed ? Color(red: 0.95, green: 0.96, blue: 0.97) : Color.clear)
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { _ in isPressed = true }
-                    .onEnded { _ in
-                        isPressed = false
-                        action()
-                    }
-            )
-    }
 }
 
 #Preview {
