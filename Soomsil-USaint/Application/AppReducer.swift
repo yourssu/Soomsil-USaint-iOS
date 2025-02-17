@@ -23,6 +23,8 @@ struct AppReducer {
     }
     
     enum Action {
+        case checkMinimumVersion
+        case checkMinimumVersionResponse(Result<String, Error>)
         case initialize
         case initResponse(Result<(StudentInfo, TotalReportCard), Error>)
         case backgroundTask
@@ -31,12 +33,26 @@ struct AppReducer {
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
+    @Dependency(\.remoteConfigClient) var remoteConfigClient
     @Dependency(\.gradeClient) var gradeClient
     @Dependency(\.studentClient) var studentClient
     
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
+            case .checkMinimumVersion:
+                return .run { send in
+                    await send(.checkMinimumVersionResponse(Result {
+                        return try await remoteConfigClient.getMinimumVersion()
+                    }))
+                }
+            case .checkMinimumVersionResponse(.success(let minimumVersion)):
+                debugPrint("MinimumVersion at AppReducer - \(minimumVersion)")
+                return .send(.initialize)
+            case .checkMinimumVersionResponse(.failure(let error)):
+                debugPrint("Error at AppReducer - \(error)")
+                // TODO: 에러 처리
+                return .none
             case .initialize:
                 return .run { send in
                     await send(.initResponse(Result {
