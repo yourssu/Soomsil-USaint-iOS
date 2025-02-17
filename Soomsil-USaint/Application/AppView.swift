@@ -17,7 +17,7 @@ struct AppView: View {
         case .initial:
             SplashView()
                 .onAppear {
-                    store.send(.initialize)
+                    store.send(.checkMinimumVersion)
                 }
         case .loggedOut:
             if let store = store.scope(state: \.loggedOut, action: \.login) {
