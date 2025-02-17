@@ -51,8 +51,7 @@ struct AppReducer {
                 return .send(.initialize)
             case .checkMinimumVersionResponse(.failure(let error)):
                 debugPrint("Error at AppReducer - \(error)")
-                // TODO: 에러 처리
-                return .none
+                return .send(.initialize)
             case .initialize:
                 return .run { send in
                     await send(.initResponse(Result {

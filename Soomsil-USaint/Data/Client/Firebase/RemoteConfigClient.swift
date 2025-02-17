@@ -38,7 +38,7 @@ extension RemoteConfigClient: DependencyKey {
     
     static let previewValue: RemoteConfigClient = Self(
         getMinimumVersion: {
-            return "1.0.0"
+            return "3.0.2"
         }
     )
     
