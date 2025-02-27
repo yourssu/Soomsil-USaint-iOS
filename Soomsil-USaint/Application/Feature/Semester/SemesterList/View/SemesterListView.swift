@@ -15,24 +15,13 @@ struct SemesterListView: View {
     @Perception.Bindable var store: StoreOf<SemesterListReducer>
     @State private var rowAnimation = false
 
-    let testReportCard = TotalReportCard(
-        gpa: 4.5, earnedCredit: 123.0,
-        graduateCredit: 123.0
-    )
-
-    let testSemesterList: [GradeSummary] = [
-        GradeSummary(year: 2024, semester: "2 학기", gpa: 3.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")]),
-        GradeSummary(year: 2024, semester: "1 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 4.0, score: "3.3", grade: .aZero, professorName: "이조은")]),
-        GradeSummary(year: 2023, semester: "1 학기", gpa: 3.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.3", grade: .aZero, professorName: "이조은")])
-    ]
-
     var body: some View {
         ZStack {
             ScrollView {
                 // MARK: - top
                 VStack(alignment: .leading) {
                     HStack {
-                        let creditCard = testReportCard
+                        let creditCard = store.totalReportCard
                         let average = creditCard.gpa
                         let sum = creditCard.earnedCredit
                         let graduateCredit = creditCard.graduateCredit
@@ -40,7 +29,7 @@ struct SemesterListView: View {
                         EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", average), sub: "4.50")
                         EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", sum), sub: String(graduateCredit))
                     }
-                    GPAGraphView(semesterList: testSemesterList)
+                    GPAGraphView(semesterList: store.semesterList)
                 }
                 .padding()
 
