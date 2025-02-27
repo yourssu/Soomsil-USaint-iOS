@@ -14,7 +14,7 @@ struct GradeClient {
     static let coreDataStack: CoreDataStack = .shared
 
     var fetchTotalReportCard:  @Sendable () async throws -> TotalReportCard
-    var fetchAllSemesterGrades: @Sendable () async throws -> [SemesterGrade]
+    var fetchAllSemesterGrades: @Sendable () async throws -> [GradeSummary]
     var fetchGrades: @Sendable (_ year: Int, _ semester: SemesterType) async throws -> [ClassGrade]
 
     var getTotalReportCard: @Sendable () async throws -> TotalReportCard
@@ -61,7 +61,7 @@ extension GradeClient: DependencyKey {
                 let response = try await CourseGradesApplicationBuilder()
                     .build(session: session)
                     .semesters(courseType: CourseType.bachelor)
-                return response
+                return response.toGradeSummaryModels()
             },
             fetchGrades: { year, semester in
                 let session = try await studentClient.createSaintSession()
@@ -233,21 +233,8 @@ extension GradeClient: DependencyKey {
             return TotalReportCard(gpa: 4.11, earnedCredit: 112, graduateCredit: 188)
         }, fetchAllSemesterGrades:  {
             [
-                SemesterGrade(
-                    year: 2024,
-                    semester: "",
-                    attemptedCredits: 22.0,
-                    earnedCredits: 4.3,
-                    pfEarnedCredits: 3.0,
-                    gradePointsAvarage: 3.0,
-                    gradePointsSum: 2.0,
-                    arithmeticMean: 2.0,
-                    semesterRank: U32Pair(first: 57, second: 100),
-                    generalRank: U32Pair(first: 38, second: 200),
-                    academicProbation: false,
-                    consult: false,
-                    flunked: false
-                )
+                GradeSummary(year: 2024, semester: "2 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "fetchAll", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")]),
+                 GradeSummary(year: 2024, semester: "1 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "fetchAll", credit: 3.0, score: "4.0", grade: .aZero, professorName: "이조은")])
             ]
         }, fetchGrades: { year, semester in
             [
@@ -257,8 +244,8 @@ extension GradeClient: DependencyKey {
             TotalReportCard(gpa: 4.34, earnedCredit: 108, graduateCredit: 133)
         }, getAllSemesterGrades: {
             [
-                GradeSummary(year: 2024, semester: "2 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")]),
-                 GradeSummary(year: 2024, semester: "1 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "이조은")])
+                GradeSummary(year: 2024, semester: "2 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "getAll", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")]),
+                 GradeSummary(year: 2024, semester: "1 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "getAll", credit: 3.0, score: "4.0", grade: .aZero, professorName: "이조은")])
             ]
         }, getGrades: { year, semester in
             GradeSummary(year: 2024, semester: "2 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")])

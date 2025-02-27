@@ -5,3 +5,81 @@
 //  Created by 이조은 on 1/6/25.
 //
 
+import Foundation
+
+import YDS_SwiftUI
+import ComposableArchitecture
+
+@Reducer
+struct SemesterListReducer {
+    @ObservableState
+    struct State {
+        var totalReportCard: TotalReportCard = TotalReportCard(gpa: 4.5, earnedCredit: 133.0, graduateCredit: 123.0)
+        var semesterList: [GradeSummary] = []
+        var fetchErrorMessage: String = ""
+        var isLoading: Bool = true
+    }
+
+    enum Action: BindableAction {
+        case binding(BindingAction<State>)
+        case onAppear
+        case onRefresh
+        case totalReportCardReponse(Result<TotalReportCard, Error>)
+        case semesterListResponse(Result<[GradeSummary], Error>)
+    }
+
+    @Dependency(\.studentClient) var studentClient
+    @Dependency(\.gradeClient) var gradeClient
+
+    var body: some Reducer<State, Action> {
+        BindingReducer()
+        Reduce { state, action in
+            switch action {
+            case .onAppear:
+                return .run { send in
+                    await send(.totalReportCardReponse(Result {
+                        return try await gradeClient.getTotalReportCard()
+                    }))
+                    await send(.semesterListResponse(Result {
+                        return try await gradeClient.getAllSemesterGrades()
+                    }))
+                }
+            case .onRefresh:
+                state.isLoading = true
+                return .run { send in
+                    try await gradeClient.deleteTotalReportCard()
+                    try await gradeClient.deleteAllSemesterGrades()
+
+                    let totalReportCard = try await gradeClient.fetchTotalReportCard()
+                    try await gradeClient.updateTotalReportCard(totalReportCard)
+                    let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
+                    try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
+
+                    await send(.totalReportCardReponse(Result {
+                        return try await gradeClient.getTotalReportCard()
+                    }))
+                    await send(.semesterListResponse(Result {
+                        return try await gradeClient.getAllSemesterGrades()
+                    }))                }
+            case .totalReportCardReponse(.success(let totalReportCard)):
+                state.totalReportCard = totalReportCard
+                return .none
+            case .totalReportCardReponse(.failure(let error)):
+                debugPrint(error)
+                YDSToast(String(describing: error), haptic: .failed)
+                return .none
+            case .semesterListResponse(.success(let semesterList)):
+                state.semesterList = semesterList
+                state.isLoading = false
+                return .none
+            case .semesterListResponse(.failure(let error)):
+                debugPrint(error)
+                YDSToast(String(describing: error), haptic: .failed)
+                return .none
+            default:
+                return .none
+            }
+        }
+    }
+
+}
