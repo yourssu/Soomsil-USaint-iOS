@@ -24,7 +24,7 @@ struct SemesterListReducer {
         case binding(BindingAction<State>)
         case onAppear
         case onRefresh
-        case totalReportCardReponse(Result<TotalReportCard, Error>)
+        case totalReportCardResponse(Result<TotalReportCard, Error>)
         case semesterListResponse(Result<[GradeSummary], Error>)
     }
 
@@ -37,7 +37,7 @@ struct SemesterListReducer {
             switch action {
             case .onAppear:
                 return .run { send in
-                    await send(.totalReportCardReponse(Result {
+                    await send(.totalReportCardResponse(Result {
                         return try await gradeClient.getTotalReportCard()
                     }))
                     await send(.semesterListResponse(Result {
@@ -55,16 +55,16 @@ struct SemesterListReducer {
                     let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
                     try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
 
-                    await send(.totalReportCardReponse(Result {
+                    await send(.totalReportCardResponse(Result {
                         return try await gradeClient.getTotalReportCard()
                     }))
                     await send(.semesterListResponse(Result {
                         return try await gradeClient.getAllSemesterGrades()
                     }))                }
-            case .totalReportCardReponse(.success(let totalReportCard)):
+            case .totalReportCardResponse(.success(let totalReportCard)):
                 state.totalReportCard = totalReportCard
                 return .none
-            case .totalReportCardReponse(.failure(let error)):
+            case .totalReportCardResponse(.failure(let error)):
                 debugPrint(error)
                 YDSToast(String(describing: error), haptic: .failed)
                 return .none
