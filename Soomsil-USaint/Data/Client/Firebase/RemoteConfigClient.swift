@@ -31,14 +31,13 @@ extension RemoteConfigClient: DependencyKey {
             try await remoteConfig.fetchAndActivate()
             
             let minimumVersion = remoteConfig[minimumVersionkey].stringValue
-            debugPrint(minimumVersion)
             return minimumVersion
         }
     )
     
     static let previewValue: RemoteConfigClient = Self(
         getMinimumVersion: {
-            return "3.0.2"
+            return "3.0.3"
         }
     )
     
