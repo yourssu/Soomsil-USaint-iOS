@@ -15,10 +15,9 @@ struct AppView: View {
     var body: some View {
         switch store.state {
         case .initial:
-            SplashView()
-                .onAppear {
-                    store.send(.checkMinimumVersion)
-                }
+            if let store = store.scope(state: \.initial, action: \.splash) {
+                SplashView(store: store)
+            }
         case .loggedOut:
             if let store = store.scope(state: \.loggedOut, action: \.login) {
                 LoginView(store: store)

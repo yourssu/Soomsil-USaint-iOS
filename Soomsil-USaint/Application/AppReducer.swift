@@ -13,71 +13,39 @@ import ComposableArchitecture
 struct AppReducer {
     @ObservableState
     enum State {
-        case initial
+        case initial(SplashReducer.State)
         case loggedOut(LoginReducer.State)
         case loggedIn(HomeReducer.State)
         
         init() {
-            self = .initial
+            self = .initial(SplashReducer.State())
         }
     }
     
     enum Action {
-        case checkMinimumVersion
-        case checkMinimumVersionResponse(Result<String, Error>)
-        case initialize
-        case initResponse(Result<(StudentInfo, TotalReportCard), Error>)
         case backgroundTask
+        case splash(SplashReducer.Action)
         case login(LoginReducer.Action)
         case home(HomeReducer.Action)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
-    @Dependency(\.remoteConfigClient) var remoteConfigClient
-    @Dependency(\.gradeClient) var gradeClient
-    @Dependency(\.studentClient) var studentClient
     
     var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .checkMinimumVersion:
-                return .run { send in
-                    await send(.checkMinimumVersionResponse(Result {
-                        return try await remoteConfigClient.getMinimumVersion()
-                    }))
-                }
-            case .checkMinimumVersionResponse(.success(let minimumVersion)):
-                debugPrint("MinimumVersion at AppReducer - \(minimumVersion)")
-                return .send(.initialize)
-            case .checkMinimumVersionResponse(.failure(let error)):
-                debugPrint("Error at AppReducer - \(error)")
-                return .send(.initialize)
-            case .initialize:
-                return .run { send in
-                    await send(.initResponse(Result {
-                        let _ = try await studentClient.getSaintInfo()
-                        try await gradeClient.deleteTotalReportCard()
-                        let rusaintReport = try await gradeClient.fetchTotalReportCard()
-                        try await gradeClient.updateTotalReportCard(rusaintReport)
-                        
-                        let info = try await studentClient.getStudentInfo()
-                        let report = try await gradeClient.getTotalReportCard()
-                        return (info, report)
-                    }))
-                }
-            case .initResponse(.success(let (info, report))):
-                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
-                return .none
-            case .initResponse(.failure(let error)):
-                debugPrint(error)
-                state = .loggedOut(LoginReducer.State())
-                return .none
             case .backgroundTask:
                 debugPrint("AppReducer: backgroundTask")
                 return .run { send in
                     @Shared(.appStorage("isFirst")) var isFirst = true
                     try await localNotificationClient.setLecturePushNotification("\(isFirst)")
                 }
+            case .splash(.initResponse(.success(let (studentInfo, totalReportCard)))):
+                state = .loggedIn(HomeReducer.State(studentInfo: studentInfo, totalReportCard: totalReportCard))
+                return .none
+            case .splash(.initResponse(.failure)):
+                state = .loggedOut(LoginReducer.State())
+                return .none
             case .login(.loginResponse(.success(let (info, report)))):
                 state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
                 return .none
@@ -87,6 +55,9 @@ struct AppReducer {
             default:
                 return .none
             }
+        }
+        .ifCaseLet(\.initial, action: \.splash) {
+            SplashReducer()
         }
         .ifCaseLet(\.loggedOut, action: \.login) {
             LoginReducer()
