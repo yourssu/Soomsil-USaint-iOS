@@ -5,10 +5,10 @@
 //  Created by 이조은 on 2/17/25.
 //
 
-import SwiftUI
-import YDS_SwiftUI
-
 import Charts
+import SwiftUI
+
+import YDS_SwiftUI
 
 struct GPAGraphView: View {
     var semesterList: [GradeSummary]
@@ -22,12 +22,8 @@ struct GPAGraphView: View {
                         ($0.semester != "겨울학기" && $0.semester != "여름학기")
                         || isOnSeasonalSemester
                     }
-                    .filter {
-                        $0.gpa != 0
-                    }
-                    .map {
-                        GPAGraph.GPAInfo(semester: "\($0.year)년 \($0.semester)", gpa: $0.gpa)
-                    }
+                    .filter { $0.gpa != 0 }
+                    .map { GPAGraph.GPAInfo(semester: "\($0.year)년 \($0.semester)", gpa: $0.gpa) }
             )
             Button {
                 isOnSeasonalSemester.toggle()
@@ -50,7 +46,7 @@ struct GPAGraphView: View {
     }
 }
 
-extension GPAGraphView {
+private extension GPAGraphView {
     struct GPAGraph: View {
         struct GPAInfo: Hashable {
             let semester: String

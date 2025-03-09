@@ -7,8 +7,8 @@
 
 import Foundation
 
-import YDS_SwiftUI
 import ComposableArchitecture
+import YDS_SwiftUI
 
 @Reducer
 struct SemesterListReducer {
@@ -63,9 +63,11 @@ struct SemesterListReducer {
                     }))                }
             case .totalReportCardResponse(.success(let totalReportCard)):
                 state.totalReportCard = totalReportCard
+                state.isLoading = false
                 return .none
             case .totalReportCardResponse(.failure(let error)):
                 debugPrint(error)
+                state.isLoading = false
                 YDSToast(String(describing: error), haptic: .failed)
                 return .none
             case .semesterListResponse(.success(let semesterList)):
@@ -74,6 +76,7 @@ struct SemesterListReducer {
                 return .none
             case .semesterListResponse(.failure(let error)):
                 debugPrint(error)
+                state.isLoading = false
                 YDSToast(String(describing: error), haptic: .failed)
                 return .none
             default:

@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-import YDS_SwiftUI
-import Rusaint
 import ComposableArchitecture
+import Rusaint
+import YDS_SwiftUI
 
 struct SemesterListView: View {
     @Perception.Bindable var store: StoreOf<SemesterListReducer>
@@ -69,7 +69,7 @@ struct SemesterListView: View {
             }
             .registerYDSToast()
             .overlay(
-                store.state.isLoading ? CircleLoadingView() : nil
+                store.isLoading ? CircleLoadingView() : nil
             )
         }
     }
