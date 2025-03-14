@@ -44,9 +44,7 @@ struct SettingReducer {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                if let info: [String: Any] = Bundle.main.infoDictionary,
-                   let currentVersion: String
-                    = info["CFBundleShortVersionString"] as? String {
+                if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                     state.appVersion = currentVersion
                 }
                 return .none
