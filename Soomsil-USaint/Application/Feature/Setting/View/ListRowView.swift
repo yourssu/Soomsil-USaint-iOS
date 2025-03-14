@@ -26,14 +26,10 @@ struct ListRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .font(YDSFont.subtitle3)
+                .font(.system(size: 14, weight: .bold))
                 .foregroundColor(YDSColor.textSecondary)
                 .padding(20)
                 .frame(height: 48)
-            
-            Divider()
-                .frame(height: 0.34)
-                .background(YDSColor.borderThin)
             
             ForEach(items.indices, id: \.self) { index in
                 HStack {
