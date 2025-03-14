@@ -47,7 +47,7 @@ struct SettingView: View {
                 ListRowView(
                     title: "계정관리",
                     items: [
-                        ItemModel(text: "로그아웃",
+                        RowView(text: "로그아웃",
                                   rightItem: .none,
                                   action: {
                                       listItemTapped(.logout)
@@ -59,7 +59,7 @@ struct SettingView: View {
                 ListRowView(
                     title: "알림",
                     items: [
-                        ItemModel(text: "성적 알림 받기",
+                        RowView(text: "성적 알림 받기",
                                   rightItem: .toggle(
                                     isPushAuthorizationEnabled: $isPushAuthorizationEnabled
                                   ),
@@ -72,14 +72,14 @@ struct SettingView: View {
                 ListRowView(
                     title: "약관",
                     items: [
-                        ItemModel(
+                        RowView(
                             text: "이용약관",
                             rightItem: .none,
                             action: {
                                 listItemTapped(.termsOfService)
                             }
                         ),
-                        ItemModel(
+                        RowView(
                             text: "개인정보 처리 방침",
                             rightItem: .none,
                             action: {
@@ -92,7 +92,7 @@ struct SettingView: View {
                 ListRowView(
                     title: "버전정보",
                     items: [
-                        ItemModel(
+                        RowView(
                             text: currentAppVersion(),
                             rightItem: .none,
                             action: {}

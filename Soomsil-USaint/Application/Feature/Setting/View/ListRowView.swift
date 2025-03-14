@@ -16,9 +16,9 @@ enum RightItem {
 
 struct ListRowView: View {
     let title: String
-    let items: [ItemModel]
+    let items: [RowView]
         
-    init(title: String, items: [ItemModel]) {
+    init(title: String, items: [RowView]) {
         self.title = title
         self.items = items
     }
@@ -40,7 +40,7 @@ struct ListRowView: View {
     }
 }
 
-struct ItemModel: View {
+struct RowView: View {
     let text: String
     let rightItem: RightItem
     let action: () -> Void
