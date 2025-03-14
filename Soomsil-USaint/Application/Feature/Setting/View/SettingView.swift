@@ -16,7 +16,10 @@ struct SettingView: View {
     var body: some View {
         WithPerceptionTracking {
             VStack(spacing: 4) {
-                SettingList(isPushAuthorizationEnabled: $store.permission) { tappedItem in
+                SettingList(
+                    isPushAuthorizationEnabled: $store.permission,
+                    appVersion: store.appVersion
+                ) { tappedItem in
                     switch tappedItem {
                     case .logout:
                         store.send(.logoutButtonTapped)
@@ -35,11 +38,15 @@ struct SettingView: View {
             )
         }
         .navigationTitle("설정")
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
     
     struct SettingList: View {
         @Binding var isPushAuthorizationEnabled: Bool
         
+        let appVersion: String
         let listItemTapped: (listItem) -> Void
         
         var body: some View {
@@ -93,7 +100,7 @@ struct SettingView: View {
                     title: "버전정보",
                     items: [
                         RowView(
-                            text: currentAppVersion(),
+                            text: "v \(appVersion)",
                             rightItem: .none,
                             action: {}
                         )
@@ -101,17 +108,6 @@ struct SettingView: View {
             }
             Spacer()
         }
-    }
-}
-
-private extension SettingView.SettingList {
-    func currentAppVersion() -> String {
-        if let info: [String: Any] = Bundle.main.infoDictionary,
-           let currentVersion: String
-            = info["CFBundleShortVersionString"] as? String {
-            return currentVersion
-        }
-        return "-"
     }
 }
 

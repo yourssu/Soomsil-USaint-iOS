@@ -16,10 +16,13 @@ struct SettingReducer {
     struct State {
         @Shared(.appStorage("permission")) var permission = false
         @Presents var alert: AlertState<Action.Alert>?
+        
+        var appVersion: String = "-"
     }
     
     enum Action: BindableAction {
         case binding(BindingAction<State>)
+        case onAppear
         case logoutButtonTapped
         case togglePushAuthorization(Bool)
         case pushAuthorizationResponse(Result<Bool, Error>)
@@ -40,6 +43,13 @@ struct SettingReducer {
         BindingReducer()
         Reduce { state, action in
             switch action {
+            case .onAppear:
+                if let info: [String: Any] = Bundle.main.infoDictionary,
+                   let currentVersion: String
+                    = info["CFBundleShortVersionString"] as? String {
+                    state.appVersion = currentVersion
+                }
+                return .none
             case .logoutButtonTapped:
                 state.alert = AlertState {
                     TextState("로그아웃 하시겠습니까?")
