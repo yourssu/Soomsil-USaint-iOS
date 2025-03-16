@@ -42,6 +42,8 @@ struct v2SemesterDetailView: View {
                                 }
                 )
                 
+        
+                
                 /// Main View
                 GeometryReader {
                     let size = $0.size
@@ -49,15 +51,22 @@ struct v2SemesterDetailView: View {
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 0) {
                             ForEach(tabs) { tab in
-                                Text(tab.id.rawValue)
-                                    .frame(width: size.width, height: size.height)
-                                    .contentShape(.rect)
+                                
+                                /// Top Summary View
+                                VStack {
+                                    Text("")
+                                }
+                                
+                                
+                                /// Grade List View
+                               
                             }
                         }
                         .scrollTargetLayout()
                         .rect { rect in
                             progress = -rect.minX / size.width
                         }
+                        .background(Color.green)
                     }
                     .scrollPosition(id: $mainViewScrollState)
                     .scrollTargetBehavior(.paging)
@@ -80,6 +89,8 @@ struct v2SemesterDetailView: View {
 }
 
 extension v2SemesterDetailView {
+    
+    
     
     struct SemesterTabView: View {
         @Binding var tabs: [TabModel]
