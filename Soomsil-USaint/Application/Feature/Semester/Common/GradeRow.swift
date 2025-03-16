@@ -8,6 +8,7 @@
 import SwiftUI
 import YDS
 
+// TODO: GradeRowView로 변경됨(반영 완료 후, 삭제)
 private enum Dimension {
     enum Spacing {
         static let mainHStack = 16.0
@@ -114,23 +115,6 @@ struct GradeRow: View {
         }
         .padding(.vertical, Dimension.Padding.mainHStack)
     }
-//    var body: some View {
-//        HStack(spacing: Dimension.Spacing.mainHStack) {
-//            Image(uiImage: gradeIcon)
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .frame(width: Dimension.Size.gradeIcon)
-//            VStack(alignment: .leading, spacing: Dimension.Spacing.innerVStack) {
-//                Text(lectureName)
-//                    .font(Font(YDSFont.subtitle1))
-//                Text(professorAndCredit)
-//                    .font(Font(YDSFont.body2))
-//                    .foregroundColor(Color(YDSColor.textTertiary))
-//            }
-//            Spacer()
-//        }
-//        .padding(.vertical, Dimension.Padding.mainHStack)
-//    }
 }
 
 struct MaskedGradeRow_Previews: PreviewProvider {
@@ -141,6 +125,6 @@ struct MaskedGradeRow_Previews: PreviewProvider {
 
 struct GradeRow_Previews: PreviewProvider {
     static var previews: some View {
-        GradeRow(lectureName: "", credit: 0.0)
+        GradeRow(lectureName: "컴퓨팅적 사고", credit: 4.0)
     }
 }
