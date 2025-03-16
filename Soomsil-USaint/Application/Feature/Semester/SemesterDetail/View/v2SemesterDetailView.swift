@@ -31,56 +31,16 @@ struct v2SemesterDetailView: View {
         if #available(iOS 17.0, *) {
             
             VStack(spacing: 0) {
-                ScrollView(.horizontal) {
-                    HStack(spacing: 24) {
-                        ForEach($tabs) { $tab in
-                            Button(action: {
-                                withAnimation(.snappy) {
-                                    activeTab = tab.id
-                                    mainViewScrollState = tab.id
-                                    tabBarScrollState = tab.id
-                                }
-                            }) {
-                                Text(tab.id.rawValue)
-                                    .padding(.vertical, 14)
-                                    .font(YDSFont.button2)
-                                    .foregroundStyle(activeTab == tab.id ? YDSColor.bottomBarSelected : YDSColor.bottomBarNormal)
-                                    .contentShape(.rect)
-                            }
-                            .rect { rect in
-                                tab.size = rect.size
-                                tab.minX = rect.minX
-                            }
-                        }
-                    }
-                    .scrollTargetLayout()
-                }
-                .scrollIndicators(.hidden)
-                .scrollPosition(id: .init(get: {
-                    return tabBarScrollState
-                }, set: { _ in
-                }), anchor: .center)
-                .overlay(alignment: .bottom) {
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .fill(.clear)
-                            .frame(height: 1)
-                        
-                        let inputRange = tabs.indices.compactMap { return CGFloat($0) }
-                        let outputRange = tabs.compactMap { return $0.size.width }
-                        let outputPositionRange = tabs.compactMap { return $0.minX }
-                        let indicatorWidth = progress.interpolate(inputRange: inputRange, outputRange: outputRange)
-                        let indicatorPosition = progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
-                        
-                        Rectangle()
-                            .fill(YDSColor.bottomBarSelected)
-                            .frame(width: indicatorWidth, height: 1.5)
-                            .offset(x: indicatorPosition)
-                    }
-                }
                 
-                .safeAreaPadding(.horizontal, 27)
-
+                /// Tab View
+                SemesterTabView(tabs: $tabs,
+                                activeTab: $activeTab,
+                                progress: $progress,
+                                tabBarScrollState: $tabBarScrollState,
+                                onTabSelected: { tab in
+                                    mainViewScrollState = tab
+                                }
+                )
                 
                 /// Main View
                 GeometryReader {
@@ -121,6 +81,64 @@ struct v2SemesterDetailView: View {
 
 extension v2SemesterDetailView {
     
+    struct SemesterTabView: View {
+        @Binding var tabs: [TabModel]
+        @Binding var activeTab: TabModel.Tab
+        @Binding var progress: CGFloat
+        @Binding var tabBarScrollState: TabModel.Tab?
+        
+        var onTabSelected: (TabModel.Tab) -> Void
+        
+        var body: some View {
+            if #available(iOS 17.0, *) {
+                
+                ScrollView(.horizontal) {
+                    HStack(spacing: 24) {
+                        ForEach($tabs) { $tab in
+                            Button(action: {
+                                withAnimation(.snappy) {
+                                    activeTab = tab.id
+                                    tabBarScrollState = tab.id
+                                    onTabSelected(tab.id)
+                                }
+                            }) {
+                                Text(tab.id.rawValue)
+                                    .padding(.vertical, 14)
+                                    .font(YDSFont.button2)
+                                    .foregroundStyle(activeTab == tab.id ? YDSColor.bottomBarSelected : YDSColor.bottomBarNormal)
+                                    .contentShape(.rect)
+                            }
+                            .rect { rect in
+                                tab.size = rect.size
+                                tab.minX = rect.minX
+                            }
+                        }
+                    }
+                    .scrollTargetLayout()
+                }
+                .scrollIndicators(.hidden)
+                .scrollPosition(id: .init(get: {
+                    return tabBarScrollState
+                }, set: { _ in
+                }), anchor: .center)
+                .overlay(alignment: .bottomLeading) {
+                    
+                    let inputRange = tabs.indices.compactMap { return CGFloat($0) }
+                    let outputRange = tabs.compactMap { return $0.size.width }
+                    let outputPositionRange = tabs.compactMap { return $0.minX }
+                    let indicatorWidth = progress.interpolate(inputRange: inputRange, outputRange: outputRange)
+                    let indicatorPosition = progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
+                    
+                    Rectangle()
+                        .fill(YDSColor.bottomBarSelected)
+                        .frame(width: indicatorWidth, height: 2)
+                        .offset(x: indicatorPosition)
+                    
+                }
+                .safeAreaPadding(.horizontal, 27)
+            }
+        }
+    }
 }
 
 #Preview {
