@@ -22,6 +22,21 @@ struct v2SemesterDetailView: View {
         .init(id: TabModel.Tab.sixth)
     ]
     
+    @State private var grades: [LectureDetail] = [
+        .init(code: "1", title: "Academic Writing in English1", credit: 4.0, score: "2.0", grade: .bPlus, professorName: "Jessica Cahill"),
+        .init(code: "2", title: "한반도평화와통일", credit: 2.0, score: "1.0", grade: .pass, professorName: "조은희"),
+        .init(code: "3", title: "컴퓨팅적사고", credit: 3.0, score: "4.0", grade: .aPlus, professorName: "서유화"),
+        .init(code: "4", title: "사고와표현", credit: 4.0, score: "2.6", grade: .bZero, professorName: "김범수"),
+        .init(code: "5", title: "물리및실험", credit: 5.0, score: "4.5", grade: .aPlus, professorName: "이재환, 이순녀"),
+        .init(code: "6", title: "CHAPEL", credit: 6.0, score: "0", grade: .fail, professorName: "조은식"),
+        .init(code: "1", title: "Academic Writing in English1", credit: 4.0, score: "2.0", grade: .bPlus, professorName: "Jessica Cahill"),
+        .init(code: "2", title: "한반도평화와통일", credit: 2.0, score: "1.0", grade: .pass, professorName: "조은희"),
+        .init(code: "3", title: "컴퓨팅적사고", credit: 3.0, score: "4.0", grade: .aPlus, professorName: "서유화"),
+        .init(code: "4", title: "사고와표현", credit: 4.0, score: "2.6", grade: .bZero, professorName: "김범수"),
+        .init(code: "5", title: "물리및실험", credit: 5.0, score: "4.5", grade: .aPlus, professorName: "이재환, 이순녀"),
+        .init(code: "6", title: "CHAPEL", credit: 6.0, score: "0", grade: .fail, professorName: "조은식")
+    ]
+    
     @State private var activeTab: TabModel.Tab = .first
     @State private var mainViewScrollState: TabModel.Tab?
     @State private var tabBarScrollState: TabModel.Tab?
@@ -33,16 +48,17 @@ struct v2SemesterDetailView: View {
             VStack(spacing: 0) {
                 
                 /// Tab View
-                SemesterTabView(tabs: $tabs,
-                                activeTab: $activeTab,
-                                progress: $progress,
-                                tabBarScrollState: $tabBarScrollState,
-                                onTabSelected: { tab in
-                                    mainViewScrollState = tab
-                                }
+                SemesterTabView(
+                    tabs: $tabs,
+                    activeTab: $activeTab,
+                    progress: $progress,
+                    tabBarScrollState: $tabBarScrollState,
+                    onTabSelected: { tab in
+                        mainViewScrollState = tab
+                    }
                 )
                 
-        
+                
                 
                 /// Main View
                 GeometryReader {
@@ -50,23 +66,66 @@ struct v2SemesterDetailView: View {
                     
                     ScrollView(.horizontal) {
                         LazyHStack(spacing: 0) {
+
                             ForEach(tabs) { tab in
-                                
-                                /// Top Summary View
-                                VStack {
-                                    Text("")
+                                ScrollView(.vertical) {
+
+                                    VStack(alignment: .leading) {
+                                        //                                    Text(tab.id.rawValue)
+                                        
+                                        /// Top Summary View
+                                        HStack(alignment: .lastTextBaseline) {
+                                            Text("4.12")
+                                                .font(YDSFont.display1)
+                                            Text("/ 4.50")
+                                                .foregroundColor(YDSColor.textTertiary)
+                                        }
+                                        
+                                        v2GradeOverView(
+                                            title: "취득 학점",
+                                            accentText: "17"
+                                        )
+                                        v2GradeOverView(
+                                            title: "학기별 석차",
+                                            accentText: "15",
+                                            subText: "55"
+                                        )
+                                        v2GradeOverView(
+                                            title: "전체 석차",
+                                            accentText: "25",
+                                            subText: "70"
+                                        )
+                                        
+                                        Divider()
+                                        
+                                        /// Grade List View
+                                        
+                                        VStack {
+                                            ForEach(Array(grades.enumerated()), id: \.offset) { index, grade in
+                                                GradeRowView(lectureDetail: grade)
+                                            }
+                                        }
+                                        
+                                        
+                                        
+                                        Spacer()
+                                        
+                                    }
+                                    
+                                    
                                 }
-                                
-                                
-                                /// Grade List View
-                               
+                                .padding(20)
+                                .frame(width: size.width, height: size.height)
+                                .contentShape(.rect)
                             }
                         }
+                        
                         .scrollTargetLayout()
                         .rect { rect in
                             progress = -rect.minX / size.width
                         }
-                        .background(Color.green)
+                        
+                    
                     }
                     .scrollPosition(id: $mainViewScrollState)
                     .scrollTargetBehavior(.paging)
