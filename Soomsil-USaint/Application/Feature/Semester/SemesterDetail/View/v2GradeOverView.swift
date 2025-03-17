@@ -35,6 +35,8 @@ struct v2GradeOverView: View {
                     .foregroundColor(YDSColor.textTertiary)
             }
         }
+        .padding(.vertical, 5)
+//        .background(Color.blue)
     }
 }
 
