@@ -39,6 +39,7 @@ struct GradeRowView: View {
             }
             Spacer()
         }
+        .padding(.vertical, 8)
     }
 }
 
