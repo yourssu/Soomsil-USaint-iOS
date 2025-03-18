@@ -11,7 +11,7 @@ import ComposableArchitecture
 struct SemesterDetailReducer {
     @ObservableState
     struct State {
-        var gradeList: [LectureDetail]
+        var gradeList: [LectureDetail] 
     }
     
     enum Action: BindableAction {

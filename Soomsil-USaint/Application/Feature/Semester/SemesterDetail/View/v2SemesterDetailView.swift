@@ -71,7 +71,6 @@ struct v2SemesterDetailView: View {
                                 ScrollView(.vertical) {
 
                                     VStack(alignment: .leading) {
-                                        //                                    Text(tab.id.rawValue)
                                         
                                         /// Top Summary View
                                         HStack(alignment: .lastTextBaseline) {
@@ -99,27 +98,19 @@ struct v2SemesterDetailView: View {
                                         Divider()
                                         
                                         /// Grade List View
-                                        
                                         VStack {
                                             ForEach(Array(grades.enumerated()), id: \.offset) { index, grade in
                                                 GradeRowView(lectureDetail: grade)
                                             }
                                         }
-                                        
-                                        
-                                        
                                         Spacer()
-                                        
                                     }
-                                    
-                                    
                                 }
                                 .padding(20)
                                 .frame(width: size.width, height: size.height)
                                 .contentShape(.rect)
                             }
                         }
-                        
                         .scrollTargetLayout()
                         .rect { rect in
                             progress = -rect.minX / size.width
