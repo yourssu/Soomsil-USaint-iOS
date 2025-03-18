@@ -16,61 +16,78 @@ struct SemesterListView: View {
     @State private var rowAnimation = false
 
     var body: some View {
-        ZStack {
-            ScrollView {
-                // MARK: - top
-                VStack(alignment: .leading) {
-                    HStack {
-                        let creditCard = store.totalReportCard
-                        let average = creditCard.gpa
-                        let sum = creditCard.earnedCredit
-                        let graduateCredit = creditCard.graduateCredit
+        WithPerceptionTracking{
+            ZStack {
+                ScrollView {
+                    // MARK: - top
+                    VStack(alignment: .leading) {
+                        HStack {
+                            let creditCard = store.totalReportCard
+                            let average = creditCard.gpa
+                            let sum = creditCard.earnedCredit
+                            let graduateCredit = creditCard.graduateCredit
 
-                        EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", average), sub: "4.50")
-                        EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", sum), sub: String(graduateCredit))
+                            EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", average), sub: "4.50")
+                            EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", sum), sub: String(graduateCredit))
+                        }
+                        GPAGraphView(semesterList: store.semesterList)
                     }
-                    GPAGraphView(semesterList: store.semesterList)
-                }
-                .padding()
+                    .padding()
 
-                Rectangle()
-                    .frame(height: 8.0)
-                    .foregroundColor(YDSColor.borderThin)
+                    Rectangle()
+                        .frame(height: 8.0)
+                        .foregroundColor(YDSColor.borderThin)
 
-                VStack(alignment: .leading) {
-                    ForEach(
-                        Array(store.state.semesterList.enumerated()),
-                        id: \.offset
-                    ) { index, report in
-                        SemesterRowView(gradeSummaryModel: report)
-                            .offset(x: self.rowAnimation ? 0 : 100)
-                            .opacity(self.rowAnimation ? 1 : 0)
-                            .animation(
-                                .easeIn
-                                    .delay(Double(index) * 0.1)
-                                    .speed(0.5),
-                                value: self.rowAnimation
-                            )
-                            .onAppear {
-                                withAnimation {
-                                    self.rowAnimation = true
-                                }
+                    VStack(alignment: .leading) {
+                        if store.state.semesterList.isEmpty {
+                            VStack {
+                                Text("유세인트에 확정된 성적표가 보이는 곳 입니다.")
+                                    .font(.headline)
+                                    .foregroundColor(.gray)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.bottom, 4)
+                                Text("성적이 보이지 않는 경우 뷰를 아래로 당겨서 새로고침을 시도해주세요!")
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                    .multilineTextAlignment(.center)
                             }
+                            .padding()
+                        } else {
+                            ForEach(
+                                Array(store.state.semesterList.sortedDescending().enumerated()),
+                                id: \.offset
+                            ) { index, report in
+                                SemesterRowView(gradeSummaryModel: report)
+                                    .offset(x: rowAnimation ? 0 : 100)
+                                    .opacity(rowAnimation ? 1 : 0)
+                                    .animation(
+                                        .easeIn
+                                            .delay(Double(index) * 0.1)
+                                            .speed(0.5),
+                                        value: rowAnimation
+                                    )
+                                    .onAppear {
+                                        withAnimation {
+                                            rowAnimation = true
+                                        }
+                                    }
+                            }
+                        }
                     }
+                    .padding()
                 }
-                .padding()
+                .background(YDSColor.bgElevated)
+                .onAppear {
+                    store.send(.onAppear)
+                }
+                .refreshable {
+                    store.send(.onRefresh)
+                }
+                .registerYDSToast()
+                .overlay(
+                    store.isLoading ? CircleLoadingView() : nil
+                )
             }
-            .background(YDSColor.bgElevated)
-            .onAppear {
-                store.send(.onAppear)
-            }
-            .refreshable {
-                store.send(.onRefresh)
-            }
-            .registerYDSToast()
-            .overlay(
-                store.isLoading ? CircleLoadingView() : nil
-            )
         }
     }
 }
