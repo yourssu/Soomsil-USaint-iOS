@@ -76,7 +76,7 @@ struct SplashReducer {
                         }
                     },
                     message: {
-                        TextState(error.localizedDescription)
+                        TextState("버전 정보를 불러오는 데 실패했습니다.\n네트워크 상태를 확인한 후 다시 시도해주세요.")
                     }
                 )
                 return .none
