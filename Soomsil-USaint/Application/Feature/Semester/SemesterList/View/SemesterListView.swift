@@ -23,7 +23,7 @@ struct SemesterListView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             let creditCard = store.totalReportCard
-                            
+
                             EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", creditCard.gpa), sub: "4.50")
                             EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", creditCard.earnedCredit), sub: String(creditCard.graduateCredit))
                         }
@@ -95,16 +95,20 @@ private extension SemesterListView {
         let emphasized: String
         let sub: String
 
+        private var isMini: Bool {
+            UIScreen.main.bounds.width <= 375
+        }
+
         var body: some View {
             VStack(alignment: .leading) {
                 Text("\(title)")
                     .font(YDSFont.subtitle2)
                 HStack(alignment: .firstTextBaseline) {
                     Text("\(emphasized)")
-                        .font(YDSFont.display1)
+                        .font(isMini ? YDSFont.display2 : YDSFont.display1)
                         .foregroundColor(YDSColor.textPointed)
                     Text("/ \(sub)")
-                        .font(YDSFont.button0)
+                        .font(isMini ? YDSFont.button1 : YDSFont.button0)
                         .foregroundColor(YDSColor.textTertiary)
                     Spacer()
                 }
