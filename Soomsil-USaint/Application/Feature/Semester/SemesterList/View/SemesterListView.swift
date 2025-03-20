@@ -43,7 +43,7 @@ struct SemesterListView: View {
                                     .foregroundColor(.gray)
                                     .multilineTextAlignment(.center)
                                     .padding(.bottom, 4)
-                                Text("성적이 보이지 않는 경우 뷰를 아래로 당겨서 새로고침을 시도해주세요!")
+                                Text("성적이 보이지 않는 경우 새로고침 버튼을 눌러주세요!")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                                     .multilineTextAlignment(.center)
@@ -77,13 +77,23 @@ struct SemesterListView: View {
                 .onAppear {
                     store.send(.onAppear)
                 }
-                .refreshable {
-                    store.send(.onRefresh)
-                }
                 .registerYDSToast()
                 .overlay(
                     store.isLoading ? CircleLoadingView() : nil
                 )
+                .toolbar {
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        Button {
+                            Task {
+                                store.send(.onRefresh)
+                            }
+                        } label: {
+                            YDSIcon.refreshLine
+                                .renderingMode(.template)
+                                .foregroundColor(YDSColor.buttonNormal)
+                        }
+                    }
+                }
             }
         }
     }
