@@ -14,7 +14,7 @@ struct HomeReducer {
     @Reducer
     enum Path {
         case setting(SettingReducer)
-//        case semesterList
+        case semesterList(SemesterListReducer)
 //        case semesterDetail
         case web(WebReducer)
     }
@@ -82,6 +82,9 @@ struct HomeReducer {
                 return .none
             case .settingPressed:
                 state.path.append(.setting(SettingReducer.State()))
+                return .none
+            case .semesterListPressed:
+                state.path.append(.semesterList(SemesterListReducer.State(totalReportCard: state.totalReportCard)))
                 return .none
             default:
                 return .none
