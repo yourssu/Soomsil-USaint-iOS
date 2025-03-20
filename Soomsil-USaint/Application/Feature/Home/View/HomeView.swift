@@ -36,6 +36,8 @@ struct HomeView: View {
                 switch store.case {
                 case .setting(let store):
                     SettingView(store: store)
+                case .semesterList(let store):
+                    SemesterListView(store: store)
                 case .web(let store):
                     WebView(store: store)
                 }
