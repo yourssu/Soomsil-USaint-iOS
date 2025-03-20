@@ -23,12 +23,9 @@ struct SemesterListView: View {
                     VStack(alignment: .leading) {
                         HStack {
                             let creditCard = store.totalReportCard
-                            let average = creditCard.gpa
-                            let sum = creditCard.earnedCredit
-                            let graduateCredit = creditCard.graduateCredit
-
-                            EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", average), sub: "4.50")
-                            EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", sum), sub: String(graduateCredit))
+                            
+                            EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", creditCard.gpa), sub: "4.50")
+                            EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", creditCard.earnedCredit), sub: String(creditCard.graduateCredit))
                         }
                         GPAGraphView(semesterList: store.semesterList)
                     }
@@ -117,7 +114,7 @@ private extension SemesterListView {
 }
 
 #Preview {
-    SemesterListView(store: Store(initialState: SemesterListReducer.State()) {
+    SemesterListView(store: Store(initialState: SemesterListReducer.State(totalReportCard: TotalReportCard(gpa: 4.5, earnedCredit: 133.0, graduateCredit: 123.0))) {
         SemesterListReducer()
     })
 }

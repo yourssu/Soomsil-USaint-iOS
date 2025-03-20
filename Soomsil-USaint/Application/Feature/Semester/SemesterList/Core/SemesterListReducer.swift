@@ -14,7 +14,7 @@ import YDS_SwiftUI
 struct SemesterListReducer {
     @ObservableState
     struct State {
-        var totalReportCard: TotalReportCard = TotalReportCard(gpa: 4.5, earnedCredit: 133.0, graduateCredit: 123.0)
+        var totalReportCard: TotalReportCard
         var semesterList: [GradeSummary] = []
         var fetchErrorMessage: String = "재로그인 후 다시 시도해주세요!"
         var isLoading: Bool = true
@@ -48,14 +48,7 @@ struct SemesterListReducer {
                 state.isLoading = true
                 return .run { send in
                 do {
-                       try await gradeClient.deleteTotalReportCard()
-                       try await gradeClient.deleteAllSemesterGrades()
-
-                       let totalReportCard = try await gradeClient.fetchTotalReportCard()
-                       try await gradeClient.updateTotalReportCard(totalReportCard)
-
-                       let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
-                       try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
+                    try await refreshGradeData()
 
                        await send(.totalReportCardResponse(Result {
                            return try await gradeClient.getTotalReportCard()
@@ -90,6 +83,17 @@ struct SemesterListReducer {
                 return .none
             }
         }
+    }
+
+    private func refreshGradeData() async throws {
+        try await gradeClient.deleteTotalReportCard()
+        try await gradeClient.deleteAllSemesterGrades()
+
+        let totalReportCard = try await gradeClient.fetchTotalReportCard()
+        try await gradeClient.updateTotalReportCard(totalReportCard)
+
+        let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
+        try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
     }
 
 }
