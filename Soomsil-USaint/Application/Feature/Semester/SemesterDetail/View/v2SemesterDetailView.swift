@@ -134,6 +134,14 @@ struct v2SemesterDetailView: View {
                     }
                 }
             }
+            .onAppear {
+                store.send(.onAppear)
+            }
+            .onChange(of: store.toastMessage) { _, newValue in
+                if let message = newValue {
+                    YDSToast(message, haptic: .failed)
+                }
+            }
         } else {
             
         }

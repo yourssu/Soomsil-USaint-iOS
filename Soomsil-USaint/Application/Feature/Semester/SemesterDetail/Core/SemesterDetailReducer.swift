@@ -6,7 +6,6 @@
 //
 
 import ComposableArchitecture
-import YDS_SwiftUI
 
 @Reducer
 struct SemesterDetailReducer {
@@ -14,6 +13,7 @@ struct SemesterDetailReducer {
     struct State {
         var semesterList: [GradeSummary] = []
         var isLoading: Bool = false
+        var toastMessage: String?
     }
     
     enum Action: BindableAction {
@@ -42,14 +42,12 @@ struct SemesterDetailReducer {
                 state.isLoading = false
                 return .none
             case .semesterListResponse(.failure(let error)):
-                debugPrint(error)
                 state.isLoading = false
-                YDSToast(String(describing: error), haptic: .failed)
+                state.toastMessage = String(describing: error)
                 return .none
             default:
                 return .none
             }
-        
         }
     }
 }
