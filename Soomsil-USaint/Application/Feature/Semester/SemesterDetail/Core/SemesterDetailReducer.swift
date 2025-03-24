@@ -12,6 +12,7 @@ struct SemesterDetailReducer {
     @ObservableState
     struct State {
         var semesterList: [GradeSummary] = []
+        var tabs: [SemesterTab] = []
         var isLoading: Bool = false
         var toastMessage: String?
     }
@@ -39,6 +40,9 @@ struct SemesterDetailReducer {
                 return .none
             case .semesterListResponse(.success(let semesterList)):
                 state.semesterList = semesterList
+                state.tabs = semesterList.map {
+                    SemesterTab(id: "\($0.year)년 \($0.semester)학기")
+                }
                 state.isLoading = false
                 return .none
             case .semesterListResponse(.failure(let error)):
