@@ -143,6 +143,7 @@ extension v2SemesterDetailView {
                                 }
                             }) {
                                 Text(formatShortedYear(tab.id))
+                                    .font(YDSFont.button2)
                                     .padding(.vertical, 12)
                                     .foregroundStyle(activeTab == tab.id ? .primary : Color.gray)
                                     .contentShape(.rect)
