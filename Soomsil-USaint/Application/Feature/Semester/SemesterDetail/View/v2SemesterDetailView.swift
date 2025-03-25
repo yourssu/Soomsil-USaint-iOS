@@ -142,7 +142,7 @@ extension v2SemesterDetailView {
                                     mainViewScrollState = tab.id
                                 }
                             }) {
-                                Text(tab.id)
+                                Text(formatShortedYear(tab.id))
                                     .padding(.vertical, 12)
                                     .foregroundStyle(activeTab == tab.id ? .primary : Color.gray)
                                     .contentShape(.rect)
@@ -193,7 +193,20 @@ extension v2SemesterDetailView {
                 .scrollIndicators(.hidden)
             }
         }
+        
+        private func formatShortedYear(_ id: String) -> String {
+            let components = id.split(separator: "년")
+            guard let year = components.first, components.count > 1 else {
+                return id
+            }
+            if let year = Int(year) {
+                let shortedYear = year % 100
+                return "\(shortedYear)년\(components[1])"
+            }
+            return id
+        }
     }
+    
 }
 
 #Preview {
