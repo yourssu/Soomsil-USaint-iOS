@@ -36,7 +36,6 @@ struct v2GradeOverView: View {
             }
         }
         .padding(.vertical, 5)
-//        .background(Color.blue)
     }
 }
 
