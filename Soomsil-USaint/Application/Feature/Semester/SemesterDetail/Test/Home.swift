@@ -35,7 +35,14 @@ struct Home: View {
                                 
                                 ForEach(store.tabs) { tab in
                                     ScrollView(.vertical) {
-                                        SemesterDetailContent()
+                                        let tappedSemester = findTappedSemester(
+                                            semesterList: store.semesterList,
+                                            tabId: tab.id
+                                        )
+                                        if let semester = tappedSemester {
+                                            TopSummary(gradeSummary: semester)
+                                            GradeList(lectures: semester.lectures ?? [])
+                                        }
                                     }
                                     .frame(width: size.width, height: size.height)
                                     .contentShape(.rect)
@@ -63,61 +70,53 @@ struct Home: View {
                 .onAppear() {
                     store.send(.onAppear)
                 }
-                
             }
         }
     }
 
-    struct SemesterDetailContent: View {
-        
-        var body: some View {
-            ScrollView(.vertical) {
-                TopSummary()
-                GradeList()
-            }
-        }
-    }
-    
     struct TopSummary: View {
+        var gradeSummary: GradeSummary
         
         var body: some View {
             VStack(alignment: .leading) {
                 HStack(alignment: .lastTextBaseline) {
-                    Text("4.12")
+                    Text("\(gradeSummary.gpa)")
                         .font(YDSFont.display1)
                     Text("/ 4.50")
                         .foregroundColor(YDSColor.textTertiary)
                 }
-                v2GradeOverView(title: "취득 학점", accentText: "17")
-                v2GradeOverView(title: "학기별 석차", accentText: "15", subText: "55")
-                v2GradeOverView(title: "전체 석차", accentText: "25", subText: "70")
+                v2GradeOverView(title: "취득 학점",
+                                accentText: "\(gradeSummary.earnedCredit)")
+                v2GradeOverView(title: "학기별 석차",
+                                accentText: "\(gradeSummary.semesterRank)",
+                                subText: "\(gradeSummary.semesterStudentCount)")
+                v2GradeOverView(title: "전체 석차",
+                                accentText: "\(gradeSummary.overallRank)",
+                                subText: "\(gradeSummary.overallStudentCount)")
                 Divider()
             }
         }
     }
     
     struct GradeList: View {
-        var grs: [LectureDetail] = [
-            .init(code: "1", title: "Academic Writing in English1", credit: 4.0, score: "2.0", grade: .bPlus, professorName: "Jessica Cahill"),
-            .init(code: "2", title: "한반도평화와통일", credit: 2.0, score: "1.0", grade: .pass, professorName: "조은희"),
-            .init(code: "3", title: "컴퓨팅적사고", credit: 3.0, score: "4.0", grade: .aPlus, professorName: "서유화"),
-            .init(code: "4", title: "사고와표현", credit: 4.0, score: "2.6", grade: .bZero, professorName: "김범수"),
-            .init(code: "5", title: "물리및실험", credit: 5.0, score: "4.5", grade: .aPlus, professorName: "이재환, 이순녀"),
-            .init(code: "6", title: "CHAPEL", credit: 6.0, score: "0", grade: .fail, professorName: "조은식")
-        ]
+        var lectures: [LectureDetail]
         
         var body: some View {
             VStack {
-                ForEach(grs, id: \.self.code) { grade in
-                    
-                    GradeRowView(lectureDetail: grade)
-                    
+                ForEach(lectures, id: \.self.code) { lecture in
+                    GradeRowView(lectureDetail: lecture)
                 }
             }
         }
     }
     
-
+    func findTappedSemester(semesterList: [GradeSummary], tabId: String) -> GradeSummary? {
+        let tappedSemesterList = store.semesterList.filter { list in
+            let id = "\(list.year)년 \(list.semester)"
+            return id == tabId
+        }
+        return tappedSemesterList.first
+    }
 }
 
 extension Home {
@@ -162,7 +161,6 @@ extension Home {
                     
                 }), anchor: .center)
                 
-                
                 .overlay(alignment: .bottom) {
                     ZStack(alignment: .leading) {
                         Rectangle()
@@ -180,19 +178,16 @@ extension Home {
                         }
                         
                         if !(inputRange.isEmpty || outputRange.isEmpty || outputPositionRange.isEmpty) {
-                            
                             let indicatorWidth = progress.interpolate(inputRange: inputRange, outputRange: outputRange)
                             let indicatorPosition = progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
                             
                             Rectangle()
                                 .fill(.primary)
                                 .frame(width: indicatorWidth,height: 1.5)
-                                .offset(x: indicatorPosition)                        }
-                        
+                                .offset(x: indicatorPosition)
+                        }
                     }
                 }
-                
-                
                 .safeAreaPadding(.horizontal, 15)
                 .scrollIndicators(.hidden)
             }
@@ -201,7 +196,6 @@ extension Home {
 }
 
 #Preview {
-
     let store = Store(initialState: SemesterDetailReducer.State()) {
         SemesterDetailReducer()
     }
