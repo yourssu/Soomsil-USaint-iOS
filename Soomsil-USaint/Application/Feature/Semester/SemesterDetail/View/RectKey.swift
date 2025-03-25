@@ -19,11 +19,13 @@ extension View {
     func rect(completion: @escaping (CGRect) -> ()) -> some View {
         self
             .overlay {
-                GeometryReader { proxy in
+                GeometryReader {
                     if #available(iOS 17.0, *) {
+                        let rect = $0.frame(in: .scrollView(axis: .horizontal))
+                        
                         Color.clear
                             .preference(key: RectKey.self,
-                                        value: proxy.frame(in: .scrollView(axis: .horizontal)))
+                                        value: rect)
                             .onPreferenceChange(RectKey.self, perform: completion)
                     } else {
 

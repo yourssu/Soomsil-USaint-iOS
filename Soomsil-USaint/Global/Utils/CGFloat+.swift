@@ -22,7 +22,7 @@ extension CGFloat {
             let y2 = outputRange[index]
 
             if x <= inputRange[index] {
-                let y = y1 + (y2 - y1) / (x2 - x1) * (x - x1)
+                let y = y1 + ((y2 - y1) / (x2 - x1)) * (x - x1)
                 return y
             }
         }
