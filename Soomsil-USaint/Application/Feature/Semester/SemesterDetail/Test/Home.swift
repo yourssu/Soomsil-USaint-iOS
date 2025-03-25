@@ -6,14 +6,13 @@
 //
 
 import SwiftUI
+
 import ComposableArchitecture
+import YDS_SwiftUI
 
 struct Home: View {
     @Perception.Bindable var store: StoreOf<SemesterDetailReducer>
 
-    
-//    @State var tabs: [SemesterTab] = []
-//    @State var activeTab: SemesterTab.ID = ""
     @State var mainViewScrollState: SemesterTab.ID?
     @State var tabBarScrollState: SemesterTab.ID?
     @State var progress: CGFloat = .zero
@@ -35,10 +34,11 @@ struct Home: View {
                             LazyHStack(spacing: 0) {
                                 
                                 ForEach(store.tabs) { tab in
-                                    Text(tab.id)
-                                        .frame(width: size.width, height: size.height)
-                                        .contentShape(.rect)
-                                    
+                                    ScrollView(.vertical) {
+                                        SemesterDetailContent()
+                                    }
+                                    .frame(width: size.width, height: size.height)
+                                    .contentShape(.rect)
                                 }
                             }
                             .scrollTargetLayout()
@@ -68,6 +68,54 @@ struct Home: View {
         }
     }
 
+    struct SemesterDetailContent: View {
+        
+        var body: some View {
+            ScrollView(.vertical) {
+                TopSummary()
+                GradeList()
+            }
+        }
+    }
+    
+    struct TopSummary: View {
+        
+        var body: some View {
+            VStack(alignment: .leading) {
+                HStack(alignment: .lastTextBaseline) {
+                    Text("4.12")
+                        .font(YDSFont.display1)
+                    Text("/ 4.50")
+                        .foregroundColor(YDSColor.textTertiary)
+                }
+                v2GradeOverView(title: "취득 학점", accentText: "17")
+                v2GradeOverView(title: "학기별 석차", accentText: "15", subText: "55")
+                v2GradeOverView(title: "전체 석차", accentText: "25", subText: "70")
+                Divider()
+            }
+        }
+    }
+    
+    struct GradeList: View {
+        var grs: [LectureDetail] = [
+            .init(code: "1", title: "Academic Writing in English1", credit: 4.0, score: "2.0", grade: .bPlus, professorName: "Jessica Cahill"),
+            .init(code: "2", title: "한반도평화와통일", credit: 2.0, score: "1.0", grade: .pass, professorName: "조은희"),
+            .init(code: "3", title: "컴퓨팅적사고", credit: 3.0, score: "4.0", grade: .aPlus, professorName: "서유화"),
+            .init(code: "4", title: "사고와표현", credit: 4.0, score: "2.6", grade: .bZero, professorName: "김범수"),
+            .init(code: "5", title: "물리및실험", credit: 5.0, score: "4.5", grade: .aPlus, professorName: "이재환, 이순녀"),
+            .init(code: "6", title: "CHAPEL", credit: 6.0, score: "0", grade: .fail, professorName: "조은식")
+        ]
+        
+        var body: some View {
+            VStack {
+                ForEach(grs, id: \.self.code) { grade in
+                    
+                    GradeRowView(lectureDetail: grade)
+                    
+                }
+            }
+        }
+    }
     
 
 }
