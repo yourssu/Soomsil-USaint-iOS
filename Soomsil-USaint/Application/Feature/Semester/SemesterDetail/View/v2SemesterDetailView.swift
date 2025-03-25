@@ -13,9 +13,9 @@ import YDS_SwiftUI
 struct v2SemesterDetailView: View {
     @Perception.Bindable var store: StoreOf<SemesterDetailReducer>
 
-    @State var mainViewScrollState: SemesterTab.ID?
-    @State var tabBarScrollState: SemesterTab.ID?
-    @State var progress: CGFloat = .zero
+    @State private var mainViewScrollState: SemesterTab.ID?
+    @State private var tabBarScrollState: SemesterTab.ID?
+    @State private var progress: CGFloat = .zero
     
     var body: some View {
         if #available(iOS 17.0, *) {
@@ -111,7 +111,7 @@ struct v2SemesterDetailView: View {
         }
     }
     
-    func findTappedSemester(semesterList: [GradeSummary], tabId: String) -> GradeSummary? {
+    private func findTappedSemester(semesterList: [GradeSummary], tabId: String) -> GradeSummary? {
         let tappedSemesterList = store.semesterList.filter { list in
             let id = "\(list.year)년 \(list.semester)"
             return id == tabId
