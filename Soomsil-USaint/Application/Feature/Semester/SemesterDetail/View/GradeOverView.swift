@@ -9,7 +9,7 @@ import SwiftUI
 
 import YDS_SwiftUI
 
-struct v2GradeOverView: View {
+struct GradeOverView: View {
 
     private let title: String
     private let accentText: String
@@ -39,12 +39,12 @@ struct v2GradeOverView: View {
     }
 }
 
-extension v2GradeOverView {
+extension GradeOverView {
     func transformIfZero(_ text: String) -> String {
         return text == "0" ? "-" : text
     }
 }
 
 #Preview {
-    v2GradeOverView(title: "전체석차", accentText: "25", subText: "70")
+    GradeOverView(title: "전체석차", accentText: "25", subText: "70")
 }
