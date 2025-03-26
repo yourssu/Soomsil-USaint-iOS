@@ -11,20 +11,21 @@ import YDS_SwiftUI
 
 struct GradeInfo: View {
     var reportCard: TotalReportCard
-
+    
     let onSemesterListPressed: () -> Void
-
+    let onSemesterDetailPressed: () -> Void
+    
     var body: some View {
-        Button(action: {
-            onSemesterListPressed()
-        }, label: {
-            VStack {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text("내 성적")
+        VStack {
+            VStack(alignment: .leading, spacing: 0) {
+                Text("내 성적")
                     .font(YDSFont.title3)
                     .padding(.leading, 4)
                     .padding(.top, 20)
-
+                
+                Button(action: {
+                    onSemesterListPressed()
+                }) {
                     HStack(spacing: 14) {
                         Image("ppussung")
                             .resizable()
@@ -46,35 +47,35 @@ struct GradeInfo: View {
                     .padding(.vertical, 12)
                     .background(YDSColor.bgElevated)
                     .frame(height: 72)
-
-                    VStack(spacing: 0) {
-                        CreditLine(title: "평균학점", earned: reportCard.gpa, graduated: 4.50, isInt: false)
-                        Divider()
-                            .padding(.horizontal, 13)
-                        CreditLine(title: "취득학점", earned: reportCard.earnedCredit, graduated: reportCard.graduateCredit, isInt: true)
-
-                        Button(action: {
-                            onSemesterListPressed()
-                        }, label: {
-                            Text("전체 학기 성적 보기")
-                                .font(Font.custom("Apple SD Gothic Neo", size: 15))
-                                .foregroundColor(.white)
-                                .frame(height: 39, alignment: .center)
-                                .frame(maxWidth: .infinity)
-                                .background(Color(red: 0.51, green: 0.43, blue: 0.93))
-                                .cornerRadius(4)
-                        })
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .padding(.bottom, 4)
-                    }
                 }
-                .padding(.horizontal, 16)
+                
+                VStack(spacing: 0) {
+                    CreditLine(title: "평균학점", earned: reportCard.gpa, graduated: 4.50, isInt: false)
+                    Divider()
+                        .padding(.horizontal, 13)
+                    CreditLine(title: "취득학점", earned: reportCard.earnedCredit, graduated: reportCard.graduateCredit, isInt: true)
+                    
+                    Button(action: {
+                        onSemesterDetailPressed()
+                    }, label: {
+                        Text("학기별 성적 조회")
+                            .font(Font.custom("Apple SD Gothic Neo", size: 15))
+                            .foregroundColor(.white)
+                            .frame(height: 39, alignment: .center)
+                            .frame(maxWidth: .infinity)
+                            .background(Color(red: 0.51, green: 0.43, blue: 0.93))
+                            .cornerRadius(4)
+                    })
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .padding(.bottom, 4)
+                }
             }
-            .foregroundStyle(.black)
-            .background(YDSColor.bgElevated)
-            .cornerRadius(8)
-        })
+            .padding(.horizontal, 16)
+        }
+        .foregroundStyle(.black)
+        .background(YDSColor.bgElevated)
+        .cornerRadius(8)
     }
 }
 
@@ -83,7 +84,7 @@ struct CreditLine: View {
     let earned: Float
     let graduated: Float
     let isInt: Bool
-
+    
     var body: some View {
         HStack {
             Text(title).font(YDSFont.body1)
@@ -102,5 +103,9 @@ struct CreditLine: View {
 }
 
 #Preview {
-    GradeInfo(reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188), onSemesterListPressed: {})
+    GradeInfo(
+        reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188),
+        onSemesterListPressed: {},
+        onSemesterDetailPressed: {}
+    )
 }
