@@ -40,7 +40,7 @@ struct Rusaint_iOSApp: App {
 //                    }
 //                }
             AppView(store: store)
-                .onChange(of: scenePhase) { phase in
+                .onChange(of: scenePhase) { _, phase in
                     debugPrint("ScenePhase: \(phase)")
                     if phase == .background {
                         scheduleCurrentSemester()
@@ -76,50 +76,50 @@ func scheduleCurrentSemester() {
 }
 
 public func compareAndFetchCurrentSemester() async {
-    do {
-        let existingSemester = SemesterRepository.shared.getSemester(year: 2024, semester: "2 학기")
-
-//        print("=== 🌟🌟🌟\(String(describing: existingSemester))")
-//        print()
-
-        let userInfo = HomeRepository.shared.getUserLoginInformation()
-        let session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
-        if session != nil {
-            let response = try await CourseGradesApplicationBuilder().build(session: session).classes(courseType: .bachelor,
-                                                                                                            year: 2024,
-                                                                                                            semester: .two,
-                                                                                                            includeDetails: false)
-
-
-            let currentClassesData = response.toLectureDetails()
-            let currentSemester = GradeSummary(year: 2024,
-                                                    semester: "2 학기",
-                                                    gpa: 0,
-                                                    earnedCredit: 0,
-                                                    semesterRank: 0,
-                                                    semesterStudentCount: 0,
-                                                    overallRank: 0,
-                                                    overallStudentCount: 0,
-                                                    lectures: currentClassesData)
-
-            if let existingSemester = existingSemester {
-                let differences = compareSemesters(existingSemester, currentSemester)
-//                print("=== ❌❌❌ Differences:", differences)
-//                print()
-
-                if !differences.isEmpty {
-                    for i in 0...differences.count-1 {
-                        LocalNotificationManager.shared.pushLectureNotification(lectureTitle: differences[i])
-                    }
-                    SemesterRepository.shared.updateLecturesForSemester(year: 2024, semester: "2 학기", newLectures: currentClassesData)
-                }
-            } else {
-                print("No existing semester found.")
-            }
-        }
-    } catch {
-        print(" Compare And Fetch Current Semester Error: \(error)")
-    }
+//    do {
+//        let existingSemester = SemesterRepository.shared.getSemester(year: 2024, semester: "2 학기")
+//
+////        print("=== 🌟🌟🌟\(String(describing: existingSemester))")
+////        print()
+//
+//        let userInfo = HomeRepository.shared.getUserLoginInformation()
+//        let session = try await USaintSessionBuilder().withPassword(id: userInfo[0], password: userInfo[1])
+//        if session != nil {
+//            let response = try await CourseGradesApplicationBuilder().build(session: session).classes(courseType: .bachelor,
+//                                                                                                            year: 2024,
+//                                                                                                            semester: .two,
+//                                                                                                            includeDetails: false)
+//
+//
+//            let currentClassesData = response.toLectureDetails()
+//            let currentSemester = GradeSummary(year: 2024,
+//                                                    semester: "2 학기",
+//                                                    gpa: 0,
+//                                                    earnedCredit: 0,
+//                                                    semesterRank: 0,
+//                                                    semesterStudentCount: 0,
+//                                                    overallRank: 0,
+//                                                    overallStudentCount: 0,
+//                                                    lectures: currentClassesData)
+//
+//            if let existingSemester = existingSemester {
+//                let differences = compareSemesters(existingSemester, currentSemester)
+////                print("=== ❌❌❌ Differences:", differences)
+////                print()
+//
+//                if !differences.isEmpty {
+//                    for i in 0...differences.count-1 {
+//                        LocalNotificationManager.shared.pushLectureNotification(lectureTitle: differences[i])
+//                    }
+//                    SemesterRepository.shared.updateLecturesForSemester(year: 2024, semester: "2 학기", newLectures: currentClassesData)
+//                }
+//            } else {
+//                print("No existing semester found.")
+//            }
+//        }
+//    } catch {
+//        print(" Compare And Fetch Current Semester Error: \(error)")
+//    }
 }
 
 private func compareSemesters(_ oldSemester: GradeSummary, _ newSemester: GradeSummary) -> [String] {

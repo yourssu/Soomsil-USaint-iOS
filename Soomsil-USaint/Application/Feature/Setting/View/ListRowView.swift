@@ -79,7 +79,7 @@ struct RowView: View {
                     .padding(.vertical, 20)
                     .tint(YDSColor.buttonPoint)
                     .frame(height: 48)
-                    .onChange(of: isPushAuthorizationEnabled.wrappedValue) { newValue in
+                    .onChange(of: isPushAuthorizationEnabled.wrappedValue) {
                         action()
                     }
             }

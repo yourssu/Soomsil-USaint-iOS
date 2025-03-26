@@ -45,7 +45,7 @@ struct HomeView: View {
             case .web(let store):
                 WebView(store: store)
             case .semesterDetail(let store):
-                v2SemesterDetailView(store: store)
+                SemesterDetailView(store: store)
             }
         }
         .onAppear {
