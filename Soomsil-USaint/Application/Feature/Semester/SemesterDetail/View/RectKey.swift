@@ -20,16 +20,12 @@ extension View {
         self
             .overlay {
                 GeometryReader {
-                    if #available(iOS 17.0, *) {
-                        let rect = $0.frame(in: .scrollView(axis: .horizontal))
-                        
-                        Color.clear
-                            .preference(key: RectKey.self,
-                                        value: rect)
-                            .onPreferenceChange(RectKey.self, perform: completion)
-                    } else {
+                    let rect = $0.frame(in: .scrollView(axis: .horizontal))
 
-                    }
+                    Color.clear
+                        .preference(key: RectKey.self,
+                                    value: rect)
+                        .onPreferenceChange(RectKey.self, perform: completion)
                 }
             }
     }
