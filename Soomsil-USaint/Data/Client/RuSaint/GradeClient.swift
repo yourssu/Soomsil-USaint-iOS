@@ -13,7 +13,7 @@ import Rusaint
 struct GradeClient {
     static let coreDataStack: CoreDataStack = .shared
 
-    var currentYearAndSemester: @Sendable () async throws -> (year: Int, semester: String)?
+    var currentYearAndSemester: @Sendable () async throws -> (year: Int, semester: SemesterType)?
 
     var fetchTotalReportCard:  @Sendable () async throws -> TotalReportCard
     var fetchAllSemesterGrades: @Sendable () async throws -> [GradeSummary]
@@ -61,15 +61,15 @@ extension GradeClient: DependencyKey {
 
                 switch (month: month, day: day) {
                 case DateRange(start: (month: 6, day: 8), end: (month: 7, day: 7)):
-                    return (year: year, semester: "1 학기")
+                    return (year: year, semester: .one)
                 case DateRange(start: (month: 7, day: 11), end: (month: 7, day: 25)):
-                    return (year: year, semester: "여름학기")
+                    return (year: year, semester: .summer)
                 case DateRange(start: (month: 12, day: 8), end: (month: 12, day: 31)):
-                    return (year: year, semester: "2 학기")
+                    return (year: year, semester: .two)
                 case DateRange(start: (month: 1, day: 1), end: (month: 1, day: 7)):
-                    return (year: year - 1, semester: "2 학기")
+                    return (year: year - 1, semester: .two)
                 case DateRange(start: (month: 1, day: 11), end: (month: 1, day: 26)):
-                    return (year: year - 1, semester: "겨울학기")
+                    return (year: year - 1, semester: .winter)
                 default:
                     return nil
                 }
@@ -250,7 +250,7 @@ extension GradeClient: DependencyKey {
 
     static let previewValue: GradeClient = Self(
         currentYearAndSemester: {
-            return (year: 2025, semester: "1 학기")
+            return (year: 2025, semester: SemesterType.one)
         }, fetchTotalReportCard: {
             return TotalReportCard(gpa: 4.11, earnedCredit: 112, graduateCredit: 188)
         }, fetchAllSemesterGrades:  {
