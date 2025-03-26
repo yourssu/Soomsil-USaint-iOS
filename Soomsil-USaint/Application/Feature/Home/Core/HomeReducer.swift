@@ -15,7 +15,7 @@ struct HomeReducer {
     enum Path {
         case setting(SettingReducer)
         case semesterList(SemesterListReducer)
-//        case semesterDetail
+        case semesterDetail(SemesterDetailReducer)
         case web(WebReducer)
     }
     
@@ -37,6 +37,7 @@ struct HomeReducer {
         case checkPushAuthorizationResponse(Result<Bool, Error>)
         case settingPressed
         case semesterListPressed
+        case semesterDetailPressed
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -85,6 +86,9 @@ struct HomeReducer {
                 return .none
             case .semesterListPressed:
                 state.path.append(.semesterList(SemesterListReducer.State(totalReportCard: state.totalReportCard)))
+                return .none
+            case .semesterDetailPressed:
+                state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
             default:
                 return .none
