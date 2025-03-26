@@ -80,8 +80,14 @@ struct SemesterListView: View {
             .overlay(
                 store.isLoading ? CircleLoadingView() : nil
             )
+            .navigationBarBackButtonHidden()
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .topBarLeading) {
+                    BackButton {
+                        store.send(.backButtonTapped)
+                    }
+                }
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     Button {
                         Task {
                             store.send(.onRefresh)

@@ -24,12 +24,14 @@ struct SemesterListReducer {
         case binding(BindingAction<State>)
         case onAppear
         case onRefresh
+        case backButtonTapped
         case totalReportCardResponse(Result<TotalReportCard, Error>)
         case semesterListResponse(Result<[GradeSummary], Error>)
     }
 
     @Dependency(\.studentClient) var studentClient
     @Dependency(\.gradeClient) var gradeClient
+    @Dependency(\.dismiss) var dismiss
 
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -60,6 +62,10 @@ struct SemesterListReducer {
                        debugPrint("onRefresh failed: \(error)")
                        await send(.semesterListResponse(.failure(error)))
                    }
+                }
+            case .backButtonTapped:
+                return .run { _ in
+                    await dismiss()
                 }
             case .totalReportCardResponse(.success(let totalReportCard)):
                 state.totalReportCard = totalReportCard

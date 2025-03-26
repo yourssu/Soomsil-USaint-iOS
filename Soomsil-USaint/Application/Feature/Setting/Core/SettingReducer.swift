@@ -23,6 +23,7 @@ struct SettingReducer {
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case onAppear
+        case backButtonTapped
         case logoutButtonTapped
         case togglePushAuthorization(Bool)
         case pushAuthorizationResponse(Result<Bool, Error>)
@@ -38,6 +39,7 @@ struct SettingReducer {
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
+    @Dependency(\.dismiss) var dismiss
     
     var body: some ReducerOf<Self> {
         BindingReducer()
@@ -48,6 +50,10 @@ struct SettingReducer {
                     state.appVersion = currentVersion
                 }
                 return .none
+            case .backButtonTapped:
+                return .run { _ in
+                    await dismiss()
+                }
             case .logoutButtonTapped:
                 state.alert = AlertState {
                     TextState("로그아웃 하시겠습니까?")

@@ -70,6 +70,14 @@ struct SemesterDetailView: View {
         .onAppear() {
             store.send(.onAppear)
         }
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                BackButton {
+                    store.send(.backButtonTapped)
+                }
+            }
+        }
     }
 
     struct TopSummary: View {
