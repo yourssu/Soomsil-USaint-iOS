@@ -11,47 +11,45 @@ import ComposableArchitecture
 import YDS_SwiftUI
 
 struct HomeView: View {
-    @Perception.Bindable var store: StoreOf<HomeReducer>
-    
+    @Bindable var store: StoreOf<HomeReducer>
+
     var body: some View {
-        WithPerceptionTracking {
-            NavigationStack(
-                path: $store.scope(state: \.path, action: \.path)
-            ) {
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+            VStack {
+                title
                 VStack {
-                    title
-                    VStack {
-                        Student(student: store.studentInfo) {
-                            store.send(.settingPressed)
-                        }
-                        GradeInfo(reportCard: store.totalReportCard) {
-                            store.send(.semesterListPressed)
-                        }
-                        Button(action: {
-                            store.send(.semesterDetailPressed)
-                        }) {
-                            Text("go to Detail")
-                        }
-                        Spacer()
+                    Student(student: store.studentInfo) {
+                        store.send(.settingPressed)
                     }
-                    .padding(.horizontal, 16)
+                    GradeInfo(reportCard: store.totalReportCard) {
+                        store.send(.semesterListPressed)
+                    }
+                    Button(action: {
+                        store.send(.semesterDetailPressed)
+                    }) {
+                        Text("go to Detail")
+                    }
+                    Spacer()
                 }
-                .background(Color(red: 0.95, green: 0.96, blue: 0.97))
-            } destination: { store in
-                switch store.case {
-                case .setting(let store):
-                    SettingView(store: store)
-                case .semesterList(let store):
-                    SemesterListView(store: store)
-                case .web(let store):
-                    WebView(store: store)
-                case .semesterDetail(let store):
-                    v2SemesterDetailView(store: store)
-                }
+                .padding(.horizontal, 16)
             }
-            .onAppear {
-                store.send(.onAppear)
+            .background(Color(red: 0.95, green: 0.96, blue: 0.97))
+        } destination: { store in
+            switch store.case {
+            case .setting(let store):
+                SettingView(store: store)
+            case .semesterList(let store):
+                SemesterListView(store: store)
+            case .web(let store):
+                WebView(store: store)
+            case .semesterDetail(let store):
+                v2SemesterDetailView(store: store)
             }
+        }
+        .onAppear {
+            store.send(.onAppear)
         }
     }
 

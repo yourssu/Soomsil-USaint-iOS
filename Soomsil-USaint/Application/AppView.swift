@@ -10,7 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct AppView: View {
-    @Perception.Bindable var store: StoreOf<AppReducer>
+    @Bindable var store: StoreOf<AppReducer>
     
     var body: some View {
         switch store.state {

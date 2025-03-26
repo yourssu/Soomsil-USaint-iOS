@@ -14,7 +14,7 @@ import YDS_SwiftUI
 // swiftlint:disable identifier_name
 
 struct OldHomeView<VM: HomeViewModel>: View {
-    @Perception.Bindable var store: StoreOf<HomeReducer>
+    @Bindable var store: StoreOf<HomeReducer>
     
     @State var path: [StackView] = []
     @StateObject var viewModel: VM
