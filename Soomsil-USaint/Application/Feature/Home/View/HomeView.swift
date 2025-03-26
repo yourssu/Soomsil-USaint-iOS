@@ -27,6 +27,11 @@ struct HomeView: View {
                         GradeInfo(reportCard: store.totalReportCard) {
                             store.send(.semesterListPressed)
                         }
+                        Button(action: {
+                            store.send(.semesterDetailPressed)
+                        }) {
+                            Text("go to Detail")
+                        }
                         Spacer()
                     }
                     .padding(.horizontal, 16)
@@ -40,6 +45,8 @@ struct HomeView: View {
                     SemesterListView(store: store)
                 case .web(let store):
                     WebView(store: store)
+                case .semesterDetail(let store):
+                    v2SemesterDetailView(store: store)
                 }
             }
             .onAppear {
