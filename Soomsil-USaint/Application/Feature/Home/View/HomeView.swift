@@ -25,11 +25,8 @@ struct HomeView: View {
                     }
                     GradeInfo(reportCard: store.totalReportCard) {
                         store.send(.semesterListPressed)
-                    }
-                    Button(action: {
+                    } onSemesterDetailPressed: {
                         store.send(.semesterDetailPressed)
-                    }) {
-                        Text("go to Detail")
                     }
                     Spacer()
                 }
