@@ -127,69 +127,66 @@ extension v2SemesterDetailView {
         @Binding var progress: CGFloat
 
         var body: some View {
-            if #available(iOS 17.0, *) {
-
-                ScrollView(.horizontal) {
-                    HStack(spacing: 20) {
-                        ForEach($tabs) { $tab in
-                            Button(action: {
-                                withAnimation(.snappy) {
-                                    activeTab = tab.id
-                                    tabBarScrollState = tab.id
-                                    mainViewScrollState = tab.id
-                                }
-                            }) {
-                                Text(formatShortedYear(tab.id))
-                                    .font(YDSFont.button2)
-                                    .padding(.vertical, 12)
-                                    .foregroundStyle(activeTab == tab.id ? .primary : Color.gray)
-                                    .contentShape(.rect)
+            ScrollView(.horizontal) {
+                HStack(spacing: 20) {
+                    ForEach($tabs) { $tab in
+                        Button(action: {
+                            withAnimation(.snappy) {
+                                activeTab = tab.id
+                                tabBarScrollState = tab.id
+                                mainViewScrollState = tab.id
                             }
-                            .buttonStyle(.plain)
-                            .rect { rect in
-                                tab.size = rect.size
-                                tab.minX = rect.minX
-                            }
+                        }) {
+                            Text(formatShortedYear(tab.id))
+                                .font(YDSFont.button2)
+                                .padding(.vertical, 12)
+                                .foregroundStyle(activeTab == tab.id ? .primary : Color.gray)
+                                .contentShape(.rect)
                         }
-                    }
-                    .scrollTargetLayout()
-                }
-                .scrollPosition(id: .init(get: {
-                    return tabBarScrollState
-                }, set: { _ in
-
-                }), anchor: .center)
-
-                .overlay(alignment: .bottom) {
-                    ZStack(alignment: .leading) {
-                        Rectangle()
-                            .fill(.gray.opacity(0.3))
-                            .frame(height: 2)
-
-                        let inputRange = tabs.indices.compactMap {
-                            return CGFloat($0)
-                        }
-                        let outputRange = tabs.compactMap {
-                            return $0.size.width
-                        }
-                        let outputPositionRange = tabs.compactMap {
-                            return $0.minX
-                        }
-
-                        if !(inputRange.isEmpty || outputRange.isEmpty || outputPositionRange.isEmpty) {
-                            let indicatorWidth = progress.interpolate(inputRange: inputRange, outputRange: outputRange)
-                            let indicatorPosition = progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
-
-                            Rectangle()
-                                .fill(.primary)
-                                .frame(width: indicatorWidth,height: 1.5)
-                                .offset(x: indicatorPosition)
+                        .buttonStyle(.plain)
+                        .rect { rect in
+                            tab.size = rect.size
+                            tab.minX = rect.minX
                         }
                     }
                 }
-                .safeAreaPadding(.horizontal, 15)
-                .scrollIndicators(.hidden)
+                .scrollTargetLayout()
             }
+            .scrollPosition(id: .init(get: {
+                return tabBarScrollState
+            }, set: { _ in
+
+            }), anchor: .center)
+
+            .overlay(alignment: .bottom) {
+                ZStack(alignment: .leading) {
+                    Rectangle()
+                        .fill(.gray.opacity(0.3))
+                        .frame(height: 2)
+
+                    let inputRange = tabs.indices.compactMap {
+                        return CGFloat($0)
+                    }
+                    let outputRange = tabs.compactMap {
+                        return $0.size.width
+                    }
+                    let outputPositionRange = tabs.compactMap {
+                        return $0.minX
+                    }
+
+                    if !(inputRange.isEmpty || outputRange.isEmpty || outputPositionRange.isEmpty) {
+                        let indicatorWidth = progress.interpolate(inputRange: inputRange, outputRange: outputRange)
+                        let indicatorPosition = progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
+
+                        Rectangle()
+                            .fill(.primary)
+                            .frame(width: indicatorWidth,height: 1.5)
+                            .offset(x: indicatorPosition)
+                    }
+                }
+            }
+            .safeAreaPadding(.horizontal, 15)
+            .scrollIndicators(.hidden)
         }
 
         private func formatShortedYear(_ id: String) -> String {
