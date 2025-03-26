@@ -207,10 +207,10 @@ struct SemesterDetailView<VM: SemesterDetailViewModel>: View {
         }
     }
 }
-////
+
 //struct ReportDetailView_Previews: PreviewProvider {
 ////    @State private var report = GradeSummaryModel([:])!
 //    static var previews: some View {
-//        SemesterDetailView<TestSemesterDetailViewModel>(semesterDetailViewModel: TestSemesterDetailViewModel())
+//        SemesterDetailView<SemesterDetailViewModel>(semesterDetailViewModel: SemesterDetailViewModel())
 //    }
 //}

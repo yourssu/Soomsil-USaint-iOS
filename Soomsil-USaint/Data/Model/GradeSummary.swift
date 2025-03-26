@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 import Rusaint
 
 public struct GradeSummary: Hashable {
@@ -40,24 +41,6 @@ public struct GradeSummary: Hashable {
         self.overallStudentCount = overallStudentCount
         self.lectures = lectures
     }
-
-//    init?(_ dict: [String: String]) {
-//        guard let year = dict["학년도"],
-//              let semester = dict["학기"],
-//              let credit = Double(dict["취득학점"]!),
-//              let pfCredit = Double(dict["P/F학점"]!),
-//              let gpa = Double(dict["평점평균"]!),
-//              let semesterRank = dict["학기별석차"],
-//              let totalRank = dict["전체석차"]
-//        else { return nil }
-//        self.year = year
-//        self.semester = semester
-//        self.credit = credit
-//        self.pfCredit = pfCredit
-//        self.gpa = gpa
-//        self.semesterRank = semesterRank.tupleOfSplittedString
-//        self.totalRank = totalRank.tupleOfSplittedString
-//    }
 
     init(year: Int, semester: String) {
         self.year = year
@@ -134,7 +117,6 @@ public extension Array where Element == GradeSummary {
                 return index1 < index2
             }
         }
-
         return false
     }
 }
