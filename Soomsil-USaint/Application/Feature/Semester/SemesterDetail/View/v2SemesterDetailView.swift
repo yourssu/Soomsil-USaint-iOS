@@ -11,73 +11,70 @@ import ComposableArchitecture
 import YDS_SwiftUI
 
 struct v2SemesterDetailView: View {
-    @Perception.Bindable var store: StoreOf<SemesterDetailReducer>
+    @Bindable var store: StoreOf<SemesterDetailReducer>
 
     @State private var mainViewScrollState: SemesterTab.ID?
     @State private var tabBarScrollState: SemesterTab.ID?
     @State private var progress: CGFloat = .zero
-    
+
     var body: some View {
-        if #available(iOS 17.0, *) {
-            WithPerceptionTracking {
-                VStack(spacing: 0) {
-                    TabView(tabs: $store.tabs,
-                            activeTab: $store.activeTab,
-                            mainViewScrollState: $mainViewScrollState,
-                            tabBarScrollState: $tabBarScrollState,
-                            progress: $progress)
-                    
-                    GeometryReader {
-                        let size = $0.size
-                        
-                        ScrollView(.horizontal) {
-                            LazyHStack(spacing: 0) {
-                                
-                                ForEach(store.tabs) { tab in
-                                    ScrollView(.vertical) {
-                                        let tappedSemester = findTappedSemester(
-                                            semesterList: store.semesterList,
-                                            tabId: tab.id
-                                        )
-                                        if let semester = tappedSemester {
-                                            TopSummary(gradeSummary: semester)
-                                            GradeList(lectures: semester.lectures ?? [])
-                                        }
-                                    }
-                                    .padding(20)
-                                    .frame(width: size.width, height: size.height)
-                                    .contentShape(.rect)
+
+        VStack(spacing: 0) {
+            TabView(tabs: $store.tabs,
+                    activeTab: $store.activeTab,
+                    mainViewScrollState: $mainViewScrollState,
+                    tabBarScrollState: $tabBarScrollState,
+                    progress: $progress)
+
+            GeometryReader {
+                let size = $0.size
+
+                ScrollView(.horizontal) {
+                    LazyHStack(spacing: 0) {
+
+                        ForEach(store.tabs) { tab in
+                            ScrollView(.vertical) {
+                                let tappedSemester = findTappedSemester(
+                                    semesterList: store.semesterList,
+                                    tabId: tab.id
+                                )
+                                if let semester = tappedSemester {
+                                    TopSummary(gradeSummary: semester)
+                                    GradeList(lectures: semester.lectures ?? [])
                                 }
                             }
-                            .scrollTargetLayout()
-                            .rect { rect in
-                                progress = -rect.minX / size.width
-                            }
+                            .padding(20)
+                            .frame(width: size.width, height: size.height)
+                            .contentShape(.rect)
                         }
                     }
-                    .scrollPosition(id: $mainViewScrollState)
-                    .scrollIndicators(.hidden)
-                    .scrollTargetBehavior(.paging)
-                    .onChange(of: mainViewScrollState) { oldValue, newValue in
-                        if let newValue {
-                            debugPrint(newValue)
-                            withAnimation(.snappy) {
-                                tabBarScrollState = newValue
-                                store.activeTab = newValue
-                            }
-                        }
+                    .scrollTargetLayout()
+                    .rect { rect in
+                        progress = -rect.minX / size.width
                     }
-                }
-                .onAppear() {
-                    store.send(.onAppear)
                 }
             }
+            .scrollPosition(id: $mainViewScrollState)
+            .scrollIndicators(.hidden)
+            .scrollTargetBehavior(.paging)
+            .onChange(of: mainViewScrollState) { oldValue, newValue in
+                if let newValue {
+                    debugPrint(newValue)
+                    withAnimation(.snappy) {
+                        tabBarScrollState = newValue
+                        store.activeTab = newValue
+                    }
+                }
+            }
+        }
+        .onAppear() {
+            store.send(.onAppear)
         }
     }
 
     struct TopSummary: View {
         var gradeSummary: GradeSummary
-        
+
         var body: some View {
             VStack(alignment: .leading) {
                 HStack(alignment: .lastTextBaseline) {
@@ -98,10 +95,10 @@ struct v2SemesterDetailView: View {
             }
         }
     }
-    
+
     struct GradeList: View {
         var lectures: [LectureDetail]
-        
+
         var body: some View {
             VStack {
                 ForEach(lectures, id: \.self.code) { lecture in
@@ -110,7 +107,7 @@ struct v2SemesterDetailView: View {
             }
         }
     }
-    
+
     private func findTappedSemester(semesterList: [GradeSummary], tabId: String) -> GradeSummary? {
         let tappedSemesterList = store.semesterList.filter { list in
             let id = "\(list.year)년 \(list.semester)"
@@ -121,17 +118,17 @@ struct v2SemesterDetailView: View {
 }
 
 extension v2SemesterDetailView {
-    
+
     struct TabView: View {
         @Binding var tabs: [SemesterTab]
         @Binding var activeTab: SemesterTab.ID
         @Binding var mainViewScrollState: SemesterTab.ID?
         @Binding var tabBarScrollState: SemesterTab.ID?
         @Binding var progress: CGFloat
-        
+
         var body: some View {
             if #available(iOS 17.0, *) {
-                
+
                 ScrollView(.horizontal) {
                     HStack(spacing: 20) {
                         ForEach($tabs) { $tab in
@@ -160,15 +157,15 @@ extension v2SemesterDetailView {
                 .scrollPosition(id: .init(get: {
                     return tabBarScrollState
                 }, set: { _ in
-                    
+
                 }), anchor: .center)
-                
+
                 .overlay(alignment: .bottom) {
                     ZStack(alignment: .leading) {
                         Rectangle()
                             .fill(.gray.opacity(0.3))
                             .frame(height: 2)
-                        
+
                         let inputRange = tabs.indices.compactMap {
                             return CGFloat($0)
                         }
@@ -178,11 +175,11 @@ extension v2SemesterDetailView {
                         let outputPositionRange = tabs.compactMap {
                             return $0.minX
                         }
-                        
+
                         if !(inputRange.isEmpty || outputRange.isEmpty || outputPositionRange.isEmpty) {
                             let indicatorWidth = progress.interpolate(inputRange: inputRange, outputRange: outputRange)
                             let indicatorPosition = progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
-                            
+
                             Rectangle()
                                 .fill(.primary)
                                 .frame(width: indicatorWidth,height: 1.5)
@@ -194,7 +191,7 @@ extension v2SemesterDetailView {
                 .scrollIndicators(.hidden)
             }
         }
-        
+
         private func formatShortedYear(_ id: String) -> String {
             let components = id.split(separator: "년")
             guard let year = components.first, components.count > 1 else {
@@ -207,7 +204,7 @@ extension v2SemesterDetailView {
             return id
         }
     }
-    
+
 }
 
 #Preview {

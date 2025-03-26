@@ -10,18 +10,16 @@ import SwiftUI
 import ComposableArchitecture
 
 struct SplashView: View {
-    @Perception.Bindable var store: StoreOf<SplashReducer>
-    
+    @Bindable var store: StoreOf<SplashReducer>
+
     var body: some View {
-        WithPerceptionTracking {
-            Image("splash")
-                .resizable()
-                .aspectRatio(contentMode: .fill)
-                .alert($store.scope(state: \.alert, action: \.alert))
-        }
-        .onAppear {
-            store.send(.checkMinimumVersion)
-        }
+        Image("splash")
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .alert($store.scope(state: \.alert, action: \.alert))
+            .onAppear {
+                store.send(.checkMinimumVersion)
+            }
     }
 }
 

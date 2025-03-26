@@ -11,32 +11,31 @@ import ComposableArchitecture
 import YDS_SwiftUI
 
 struct SettingView: View {
-    @Perception.Bindable var store: StoreOf<SettingReducer>
+    @Bindable var store: StoreOf<SettingReducer>
     
     var body: some View {
-        WithPerceptionTracking {
-            VStack(spacing: 4) {
-                SettingList(
-                    isPushAuthorizationEnabled: $store.permission,
-                    appVersion: store.appVersion
-                ) { tappedItem in
-                    switch tappedItem {
-                    case .logout:
-                        store.send(.logoutButtonTapped)
-                    case .toggleAuthorization(let granted):
-                        store.send(.togglePushAuthorization(granted))
-                    case .termsOfService:
-                        store.send(.termsOfServiceButtonTapped)
-                    case .privacyPolicy:
-                        store.send(.privacyPolicyButtonTapped)
-                    }
+        VStack(spacing: 4) {
+            SettingList(
+                isPushAuthorizationEnabled: $store.permission,
+                appVersion: store.appVersion
+            ) { tappedItem in
+                switch tappedItem {
+                case .logout:
+                    store.send(.logoutButtonTapped)
+                case .toggleAuthorization(let granted):
+                    store.send(.togglePushAuthorization(granted))
+                case .termsOfService:
+                    store.send(.termsOfServiceButtonTapped)
+                case .privacyPolicy:
+                    store.send(.privacyPolicyButtonTapped)
                 }
             }
-            .registerYDSToast()
-            .alert(
-                $store.scope(state: \.alert, action: \.alert)
-            )
         }
+        .registerYDSToast()
+        .alert(
+            $store.scope(state: \.alert, action: \.alert)
+        )
+        
         .navigationTitle("설정")
         .onAppear {
             store.send(.onAppear)
@@ -55,11 +54,11 @@ struct SettingView: View {
                     title: "계정관리",
                     items: [
                         RowView(text: "로그아웃",
-                                  rightItem: .none,
-                                  action: {
-                                      listItemTapped(.logout)
-                                  }
-                                 )
+                                rightItem: .none,
+                                action: {
+                                    listItemTapped(.logout)
+                                }
+                               )
                     ]
                 )
                 
@@ -67,13 +66,13 @@ struct SettingView: View {
                     title: "알림",
                     items: [
                         RowView(text: "성적 알림 받기",
-                                  rightItem: .toggle(
+                                rightItem: .toggle(
                                     isPushAuthorizationEnabled: $isPushAuthorizationEnabled
-                                  ),
-                                  action: {
-                                      listItemTapped(.toggleAuthorization(isPushAuthorizationEnabled))
-                                  }
-                                 )
+                                ),
+                                action: {
+                                    listItemTapped(.toggleAuthorization(isPushAuthorizationEnabled))
+                                }
+                               )
                     ])
                 
                 ListRowView(
