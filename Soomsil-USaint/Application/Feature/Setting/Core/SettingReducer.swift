@@ -16,25 +16,24 @@ struct SettingReducer {
     struct State {
         @Shared(.appStorage("permission")) var permission = false
         @Presents var alert: AlertState<Action.Alert>?
-//        var path = StackState<Path.State>()
-//        var appState: AppReducer.State?
+        
+        var appVersion: String = "-"
     }
     
     enum Action: BindableAction {
         case binding(BindingAction<State>)
+        case onAppear
         case logoutButtonTapped
         case togglePushAuthorization(Bool)
         case pushAuthorizationResponse(Result<Bool, Error>)
         case requestPushAuthorizationResponse(Result<Bool, Error>)
         case termsOfServiceButtonTapped
         case privacyPolicyButtonTapped
-//        case path(StackActionOf<Path>)
         case alert(PresentationAction<Alert>)
-//        case appState(AppReducer.Action)
         
         enum Alert: Equatable {
-            case logout
-            case configurePushAuthorization
+            case confirmLogoutTapped
+            case configurePushAuthorizationTapped
         }
     }
     
@@ -44,13 +43,18 @@ struct SettingReducer {
         BindingReducer()
         Reduce { state, action in
             switch action {
+            case .onAppear:
+                if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                    state.appVersion = currentVersion
+                }
+                return .none
             case .logoutButtonTapped:
                 state.alert = AlertState {
                     TextState("로그아웃 하시겠습니까?")
                 } actions: {
                     ButtonState(
                         role: .destructive,
-                        action: .logout) {
+                        action: .confirmLogoutTapped) {
                             TextState("로그아웃")
                         }
                     ButtonState(
@@ -59,8 +63,8 @@ struct SettingReducer {
                         }
                 }
                 return .none
-            case .alert(.presented(.logout)):
-//                YDSToast("로그아웃", haptic: .success)
+            case .alert(.presented(.confirmLogoutTapped)):
+                YDSToast("로그아웃 완료", haptic: .success)
                 return .none
             case .togglePushAuthorization(true):
                 return .run { send in
@@ -70,6 +74,7 @@ struct SettingReducer {
                 }
             case .togglePushAuthorization(false):
                 state.$permission.withLock { $0 = false }
+                YDSToast("알림권한 거부", haptic: .success)
                 return .none
             case .pushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
@@ -79,7 +84,7 @@ struct SettingReducer {
                     } actions: {
                         ButtonState(
                             role: .destructive,
-                            action: .configurePushAuthorization
+                            action: .configurePushAuthorizationTapped
                         ) {
                             TextState("설정")
                         }
@@ -90,6 +95,8 @@ struct SettingReducer {
                     } message: {
                         TextState("알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요.")
                     }
+                } else {
+                    YDSToast("알림권한 허용", haptic: .success)
                 }
                 return .none
             case .requestPushAuthorizationResponse(.success(let granted)):
@@ -103,37 +110,17 @@ struct SettingReducer {
                     }
                 }
                 return .none
-            case .alert(.presented(.configurePushAuthorization)):
+            case .alert(.presented(.configurePushAuthorizationTapped)):
                 debugPrint("alert permission")
                 return .run { send in
                     await send(.requestPushAuthorizationResponse(Result {
                         try await localNotificationClient.requestPushAuthorization()
                     }))
                 }
-//            case .termsOfServiceButtonTapped:
-//                state.path.append(
-//                    .navigateToTermsWebView(WebReducer.State(
-//                        url: URL(string: "https://auth.yourssu.com/terms/service.html")!)))
-//                return .none
-//            case .privacyPolicyButtonTapped:
-//                state.path.append(.navigateToTermsWebView(WebReducer.State(
-//                    url: URL(string: "https://auth.yourssu.com/terms/information.html")!)))
-//                return .none
             default:
                 return .none
             }
         }
-//        .ifLet(\.appState, action: \.appState) {
-//            AppReducer()
-//        }
         .ifLet(\.$alert, action: \.alert)
-//        .forEach(\.path, action: \.path)
     }
 }
-
-//extension SettingReducer {
-//    @Reducer
-//    enum Path {
-//        case navigateToTermsWebView(WebReducer)
-//    }
-//}
