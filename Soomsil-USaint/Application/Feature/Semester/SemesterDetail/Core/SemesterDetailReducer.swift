@@ -22,10 +22,12 @@ struct SemesterDetailReducer {
         case binding(BindingAction<State>)
         case onAppear
         case refresh
+        case backButtonTapped
         case semesterListResponse(Result<[GradeSummary], Error>)
     }
     
     @Dependency(\.gradeClient) var gradeClient
+    @Dependency(\.dismiss) var dismiss
     
     var body: some ReducerOf<Self> {
         BindingReducer()
@@ -39,6 +41,10 @@ struct SemesterDetailReducer {
                 }
             case .refresh:
                 return .none
+            case .backButtonTapped:
+                return .run { _ in
+                    await dismiss()
+                }
             case .semesterListResponse(.success(let semesterList)):
                 state.semesterList = semesterList
                 state.tabs = semesterList.map {

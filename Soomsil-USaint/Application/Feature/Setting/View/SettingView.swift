@@ -35,10 +35,17 @@ struct SettingView: View {
         .alert(
             $store.scope(state: \.alert, action: \.alert)
         )
-        
-        .navigationTitle("설정")
         .onAppear {
             store.send(.onAppear)
+        }
+        .navigationTitle("설정")
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                BackButton {
+                    store.send(.backButtonTapped)
+                }
+            }
         }
     }
     
