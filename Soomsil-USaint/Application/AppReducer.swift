@@ -40,7 +40,7 @@ struct AppReducer {
             case .backgroundTask:
                 scheduleCurrentSemester()
                 return .run { send in
-                    try await localNotificationClient.setLecturePushNotification("")
+                    try await compareAndFetchCurrentSemester()
                 }
             case .splash(.initResponse(.success(let (studentInfo, totalReportCard)))):
                 state = .loggedIn(HomeReducer.State(studentInfo: studentInfo, totalReportCard: totalReportCard))
@@ -92,7 +92,7 @@ struct AppReducer {
         )
         let currentGrade = GradeSummary(
             year: currentSemester.year,
-            semester: semesterTypeToString(currentSemester.semester),
+            semester: currentSemester.semester.toString(),
             gpa: 0,
             earnedCredit: 0,
             semesterRank: 0,
@@ -104,7 +104,7 @@ struct AppReducer {
         
         guard let storedGrade = try await gradeClient.getGrades(
             year: currentSemester.year,
-            semester: semesterTypeToString(currentSemester.semester)
+            semester: currentSemester.semester.toString()
         ) else {
             return
         }
@@ -114,7 +114,7 @@ struct AppReducer {
             try await localNotificationClient.setLecturePushNotification(diff)
             try await gradeClient.updateGrades(
                 year: currentSemester.year,
-                semester: semesterTypeToString(currentSemester.semester),
+                semester: currentSemester.semester.toString(),
                 newLectures: grades.toLectureDetails()
             )
         }
@@ -139,18 +139,5 @@ struct AppReducer {
         }
         
         return gradeChangedLectures
-    }
-    
-    private func semesterTypeToString(_ semesterType: SemesterType) -> String {
-        switch semesterType {
-        case .one:
-            return "1 학기"
-        case .two:
-            return "2 학기"
-        case .summer:
-            return "여름학기"
-        case .winter:
-            return "겨울학기"
-        }
     }
 }
