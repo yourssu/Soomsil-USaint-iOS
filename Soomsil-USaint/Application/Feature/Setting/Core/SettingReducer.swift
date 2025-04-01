@@ -16,31 +16,35 @@ struct SettingReducer {
     struct State {
         @Shared(.appStorage("permission")) var permission = false
         @Presents var alert: AlertState<Action.Alert>?
-        
+
         var appVersion: String = "-"
     }
-    
+
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case onAppear
         case backButtonTapped
         case logoutButtonTapped
+        case logoutConfirmed
+        case logoutCompleted
         case togglePushAuthorization(Bool)
         case pushAuthorizationResponse(Result<Bool, Error>)
         case requestPushAuthorizationResponse(Result<Bool, Error>)
         case termsOfServiceButtonTapped
         case privacyPolicyButtonTapped
         case alert(PresentationAction<Alert>)
-        
+
         enum Alert: Equatable {
             case confirmLogoutTapped
             case configurePushAuthorizationTapped
         }
     }
-    
+
     @Dependency(\.localNotificationClient) var localNotificationClient
+    @Dependency(\.studentClient) var studentClient
+    @Dependency(\.gradeClient) var gradeClient
     @Dependency(\.dismiss) var dismiss
-    
+
     var body: some ReducerOf<Self> {
         BindingReducer()
         Reduce { state, action in
@@ -70,8 +74,17 @@ struct SettingReducer {
                 }
                 return .none
             case .alert(.presented(.confirmLogoutTapped)):
-                YDSToast("로그아웃 완료", haptic: .success)
-                return .none
+                return .send(.logoutConfirmed)
+            case .logoutConfirmed:
+                return .run { send in
+                    try await gradeClient.deleteTotalReportCard()
+                    try await gradeClient.deleteAllSemesterGrades()
+                    try await studentClient.deleteStudentInfo()
+
+                    YDSToast("로그아웃 완료", haptic: .success)
+
+                    await send(.logoutCompleted)
+                }
             case .togglePushAuthorization(true):
                 return .run { send in
                     await send(.pushAuthorizationResponse(Result {
