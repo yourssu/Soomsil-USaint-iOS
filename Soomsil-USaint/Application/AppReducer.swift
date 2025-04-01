@@ -38,9 +38,9 @@ struct AppReducer {
         Reduce { state, action in
             switch action {
             case .backgroundTask:
-                scheduleCurrentSemester()
+                scheduleBackgroundTask()
                 return .run { send in
-                    try await compareAndFetchCurrentSemester()
+                    try await scheduleChangedGardeLecturePush()
                 }
             case .splash(.initResponse(.success(let (studentInfo, totalReportCard)))):
                 state = .loggedIn(HomeReducer.State(studentInfo: studentInfo, totalReportCard: totalReportCard))
@@ -69,7 +69,7 @@ struct AppReducer {
         }
     }
     
-    func scheduleCurrentSemester() {
+    private func scheduleBackgroundTask() {
         let request = BGAppRefreshTaskRequest(identifier: "soomsilUSaint.com")
         request.earliestBeginDate = Date(timeIntervalSinceNow: 30*60)
         
@@ -81,7 +81,7 @@ struct AppReducer {
         }
     }
     
-    func compareAndFetchCurrentSemester() async throws {
+    private func scheduleChangedGardeLecturePush() async throws {
         guard let currentSemester = try await gradeClient.currentYearAndSemester() else {
             return
         }
@@ -109,7 +109,7 @@ struct AppReducer {
             return
         }
         
-        let difference = compareSemesters(storedGrade, currentGrade)
+        let difference = storedGrade.getDifferenceLectureTitleByGradeSummary(by: currentGrade)
         for diff in difference {
             try await localNotificationClient.setLecturePushNotification(diff)
             try await gradeClient.updateGrades(
@@ -118,26 +118,5 @@ struct AppReducer {
                 newLectures: grades.toLectureDetails()
             )
         }
-    }
-    
-    private func compareSemesters(_ oldSemester: GradeSummary, _ newSemester: GradeSummary) -> [String] {
-        let oldLectures = oldSemester.lectures?.reduce(into: [String: LectureDetail]()) { result, lecture in
-            result[lecture.code] = lecture
-        }
-        let newLectures = newSemester.lectures?.reduce(into: [String: LectureDetail]()) { result, lecture in
-            result[lecture.code] = lecture
-        }
-        var gradeChangedLectures: [String] = []
-        
-        if let newLectures = newLectures {
-            for (code, newLecture) in newLectures {
-                if let oldLecture = oldLectures?[code],
-                   oldLecture.grade != newLecture.grade {
-                    gradeChangedLectures.append(newLecture.title)
-                }
-            }
-        }
-        
-        return gradeChangedLectures
     }
 }
