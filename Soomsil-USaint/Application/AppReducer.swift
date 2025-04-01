@@ -49,7 +49,7 @@ struct AppReducer {
             case .login(.loginResponse(.success(let (info, report)))):
                 state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
                 return .none
-            case .home(.path(.element(id: _, action: .setting(.alert(.presented(.confirmLogoutTapped)))))):
+            case .home(.path(.element(id: _, action: .setting(.logoutCompleted)))):
                 state = .loggedOut(LoginReducer.State())
                 return .none
             default:
