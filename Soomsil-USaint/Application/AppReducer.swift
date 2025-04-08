@@ -90,6 +90,10 @@ struct AppReducer {
             year: currentSemester.year,
             semester: currentSemester.semester
         )
+        guard !grades.isEmpty else {
+            return
+        }
+        
         let currentGrade = GradeSummary(
             year: currentSemester.year,
             semester: currentSemester.semester.toString(),
