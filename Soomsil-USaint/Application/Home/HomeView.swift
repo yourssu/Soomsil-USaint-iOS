@@ -50,6 +50,7 @@ struct HomeView<VM: HomeViewModel>: View {
 
                     VStack(spacing: Dimension.MainSpacing.vertical) {
                         userInformationView()
+                        EventButtonView()
                         GradeItemGroup(reportCard: totalReportCard)
                         Spacer()
                     }
@@ -164,6 +165,36 @@ struct HomeView<VM: HomeViewModel>: View {
             .foregroundColor(Color(red: 0.06, green: 0.07, blue: 0.07))
             .padding(.horizontal, Dimension.MainSpacing.horizontal)
         })
+    }
+    
+    @ViewBuilder
+    private func EventButtonView() -> some View {
+        HStack {
+            Button {
+                if let url = URL(string: "https://apps.apple.com/app/id6739670109") {
+                    UIApplication.shared.open(url)
+                }
+            } label: {
+                Text("”TREND WAVE 2025” 티켓 받으러 가기")
+                    .font(YDSFont.body2)
+                    .padding(.horizontal, Dimension.MainSpacing.horizontal)
+
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 20)
+
+            Spacer()
+            
+            YDSIcon.arrowRightLine
+                .renderingMode(.template)
+                .foregroundColor(YDSColor.buttonNormal)
+                .padding(.trailing, Dimension.MainSpacing.horizontal+8)
+
+        }
+        .foregroundColor(.black)
+        .background(YDSColor.bgElevated)
+        .cornerRadius(16)
+        .padding(.horizontal, Dimension.MainSpacing.horizontal)
     }
 
     private func detailGradeListView(average: Float, credit: Float, graduateCredit: Float) -> some View {
@@ -280,7 +311,7 @@ private struct SaintItemGroupView<Content>: View where Content: View {
             .background(YDSColor.bgElevated)
             content()
         }
-        .cornerRadius(8)
+        .cornerRadius(16)
     }
 }
 
