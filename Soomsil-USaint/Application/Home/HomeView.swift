@@ -171,7 +171,7 @@ struct HomeView<VM: HomeViewModel>: View {
     private func EventButtonView() -> some View {
         HStack {
             Button {
-                if let url = URL(string: "https://trendwave-one.vercel.app/") {
+                if let url = URL(string: "https://apps.apple.com/app/id6739670109") {
                     UIApplication.shared.open(url)
                 }
             } label: {
