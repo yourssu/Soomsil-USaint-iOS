@@ -58,10 +58,12 @@ struct LoginView: View {
             VStack(alignment: .leading, spacing: Dimension.VStack.spacing) {
                 Text("학번")
                     .font(YDSFont.body1)
+                    .foregroundStyle(.titleText)
                 YDSSimpleTextField(text: $id)
 
                 Text("유세인트 비밀번호")
                     .font(YDSFont.body1)
+                    .foregroundStyle(.titleText)
                 SecureTextField(text: $password)
                     .padding(.bottom, Dimension.largeSpace)
 
@@ -69,10 +71,10 @@ struct LoginView: View {
                     onLoginPressed()
                 } label: {
                     Text("로그인")
-                        .foregroundStyle(YDSColor.buttonBright)
+                        .foregroundStyle(.smallText)
                         .font(YDSFont.button4)
                         .frame(maxWidth: .infinity, minHeight: Dimension.Button.minHeight)
-                        .background(YDSColor.buttonPoint, in: RoundedRectangle(cornerRadius: 5))
+                        .background(.vPrimary, in: RoundedRectangle(cornerRadius: 5))
                 }
                 .buttonStyle(.plain)
 
@@ -82,7 +84,7 @@ struct LoginView: View {
                     Text("숨쉴때 유세인트 서비스 이용을 위한 유세인트 학번 및 비밀번호는 사용자 기기에만 저장되며, 유어슈는 유세인트 서비스를 통하여 이용자의 정보를 일체 수집ㆍ저장하지 않습니다.")
                         .font(.caption2)
                 }
-                .foregroundStyle(YDSColor.textPointed)
+                .foregroundStyle(.vPrimary)
             }
             .padding(Dimension.padding)
         }

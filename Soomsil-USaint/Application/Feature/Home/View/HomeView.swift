@@ -32,7 +32,7 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .background(Color(red: 0.95, green: 0.96, blue: 0.97))
+            .background(.surface)
         } destination: { store in
             switch store.case {
             case .setting(let store):
@@ -68,6 +68,7 @@ struct HomeView: View {
                     Text("\(student.major) \(student.schoolYear)")
                         .font(YDSFont.body1)
                 }
+                .foregroundStyle(.titleText)
                 .padding(.leading)
                 Spacer()
                 Button(action: {
@@ -87,11 +88,12 @@ private extension HomeView {
         HStack {
             Text("유세인트")
                 .font(YDSFont.title2)
+                .foregroundStyle(.titleText)
                 .padding(.horizontal, 16)
                 .padding(.bottom, 8)
             Spacer()
         }
-        .background(.white)
+        .background(.bgTitle)
     }
 }
 

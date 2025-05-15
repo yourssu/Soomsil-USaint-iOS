@@ -27,7 +27,7 @@ struct ListRowView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(YDSColor.textSecondary)
+                .foregroundStyle(.titleText)
                 .padding(20)
                 .frame(height: 48)
             
@@ -50,11 +50,11 @@ struct RowView: View {
         HStack {
             Text(text)
                 .font(YDSFont.button3)
-                .foregroundColor(YDSColor.textSecondary)
+                .foregroundStyle(.titleText)
                 .padding(20)
                 .frame(height: 48)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(isPressed ? Color(red: 0.95, green: 0.96, blue: 0.97) : Color.white)
+                .background(isPressed ? .lightGray : .clear)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in isPressed = true }
@@ -77,7 +77,7 @@ struct RowView: View {
                     .labelsHidden()
                     .padding(.horizontal, 20)
                     .padding(.vertical, 20)
-                    .tint(YDSColor.buttonPoint)
+                    .tint(.vPrimary)
                     .frame(height: 48)
                     .onChange(of: isPushAuthorizationEnabled.wrappedValue) {
                         action()
