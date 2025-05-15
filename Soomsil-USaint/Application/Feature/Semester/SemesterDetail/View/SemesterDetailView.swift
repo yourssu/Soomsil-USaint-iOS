@@ -89,7 +89,7 @@ struct SemesterDetailView: View {
                     Text(String(format: "%.2f", gradeSummary.gpa))
                         .font(YDSFont.display1)
                     Text("/ 4.50")
-                        .foregroundColor(.grayText)
+                        .foregroundStyle(.grayText)
                 }
                 GradeOverView(title: "취득 학점",
                                 accentText: "\(gradeSummary.earnedCredit)")

@@ -59,7 +59,7 @@ struct GradeInfo: View {
                     }, label: {
                         Text("학기별 성적 조회")
                             .font(Font.custom("Apple SD Gothic Neo", size: 15))
-                            .foregroundColor(.smallText)
+                            .foregroundStyle(.smallText)
                             .frame(height: 39, alignment: .center)
                             .frame(maxWidth: .infinity)
                             .background(.vPrimary)
@@ -92,10 +92,10 @@ struct CreditLine: View {
             Spacer()
             Text(isInt ? String(Int(earned)) : String(format: "%.2f", earned))
                 .font(YDSFont.subtitle2)
-                .foregroundColor(.vPrimary)
+                .foregroundStyle(.vPrimary)
             Text("/ \(isInt ? String(Int(graduated)) : String(format: "%.2f", graduated))")
                 .font(YDSFont.subtitle3)
-                .foregroundColor(.grayText)
+                .foregroundStyle(.grayText)
         }
         .frame(height: 23)
         .padding(.vertical, 8)

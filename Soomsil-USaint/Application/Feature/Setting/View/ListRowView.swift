@@ -27,7 +27,7 @@ struct ListRowView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
                 .font(.system(size: 14, weight: .bold))
-                .foregroundColor(.titleText)
+                .foregroundStyle(.titleText)
                 .padding(20)
                 .frame(height: 48)
             
@@ -50,7 +50,7 @@ struct RowView: View {
         HStack {
             Text(text)
                 .font(YDSFont.button3)
-                .foregroundColor(.titleText)
+                .foregroundStyle(.titleText)
                 .padding(20)
                 .frame(height: 48)
                 .frame(maxWidth: .infinity, alignment: .leading)
