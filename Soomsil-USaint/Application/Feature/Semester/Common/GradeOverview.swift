@@ -22,7 +22,7 @@ struct GradeOverview: View {
         HStack(alignment: .lastTextBaseline) {
             Text(transformIfZero(title))
                 .font(Font(YDSFont.body1))
-                .foregroundColor(.grayText)
+                .foregroundStyle(.grayText)
             Spacer()
             Text(transformIfZero(accentText))
                 .font(Font(YDSFont.subtitle2))
@@ -30,7 +30,7 @@ struct GradeOverview: View {
             if let subText {
                 Text("/ \(transformIfZero(subText))")
                     .font(Font(YDSFont.caption0))
-                    .foregroundColor(.grayText)
+                    .foregroundStyle(.grayText)
             }
         }
     }

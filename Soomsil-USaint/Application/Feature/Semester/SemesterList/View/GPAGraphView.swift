@@ -35,7 +35,7 @@ struct GPAGraphView: View {
                         .frame(width: 16, height: 16)
                     Text("계절학기 포함")
                         .font(YDSFont.button4)
-                        .foregroundColor(.grayText)
+                        .foregroundStyle(.grayText)
                 }
                 .foregroundStyle(
                     isOnSeasonalSemester

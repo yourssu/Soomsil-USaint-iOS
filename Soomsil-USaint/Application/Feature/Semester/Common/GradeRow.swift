@@ -79,10 +79,10 @@ struct GradeRow: View {
             VStack(alignment: .leading, spacing: Dimension.Spacing.innerVStack) {
                 Text(lectureName)
                     .font(Font(YDSFont.subtitle1))
-                    .foregroundColor(.titleText)
+                    .foregroundStyle(.titleText)
                 Text(professorAndCredit)
                     .font(Font(YDSFont.body2))
-                    .foregroundColor(.grayText)
+                    .foregroundStyle(.grayText)
             }
             Spacer()
         }

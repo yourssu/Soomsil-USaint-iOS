@@ -32,19 +32,19 @@ struct SemesterListView: View {
 
                 Rectangle()
                     .frame(height: 8.0)
-                    .foregroundColor(.lightGray)
+                    .foregroundStyle(.lightGray)
 
                 VStack(alignment: .leading) {
                     if store.state.semesterList.isEmpty {
                         VStack {
                             Text("유세인트에 확정된 성적표가 보이는 곳 입니다.")
                                 .font(.headline)
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.gray)
                                 .multilineTextAlignment(.center)
                                 .padding(.bottom, 4)
                             Text("성적이 보이지 않는 경우 새로고침 버튼을 눌러주세요!")
                                 .font(.subheadline)
-                                .foregroundColor(.gray)
+                                .foregroundStyle(.gray)
                                 .multilineTextAlignment(.center)
                         }
                         .padding()
@@ -95,7 +95,7 @@ struct SemesterListView: View {
                     } label: {
                         YDSIcon.refreshLine
                             .renderingMode(.template)
-                            .foregroundColor(.grayText)
+                            .foregroundStyle(.grayText)
                     }
                 }
             }
@@ -121,10 +121,10 @@ private extension SemesterListView {
                 HStack(alignment: .firstTextBaseline) {
                     Text("\(emphasized)")
                         .font(isMini ? YDSFont.display2 : YDSFont.display1)
-                        .foregroundColor(.vPrimary)
+                        .foregroundStyle(.vPrimary)
                     Text("/ \(sub)")
                         .font(isMini ? YDSFont.button1 : YDSFont.button0)
-                        .foregroundColor(.grayText)
+                        .foregroundStyle(.grayText)
                     Spacer()
                 }
             }
