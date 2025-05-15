@@ -54,7 +54,7 @@ struct RowView: View {
                 .padding(20)
                 .frame(height: 48)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(isPressed ? Color(red: 0.95, green: 0.96, blue: 0.97) : Color.white)
+                .background(isPressed ? .lightGray : .clear)
                 .gesture(
                     DragGesture(minimumDistance: 0)
                         .onChanged { _ in isPressed = true }

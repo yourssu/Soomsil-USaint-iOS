@@ -59,7 +59,7 @@ struct GradeInfo: View {
                     }, label: {
                         Text("학기별 성적 조회")
                             .font(Font.custom("Apple SD Gothic Neo", size: 15))
-                            .foregroundColor(.onSurface)
+                            .foregroundColor(.smallText)
                             .frame(height: 39, alignment: .center)
                             .frame(maxWidth: .infinity)
                             .background(.vPrimary)
