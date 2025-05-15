@@ -32,7 +32,7 @@ struct SemesterListView: View {
 
                 Rectangle()
                     .frame(height: 8.0)
-                    .foregroundColor(Color(red: 0.96, green: 0.96, blue: 0.97))
+                    .foregroundColor(.lightGray)
 
                 VStack(alignment: .leading) {
                     if store.state.semesterList.isEmpty {
