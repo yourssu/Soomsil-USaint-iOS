@@ -22,7 +22,7 @@ struct GradeInfo: View {
                     .font(YDSFont.title3)
                     .padding(.leading, 4)
                     .padding(.top, 20)
-                
+
                 Button(action: {
                     onSemesterListPressed()
                 }) {
@@ -41,11 +41,10 @@ struct GradeInfo: View {
                         Spacer()
                         YDSIcon.arrowRightLine
                             .renderingMode(.template)
-                            .foregroundColor(YDSColor.buttonNormal)
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(YDSColor.bgElevated)
+                    .background(.onSurface)
                     .frame(height: 72)
                 }
                 
@@ -60,10 +59,10 @@ struct GradeInfo: View {
                     }, label: {
                         Text("학기별 성적 조회")
                             .font(Font.custom("Apple SD Gothic Neo", size: 15))
-                            .foregroundColor(.white)
+                            .foregroundColor(.onSurface)
                             .frame(height: 39, alignment: .center)
                             .frame(maxWidth: .infinity)
-                            .background(Color(red: 0.51, green: 0.43, blue: 0.93))
+                            .background(.vPrimary)
                             .cornerRadius(4)
                     })
                     .padding(.horizontal, 16)
@@ -73,8 +72,8 @@ struct GradeInfo: View {
             }
             .padding(.horizontal, 16)
         }
-        .foregroundStyle(.black)
-        .background(YDSColor.bgElevated)
+        .foregroundStyle(.titleText)
+        .background(.onSurface)
         .cornerRadius(8)
     }
 }
@@ -87,14 +86,16 @@ struct CreditLine: View {
     
     var body: some View {
         HStack {
-            Text(title).font(YDSFont.body1)
+            Text(title)
+                .font(YDSFont.body1)
+                .foregroundStyle(.titleText)
             Spacer()
             Text(isInt ? String(Int(earned)) : String(format: "%.2f", earned))
                 .font(YDSFont.subtitle2)
-                .foregroundColor(Color(red: 0.51, green: 0.43, blue: 0.93))
+                .foregroundColor(.vPrimary)
             Text("/ \(isInt ? String(Int(graduated)) : String(format: "%.2f", graduated))")
                 .font(YDSFont.subtitle3)
-                .foregroundColor(Color(red: 0.56, green: 0.58, blue: 0.6))
+                .foregroundColor(.grayText)
         }
         .frame(height: 23)
         .padding(.vertical, 8)

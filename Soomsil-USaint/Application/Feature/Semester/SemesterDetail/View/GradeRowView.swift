@@ -33,9 +33,10 @@ struct GradeRowView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
                     .font(YDSFont.subtitle2)
+                    .foregroundColor(.titleText)
                 Text("\(professorName) · \(String(format: "%.1f", credit)) 학점")
                     .font(YDSFont.body2)
-                    .foregroundStyle(YDSColor.textTertiary)
+                    .foregroundStyle(.grayText)
             }
             Spacer()
         }

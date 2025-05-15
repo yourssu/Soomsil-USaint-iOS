@@ -25,14 +25,15 @@ struct GradeOverView: View {
         HStack {
             Text(transformIfZero(title))
                 .font(YDSFont.body1)
-                .foregroundColor(YDSColor.textTertiary)
+                .foregroundColor(.grayText)
             Spacer()
             Text(transformIfZero(accentText))
                 .font(YDSFont.subtitle2)
+                .foregroundStyle(.titleText)
             if let subText {
                 Text("/ \(transformIfZero(subText))")
                     .font(YDSFont.caption0)
-                    .foregroundColor(YDSColor.textTertiary)
+                    .foregroundColor(.grayText)
             }
         }
         .padding(.vertical, 5)

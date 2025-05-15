@@ -23,7 +23,7 @@ struct SecureTextField: View {
                 isSecured.toggle()
             }) {
                 Image(systemName: isSecured ? "eye.slash" : "eye")
-                    .accentColor(YDSColor.buttonNormal)
+                    .accentColor(.grayText)
                     .frame(width: 24, height: 24)
             }
         }
@@ -31,7 +31,7 @@ struct SecureTextField: View {
         .padding(.horizontal, 16)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(YDSColor.inputFieldElevated)
+                .fill(.lightGray)
         )
         .frame(height: 48)
     }
@@ -72,7 +72,7 @@ struct SecureUITextField: UIViewRepresentable {
         textField.backgroundColor = .clear
         textField.returnKeyType = .done
         textField.borderStyle = .none
-        textField.tintColor = YDSColor.textPointed
+        textField.tintColor = .vPrimary
         return textField
     }
     

@@ -32,7 +32,7 @@ struct SemesterListView: View {
 
                 Rectangle()
                     .frame(height: 8.0)
-                    .foregroundColor(YDSColor.borderThin)
+                    .foregroundColor(Color(red: 0.96, green: 0.96, blue: 0.97))
 
                 VStack(alignment: .leading) {
                     if store.state.semesterList.isEmpty {
@@ -72,7 +72,7 @@ struct SemesterListView: View {
                 }
                 .padding()
             }
-            .background(YDSColor.bgElevated)
+            .background(.onSurface)
             .onAppear {
                 store.send(.onAppear)
             }
@@ -95,7 +95,7 @@ struct SemesterListView: View {
                     } label: {
                         YDSIcon.refreshLine
                             .renderingMode(.template)
-                            .foregroundColor(YDSColor.buttonNormal)
+                            .foregroundColor(.grayText)
                     }
                 }
             }
@@ -121,10 +121,10 @@ private extension SemesterListView {
                 HStack(alignment: .firstTextBaseline) {
                     Text("\(emphasized)")
                         .font(isMini ? YDSFont.display2 : YDSFont.display1)
-                        .foregroundColor(YDSColor.textPointed)
+                        .foregroundColor(.vPrimary)
                     Text("/ \(sub)")
                         .font(isMini ? YDSFont.button1 : YDSFont.button0)
-                        .foregroundColor(YDSColor.textTertiary)
+                        .foregroundColor(.grayText)
                     Spacer()
                 }
             }
