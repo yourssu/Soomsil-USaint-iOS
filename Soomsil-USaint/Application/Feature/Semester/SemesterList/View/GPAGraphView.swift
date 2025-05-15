@@ -35,11 +35,12 @@ struct GPAGraphView: View {
                         .frame(width: 16, height: 16)
                     Text("계절학기 포함")
                         .font(YDSFont.button4)
+                        .foregroundColor(.grayText)
                 }
                 .foregroundStyle(
                     isOnSeasonalSemester
-                    ? YDSColor.buttonPoint
-                    : YDSColor.buttonDisabled
+                    ? .vPrimary
+                    : .grayText
                 )
             }
         }
@@ -95,17 +96,17 @@ private extension GPAGraphView {
                         y: .value("gpa", gpa.gpa)
                     )
                     .interpolationMethod(.catmullRom)
-                    .foregroundStyle(YDSColor.textPointed.opacity(0.5))
+                    .foregroundStyle(.vPrimary.opacity(0.5))
                     LineMark(
                         x: .value("semester", gpa.semester),
                         y: .value("gpa", gpa.gpa)
                     )
                     .interpolationMethod(.catmullRom)
                     .lineStyle(StrokeStyle(lineWidth: 3))
-                    .foregroundStyle(YDSColor.textPointed)
+                    .foregroundStyle(.vPrimary)
                     .symbol {
                         Circle()
-                            .fill(YDSColor.textPointed)
+                            .fill(.vPrimary)
                             .frame(width: 8, height: 8)
                     }
                 }

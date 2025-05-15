@@ -29,15 +29,16 @@ struct SemesterRowView: View {
                 HStack {
                     Text("\(year)년 \(semester)")
                         .font(YDSFont.subtitle2)
+                        .foregroundColor(.titleText)
                 }
                 Text("\(String(format: "%.1f", earnedCredit))학점")
                     .font(YDSFont.body1)
-                    .foregroundColor(YDSColor.textTertiary)
+                    .foregroundColor(.grayText)
             }
             Spacer()
             Text("\(String(format: "%.2f", semesterGPA))")
                 .font(YDSFont.button0)
-                .foregroundColor(YDSColor.buttonNormal)
+                .foregroundColor(.grayText)
         }
         .contentShape(Rectangle())
         .padding(.vertical, 8.0)

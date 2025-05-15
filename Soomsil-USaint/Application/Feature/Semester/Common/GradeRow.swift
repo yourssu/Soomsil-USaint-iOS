@@ -28,45 +28,17 @@ private enum Dimension {
 struct MaskedGradeRow: View {
     var grade: Grade = .unknown
     
-//    private var gradeImage: Image {
-//        Image(grade.string)
-//    }
-    
     var body: some View {
         HStack(spacing: Dimension.Spacing.mainHStack) {
             Image(grade.string)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(width: Dimension.Size.gradeIcon)
-            Color(YDSColor.bgSelected)
+            Color(red: 0.89, green: 0.89, blue: 0.89)
                 .frame(maxHeight: Dimension.Size.maskingViewHeight)
         }
         .padding(.vertical, Dimension.Padding.mainHStack)
     }
-    
-//    private var gradeIcon: UIImage {
-//        guard let image = UIImage(
-//            named: grade.string,
-//            in: Bundle(identifier: "com.yourssu.SoomsilUI"),
-//            with: nil
-//        ) else {
-//            return Icon.unknown
-//        }
-//        image.accessibilityIdentifier = grade.string
-//        return image
-//    }
-//    
-//    var body: some View {
-//        HStack(spacing: Dimension.Spacing.mainHStack) {
-//            Image(uiImage: gradeIcon)
-//                .resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .frame(width: Dimension.Size.gradeIcon)
-//            Color(YDSColor.bgSelected)
-//                .frame(maxHeight: Dimension.Size.maskingViewHeight)
-//        }
-//        .padding(.vertical, Dimension.Padding.mainHStack)
-//    }
 }
 
 struct GradeRow: View {
@@ -107,9 +79,10 @@ struct GradeRow: View {
             VStack(alignment: .leading, spacing: Dimension.Spacing.innerVStack) {
                 Text(lectureName)
                     .font(Font(YDSFont.subtitle1))
+                    .foregroundColor(.titleText)
                 Text(professorAndCredit)
                     .font(Font(YDSFont.body2))
-                    .foregroundColor(Color(YDSColor.textTertiary))
+                    .foregroundColor(.grayText)
             }
             Spacer()
         }

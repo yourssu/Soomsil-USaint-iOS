@@ -22,14 +22,15 @@ struct GradeOverview: View {
         HStack(alignment: .lastTextBaseline) {
             Text(transformIfZero(title))
                 .font(Font(YDSFont.body1))
-                .foregroundColor(Color(YDSColor.textTertiary))
+                .foregroundColor(.grayText)
             Spacer()
             Text(transformIfZero(accentText))
                 .font(Font(YDSFont.subtitle2))
+                .foregroundStyle(.titleText)
             if let subText {
                 Text("/ \(transformIfZero(subText))")
                     .font(Font(YDSFont.caption0))
-                    .foregroundColor(Color(YDSColor.textTertiary))
+                    .foregroundColor(.grayText)
             }
         }
     }
