@@ -33,6 +33,9 @@ struct HomeView: View {
                     } onSemesterGradesPressed: {
                         store.send(.semesterGradesPressed)
                     }
+                    
+                    Chapel()
+                    
                     Spacer()
                 }
                 .padding(.horizontal, 20)
