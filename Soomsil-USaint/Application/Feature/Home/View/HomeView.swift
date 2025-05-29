@@ -28,6 +28,9 @@ struct HomeView: View {
                     } onSemesterDetailPressed: {
                         store.send(.semesterDetailPressed)
                     }
+                    
+                    Chapel()
+                    
                     Spacer()
                 }
                 .padding(.horizontal, 16)
