@@ -29,7 +29,7 @@ struct HomeView: View {
                         store.send(.semesterDetailPressed)
                     }
                     
-                    Chapel()
+                    ChapelInfo()
                     
                     Spacer()
                 }
