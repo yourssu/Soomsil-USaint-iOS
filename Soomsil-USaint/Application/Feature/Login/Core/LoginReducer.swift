@@ -24,12 +24,13 @@ struct LoginReducer {
         case onAppear
         case initResponse(Result<SaintInfo, Error>)
         case loginPressed
-        case loginResponse(Result<(StudentInfo, TotalReportCard), Error>)
+        case loginResponse(Result<(StudentInfo, TotalReportCard, ChapelCard), Error>)
         case deleteResponse(Result<Void, Error>)
     }
     
     @Dependency(\.gradeClient) var gradeClient
     @Dependency(\.studentClient) var studentClient
+    @Dependency(\.chapelClient) var chapelClient
     
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -54,11 +55,14 @@ struct LoginReducer {
                         try await studentClient.setStudentInfo()
                         let rusaintReport = try await gradeClient.fetchTotalReportCard()
                         try await gradeClient.updateTotalReportCard(rusaintReport)
+                        let  chapelReport = try await chapelClient.fetchChapelCard()
+                        try await chapelClient.updateChapelCard(chapelReport)
 
                         let studentInfo = try await studentClient.getStudentInfo()
                         let report = try await gradeClient.getTotalReportCard()
+                        let chapel = try await chapelClient.getChapelCard()
                         
-                        return (studentInfo, report)
+                        return (studentInfo, report, chapel)
                     }))
                 }
             case .loginResponse(.success):

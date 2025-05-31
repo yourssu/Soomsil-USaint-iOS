@@ -22,6 +22,7 @@ struct ChapelInfo: View {
                 .kerning(0)
                 .foregroundStyle(Color(hex: "#101112"))
                 .frame(width: 32, height: 23)
+            
             ZStack {
                 Rectangle()
                     .frame(width: 350, height: 130)
@@ -50,7 +51,7 @@ private struct AttendanceView: View {
     
     init(_ attendanceCount: Int) {
         self.attendanceCount = attendanceCount
-        self.remainToPassCount = (maxAttendanceCount / 3) * 2 - attendanceCount
+        self.remainToPassCount = max(0, (maxAttendanceCount / 3) * 2 - attendanceCount)
     }
     
     var body: some View {
@@ -85,6 +86,28 @@ private struct AttendanceView: View {
     }
 }
 
+private struct SeatPositionView: View {
+    var seatPosition: String
+    
+    init(_ seatPosition: String) {
+        self.seatPosition = seatPosition
+    }
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            Text("좌석 정보")
+                .font(.system(size: 15))
+            Spacer()
+            Text(seatPosition)
+                .font(.system(size: 16))
+                .fontWeight(.bold)
+                .foregroundStyle(mainPurple)
+        }
+        .frame(width: 294, height: 39)
+        .padding(.top, 18)
+    }
+}
+
 private struct CustomLinearProgressViewStyle: ProgressViewStyle {
     var progressColor: Color
     var trackColor: Color
@@ -92,15 +115,12 @@ private struct CustomLinearProgressViewStyle: ProgressViewStyle {
     func makeBody(configuration: Configuration) -> some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                // 트랙 (진행 안된 부분)
                 RoundedRectangle(cornerRadius: 10)
                     .fill(trackColor)
                     .frame(height: 6.6)
-                // 진행된 부분
                 RoundedRectangle(cornerRadius: 10)
                     .fill(progressColor)
                     .frame(width: geometry.size.width * CGFloat(configuration.fractionCompleted ?? 0), height: 6.6)
-                // Pass 지점
                 Rectangle()
                     .fill(mainPurple)
                     .frame(width: 2, height: 9)
@@ -114,31 +134,6 @@ private struct CustomLinearProgressViewStyle: ProgressViewStyle {
         .frame(height: 6.6)
     }
 }
-
-private struct SeatPositionView: View {
-    var seatPosition: String
-    
-    init(_ seatPosition: String) {
-        self.seatPosition = seatPosition
-    }
-    
-    var body: some View {
-        HStack(spacing: 0) {
-            Text("좌석 정보")
-                .font(.system(size: 15))
-                .padding(.leading, 28)
-            Spacer()
-            Text(seatPosition)
-                .font(.system(size: 16))
-                .fontWeight(.bold)
-                .foregroundStyle(mainPurple)
-                .padding(.trailing, 28)
-        }
-        .frame(width: 350, height: 37)
-        .padding(.top, 18)
-    }
-}
-
 
 #Preview {
     ChapelInfo()
