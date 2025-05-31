@@ -34,7 +34,7 @@ struct HomeView: View {
                         store.send(.semesterGradesPressed)
                     }
                     
-                    Chapel()
+                    ChapelInfo()
                     
                     Spacer()
                 }
