@@ -11,8 +11,9 @@ let mainPurple: Color = Color(hex: "#816DEC")
 
 struct ChapelInfo: View {
     // 받아올 정보
-    var attendanceCount: Int = 4
-    var seatPosition: String = "1층 A-1-2"
+    var chapelCard: ChapelCard
+    var attendanceCount: Int { chapelCard.attendance }
+    var seatPosition: String { chapelCard.seatPosition }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -136,7 +137,7 @@ private struct CustomLinearProgressViewStyle: ProgressViewStyle {
 }
 
 #Preview {
-    ChapelInfo()
+    ChapelInfo(chapelCard: ChapelCard(attendance: 4, seatPosition: "E-10-4"))
 }
 
 
