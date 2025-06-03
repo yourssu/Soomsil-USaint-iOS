@@ -55,8 +55,12 @@ struct LoginReducer {
                         try await studentClient.setStudentInfo()
                         let rusaintReport = try await gradeClient.fetchTotalReportCard()
                         try await gradeClient.updateTotalReportCard(rusaintReport)
-                        let  chapelReport = try await chapelClient.fetchChapelCard()
-                        try await chapelClient.updateChapelCard(chapelReport)
+                        do {
+                            let chapelReport = try await chapelClient.fetchChapelCard()
+                            try await chapelClient.updateChapelCard(chapelReport)
+                        } catch {
+                            debugPrint("fetchCahpelCard() error \(error)")
+                        }
 
                         let studentInfo = try await studentClient.getStudentInfo()
                         let report = try await gradeClient.getTotalReportCard()
