@@ -28,6 +28,9 @@ struct HomeView: View {
                     } onSemesterDetailPressed: {
                         store.send(.semesterDetailPressed)
                     }
+                    
+                    ChapelInfo(chapelCard: ChapelCard(attendance: store.chapelCard.attendance, seatPosition: store.chapelCard.seatPosition))
+                    
                     Spacer()
                 }
                 .padding(.horizontal, 16)
@@ -101,7 +104,7 @@ private extension HomeView {
     HomeView(store: Store(
         initialState: HomeReducer.State(
             studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "6학년"),
-            totalReportCard: TotalReportCard(gpa: 3.4, earnedCredit: 34.5, graduateCredit: 124.0)
+            totalReportCard: TotalReportCard(gpa: 3.4, earnedCredit: 34.5, graduateCredit: 124.0), chapelCard: ChapelCard(attendance: 4, seatPosition: "E-10-4")
         )
     ) {
         HomeReducer()
