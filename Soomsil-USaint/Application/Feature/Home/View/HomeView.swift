@@ -40,6 +40,7 @@ struct HomeView: View {
                         floorLevel: store.chapelCard.floorLevel,
                         status: store.chapelCard.status))
                     
+                    ReportCardView()
                     Spacer()
                 }
                 .padding(.horizontal, 20)
