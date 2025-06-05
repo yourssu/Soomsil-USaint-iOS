@@ -28,9 +28,10 @@ struct HomeView: View {
                     } onSemesterDetailPressed: {
                         store.send(.semesterDetailPressed)
                     }
+                    ReportCardView()
                     Spacer()
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 20)
             }
             .background(.surface)
         } destination: { store in
