@@ -29,30 +29,59 @@ extension DependencyValues {
     }
 }
 
+enum ChapelError: Error {
+    case noChapelData        // 채플 정보가 없는 학생
+    case networkError(Error) // 네트워크 오류
+}
+
 extension ChapelClient: DependencyKey {
     static var liveValue: ChapelClient = Self(
         fetchChapelCard: {
             @Dependency(\.studentClient) var studentClient: StudentClient
             
-            // 1. 세션 생성
-            let session = try await studentClient.createSaintSession()
-            
-            // 2. ChapelApplication 생성
-            let chapelApp = try await ChapelApplicationBuilder().build(session: session)
-            
-            // 3. 현재 학기 정보 가져오기
-            let currentYear = UInt32(Calendar.current.component(.year, from: Date()))
-            let currentMonth = UInt32(Calendar.current.component(.month, from: Date()))
-            let semester: SemesterType = currentMonth <= 6 ? .one : .two
-            
-            // 4. 채플 정보 가져오기
-            let chapelInfo = try await chapelApp.information(year: currentYear, semester: semester)
-            
-            // 5. ChapelCard 생성
-            let attendanceCount = chapelInfo.attendances.filter { $0.attendance == "출석" }.count
-            let seatPosition = chapelInfo.generalInformation.seatNumber ?? "정보 없음"
-            
-            return ChapelCard(attendance: attendanceCount, seatPosition: seatPosition)
+            do {
+                // 1. 세션 생성
+                let session = try await studentClient.createSaintSession()
+                
+                // 2. ChapelApplication 생성
+                let chapelApp = try await ChapelApplicationBuilder().build(session: session)
+                
+                // 3. 현재 학기 정보 가져오기
+                let currentYear = UInt32(Calendar.current.component(.year, from: Date()))
+                let currentMonth = UInt32(Calendar.current.component(.month, from: Date()))
+                let semester: SemesterType = currentMonth <= 6 ? .one : .two
+                
+                // 4. 채플 정보 가져오기
+                let chapelInfo = try await chapelApp.information(year: currentYear, semester: semester)
+                
+                // 5. ChapelCard 생성
+                let attendanceCount = chapelInfo.attendances.filter { $0.attendance == "출석" }.count
+                let seatPosition = chapelInfo.generalInformation.seatNumber
+                
+                return ChapelCard(attendance: attendanceCount, seatPosition: seatPosition)
+            } catch let error as ChapelError {
+                print("catch: error as ChapelError")
+                throw error
+            } catch let error as URLError {
+                print("catch: error as URLError")
+                throw ChapelError.networkError(error)
+            } catch {
+                let errorString = String(describing: error)
+                let errorDescription = error.localizedDescription
+                
+                if errorString.contains("No chapel information provided") ||
+                   errorDescription.contains("No chapel information provided") ||
+                   errorString.contains("no chapel") ||
+                   errorDescription.contains("no chapel") {
+                    throw ChapelError.noChapelData
+                } else if error is URLError {
+                    // 네트워크 관련 에러
+                    throw ChapelError.networkError(error)
+                } else {
+                    // 기타 에러
+                    throw ChapelError.networkError(error)
+                }
+            }
         }, getChapelCard: {
             let context = coreDataStack.taskContext()
             let fetchRequest: NSFetchRequest<CDChapelCard> = CDChapelCard.fetchRequest()
@@ -60,12 +89,16 @@ extension ChapelClient: DependencyKey {
             do {
                 let data = try context.fetch(fetchRequest)
                 guard let first = data.first else {
-                    return ChapelCard(attendance: 0, seatPosition: "정보 없음")
+                    return ChapelCard(attendance: 0, seatPosition: "정보 없음", status: .inactive)
                 }
+                
+                let statusString = first.status ?? "active"
+                let status: ChapelStatus = (statusString == "active") ? .active : .inactive
                 
                 return ChapelCard(
                     attendance: Int(first.attendance),
-                    seatPosition: first.seatPosition ?? "정보 없음"
+                    seatPosition: first.seatPosition ?? "정보 없음",
+                    status: status
                 )
             } catch {
                 print("ChapelCard 조회 실패: \(error.localizedDescription)")
@@ -82,6 +115,7 @@ extension ChapelClient: DependencyKey {
             let cdChapelCard = CDChapelCard(context: context)
             cdChapelCard.attendance = Int32(chapelCard.attendance)
             cdChapelCard.seatPosition = chapelCard.seatPosition
+            cdChapelCard.status = chapelCard.status == .active ? "active" : "inactive"
             
             context.performAndWait {
                 do {
