@@ -29,7 +29,7 @@ struct HomeView: View {
                         store.send(.semesterDetailPressed)
                     }
                     
-                    ChapelInfo(chapelCard: ChapelCard(attendance: store.chapelCard.attendance, seatPosition: store.chapelCard.seatPosition))
+                    ChapelInfo(chapelCard: ChapelCard(attendance: store.chapelCard.attendance, seatPosition: store.chapelCard.seatPosition, status: store.chapelCard.status))
                     
                     Spacer()
                 }

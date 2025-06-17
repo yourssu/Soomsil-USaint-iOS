@@ -55,16 +55,24 @@ struct LoginReducer {
                         try await studentClient.setStudentInfo()
                         let rusaintReport = try await gradeClient.fetchTotalReportCard()
                         try await gradeClient.updateTotalReportCard(rusaintReport)
+                        
+                        var chapel: ChapelCard
                         do {
                             let chapelReport = try await chapelClient.fetchChapelCard()
                             try await chapelClient.updateChapelCard(chapelReport)
+                            chapel = try await chapelClient.getChapelCard()
+                        } catch ChapelError.noChapelData {
+                            chapel = ChapelCard.inactive()
+                        } catch ChapelError.networkError {
+                            print("네트워크 에러")
+                            chapel = try await chapelClient.getChapelCard()
                         } catch {
-                            debugPrint("fetchCahpelCard() error \(error)")
+                            print("채플 정보 조회 중 알 수 없는 오류: \(error)")
+                            chapel = try await chapelClient.getChapelCard()
                         }
 
                         let studentInfo = try await studentClient.getStudentInfo()
                         let report = try await gradeClient.getTotalReportCard()
-                        let chapel = try await chapelClient.getChapelCard()
                         
                         return (studentInfo, report, chapel)
                     }))

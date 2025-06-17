@@ -14,6 +14,7 @@ struct ChapelInfo: View {
     var chapelCard: ChapelCard
     var attendanceCount: Int { chapelCard.attendance }
     var seatPosition: String { chapelCard.seatPosition }
+    var status: ChapelStatus { chapelCard.status }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -31,17 +32,43 @@ struct ChapelInfo: View {
                     .foregroundStyle(.white)
                     .shadow(color: Color(hex: "#FFF").opacity(0.07), radius: 7)
                 
-                VStack(spacing: 0) {
-                    AttendanceView(attendanceCount)
-                    SeatPositionView(seatPosition)
-                    Divider()
-                        .frame(width: 330)
+                if status == ChapelStatus.active {
+                    ActiveStatusView(attendanceCount, seatPosition)
+                } else {
+                    InactiveStatusView()
                 }
             }
             .padding(.top, 14.5)
         }
         .padding(.horizontal, 20)
         .padding(.top, 24.5)
+    }
+}
+
+private struct ActiveStatusView: View {
+    let attendanceCount: Int
+    let seatPosition: String
+    
+    init(_ attendanceCount: Int, _ seatPosition: String) {
+        self.attendanceCount = attendanceCount
+        self.seatPosition = seatPosition
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            AttendanceView(attendanceCount)
+            SeatPositionView(seatPosition)
+            Divider()
+                .frame(width: 330)
+        }
+    }
+}
+
+private struct InactiveStatusView: View {
+    var body: some View {
+        Text("채플 수료 완료!")
+            .font(.system(size: 18))
+            .foregroundStyle(mainPurple)
     }
 }
 
@@ -59,7 +86,9 @@ private struct AttendanceView: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 Text("Pass까지 ")
+                    .font(.system(size: 15))
                 + Text("\(remainToPassCount)회 ")
+                    .font(.system(size: 15))
                     .foregroundStyle(mainPurple)
                 + Text("남았어요")
                     .font(.system(size: 15))
@@ -137,7 +166,14 @@ private struct CustomLinearProgressViewStyle: ProgressViewStyle {
 }
 
 #Preview {
-    ChapelInfo(chapelCard: ChapelCard(attendance: 4, seatPosition: "E-10-4"))
+    ZStack {
+        Color(.lightGray)
+            .ignoresSafeArea(.all)
+        VStack {
+            ChapelInfo(chapelCard: ChapelCard(attendance: 4, seatPosition: "E-10-4"))
+            ChapelInfo(chapelCard: ChapelCard.inactive())
+        }
+    }
 }
 
 

@@ -3,6 +3,7 @@
     <entity name="CDChapelCard" representedClassName="CDChapelCard" syncable="YES" codeGenerationType="class">
         <attribute name="attendance" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="seatPosition" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
     </entity>
     <entity name="CDLecture" representedClassName="CDLecture" syncable="YES" codeGenerationType="class">
         <attribute name="code" optional="YES" attributeType="String"/>
