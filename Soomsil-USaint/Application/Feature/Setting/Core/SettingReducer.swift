@@ -43,6 +43,7 @@ struct SettingReducer {
     @Dependency(\.localNotificationClient) var localNotificationClient
     @Dependency(\.studentClient) var studentClient
     @Dependency(\.gradeClient) var gradeClient
+    @Dependency(\.chapelClient) var chapelClient
     @Dependency(\.dismiss) var dismiss
 
     var body: some ReducerOf<Self> {
@@ -80,6 +81,7 @@ struct SettingReducer {
                     try await gradeClient.deleteTotalReportCard()
                     try await gradeClient.deleteAllSemesterGrades()
                     try await studentClient.deleteStudentInfo()
+                    try await chapelClient.deleteChapelCard()
 
                     YDSToast("로그아웃 완료", haptic: .success)
 
