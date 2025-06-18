@@ -57,8 +57,9 @@ extension ChapelClient: DependencyKey {
                 // 5. ChapelCard 생성
                 let attendanceCount = chapelInfo.attendances.filter { $0.attendance == "출석" }.count
                 let seatPosition = chapelInfo.generalInformation.seatNumber
+                let floorLevel = chapelInfo.generalInformation.floorLevel
                 
-                return ChapelCard(attendance: attendanceCount, seatPosition: seatPosition)
+                return ChapelCard(attendance: attendanceCount, seatPosition: seatPosition, floorLevel: floorLevel)
             } catch let error as ChapelError {
                 print("catch: error as ChapelError")
                 throw error
@@ -89,7 +90,7 @@ extension ChapelClient: DependencyKey {
             do {
                 let data = try context.fetch(fetchRequest)
                 guard let first = data.first else {
-                    return ChapelCard(attendance: 0, seatPosition: "정보 없음", status: .inactive)
+                    return ChapelCard(attendance: 0, seatPosition: "정보 없음", floorLevel: 0, status: .inactive)
                 }
                 
                 let statusString = first.status ?? "active"
@@ -98,11 +99,12 @@ extension ChapelClient: DependencyKey {
                 return ChapelCard(
                     attendance: Int(first.attendance),
                     seatPosition: first.seatPosition ?? "정보 없음",
+                    floorLevel: UInt32(first.floorLevel),
                     status: status
                 )
             } catch {
                 print("ChapelCard 조회 실패: \(error.localizedDescription)")
-                return ChapelCard(attendance: 0, seatPosition: "정보 없음")
+                return ChapelCard(attendance: 0, seatPosition: "정보 없음", floorLevel: 0)
             }
         }, updateChapelCard: { chapelCard in
             let context = coreDataStack.taskContext()
@@ -115,6 +117,7 @@ extension ChapelClient: DependencyKey {
             let cdChapelCard = CDChapelCard(context: context)
             cdChapelCard.attendance = Int32(chapelCard.attendance)
             cdChapelCard.seatPosition = chapelCard.seatPosition
+            cdChapelCard.floorLevel = Int32(chapelCard.floorLevel)
             cdChapelCard.status = chapelCard.status == .active ? "active" : "inactive"
             
             context.performAndWait {
@@ -135,9 +138,9 @@ extension ChapelClient: DependencyKey {
     
     static let previewValue: ChapelClient = Self(
         fetchChapelCard: {
-            return ChapelCard(attendance: 2, seatPosition: "E-10-4")
+            return ChapelCard(attendance: 2, seatPosition: "E-10-4", floorLevel: 1)
         }, getChapelCard: {
-            ChapelCard(attendance: 10, seatPosition: "A-3-2")
+            ChapelCard(attendance: 10, seatPosition: "A-3-2", floorLevel: 1)
         }, updateChapelCard: { chapelCard in
             return
         }, deleteChapelCard: {
