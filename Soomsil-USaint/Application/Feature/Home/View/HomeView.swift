@@ -23,12 +23,16 @@ struct HomeView: View {
                     Student(student: store.studentInfo) {
                         store.send(.settingPressed)
                     }
-                    GradeInfo(reportCard: store.totalReportCard) {
-                        store.send(.semesterListPressed)
-                    } onSemesterDetailPressed: {
-                        store.send(.semesterDetailPressed)
+//                    GradeInfo(reportCard: store.totalReportCard) {
+//                        store.send(.semesterListPressed)
+//                    } onSemesterDetailPressed: {
+//                        store.send(.semesterDetailPressed)
+//                    }
+                    ReportCardView(reportCard: store.totalReportCard) {
+                        store.send(.currentSemesterGradesPressed)
+                    } onSemesterGradesPressed: {
+                        store.send(.semesterGradesPressed)
                     }
-                    ReportCardView()
                     Spacer()
                 }
                 .padding(.horizontal, 20)
@@ -46,6 +50,24 @@ struct HomeView: View {
                 SemesterDetailView(store: store)
             }
         }
+        .sheet(
+            isPresented: $store.currentSemesterGrades
+            )
+        {
+            NavigationStack {
+                CurrentSemesterGradesView(
+//                    grades: store.totalReportCard.currentSemesterGrades,
+                    store: store, onDismiss: {
+                        store.send(.currentSemesterGradesDismissed)
+                    }
+                )
+                .presentationCornerRadius(20)
+                .presentationDragIndicator(.visible)
+                .presentationDetents([.fraction(2/3),
+                                      .large])
+            }
+        }
+    
         .onAppear {
             store.send(.onAppear)
         }
@@ -102,7 +124,7 @@ private extension HomeView {
     HomeView(store: Store(
         initialState: HomeReducer.State(
             studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "6학년"),
-            totalReportCard: TotalReportCard(gpa: 3.4, earnedCredit: 34.5, graduateCredit: 124.0)
+            totalReportCard: TotalReportCard(gpa: 4.22, earnedCredit: 34.5, graduateCredit: 124.0, generalRank: 10, overallStudentCount: 100)
         )
     ) {
         HomeReducer()

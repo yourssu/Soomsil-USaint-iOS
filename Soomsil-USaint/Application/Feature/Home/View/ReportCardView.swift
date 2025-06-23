@@ -10,6 +10,11 @@ import SwiftUI
 import YDS_SwiftUI
 
 struct ReportCardView: View {
+    var reportCard: TotalReportCard
+    
+    let onCurrentSemesterPressed: () -> Void
+    let onSemesterGradesPressed: () -> Void
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("내 성적")
@@ -17,11 +22,12 @@ struct ReportCardView: View {
                 .padding(.bottom, 15)
             
             Button(action: {
-                // TODO: add action
+                onCurrentSemesterPressed()
             }) {
                 HStack(spacing: 0) {
                     Text("이번 학기 성적 확인")
                         .foregroundStyle(.titleText)
+                        .font(YDSFont.body1)
                         .padding(.vertical, 19)
 
                     Spacer()
@@ -38,12 +44,12 @@ struct ReportCardView: View {
             .padding(.bottom, 10)
             
             Button(action: {
-                // TODO: add action
+                onSemesterGradesPressed()
             }) {
                 VStack(spacing: 0) {
-                    CreditLine(title: "평균학점", earned: 4.22, graduated: 4.50, isInt: false)
-                    CreditLine(title: "증명학점", earned: 97, graduated: 135, isInt: true)
-                    CreditLine(title: "전체석차", earned: 97, graduated: 135, isInt: true)
+                    CreditLine(title: "평균학점", earned: reportCard.gpa, graduated: 4.50, isInt: false)
+                    CreditLine(title: "취득학점", earned: reportCard.earnedCredit, graduated: reportCard.graduateCredit, isInt: true)
+                    CreditLine(title: "전체석차", earned: Float(reportCard.generalRank), graduated: Float(reportCard.overallStudentCount), isInt: true)
                 }
                 .padding(.vertical, 20)
                 .background(.white)
@@ -79,7 +85,7 @@ struct CreditLine: View {
 }
 
 #Preview {
-    ReportCardView()
+    ReportCardView(reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188, generalRank: 10, overallStudentCount: 100)) {} onSemesterGradesPressed: {}
         .background(.surface)
         .padding(.horizontal, 20)
 }

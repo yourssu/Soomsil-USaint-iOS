@@ -107,8 +107,8 @@ struct GradeInfo: View {
 
 #Preview {
     GradeInfo(
-        reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188),
+        reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188, generalRank: 10, overallStudentCount: 100),
         onSemesterListPressed: {},
-        onSemesterDetailPressed: {}
+         onSemesterDetailPressed: {}
     )
 }

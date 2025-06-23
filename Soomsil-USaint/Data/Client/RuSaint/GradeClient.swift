@@ -85,7 +85,10 @@ extension GradeClient: DependencyKey {
                 return TotalReportCard(
                     gpa: courseGrades.gradePointsAvarage,
                     earnedCredit: courseGrades.earnedCredits,
-                    graduateCredit: Float(graduateCredit)
+                    graduateCredit: Float(graduateCredit),
+                    // FIXME: - home에서 SemesterGrade fetch후, 해당 필드에 넣어줘야 함
+                    generalRank: 10,
+                    overallStudentCount: 100
                 )
             }, fetchAllSemesterGrades: {
                 let session = try await studentClient.createSaintSession()
@@ -111,7 +114,11 @@ extension GradeClient: DependencyKey {
                     return data.toTotalReportCard()
                 } catch {
                     print(error.localizedDescription)
-                    return TotalReportCard(gpa: 0.00, earnedCredit: 0, graduateCredit: 0)
+                    return TotalReportCard(gpa: 0.00,
+                                           earnedCredit: 0,
+                                           graduateCredit: 0,
+                                           generalRank: 0,
+                                           overallStudentCount: 0)
                 }
             }, getAllSemesterGrades: {
                 let context = coreDataStack.taskContext()
@@ -252,7 +259,7 @@ extension GradeClient: DependencyKey {
         currentYearAndSemester: {
             return (year: 2025, semester: SemesterType.one)
         }, fetchTotalReportCard: {
-            return TotalReportCard(gpa: 4.11, earnedCredit: 112, graduateCredit: 188)
+            return TotalReportCard(gpa: 4.11, earnedCredit: 112, graduateCredit: 188, generalRank: 10, overallStudentCount: 100)
         }, fetchAllSemesterGrades:  {
             [
                 GradeSummary(year: 2024, semester: "2 학기", gpa: 4.5, earnedCredit: 133, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "fetchAll", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")]),
@@ -263,7 +270,7 @@ extension GradeClient: DependencyKey {
                 Rusaint.ClassGrade(year: "2024", semester: "2 학기", code: "", className: "", gradePoints: 0.0, score: .empty, rank: "", professor: "", detail: nil)
             ]
         }, getTotalReportCard: {
-            TotalReportCard(gpa: 4.34, earnedCredit: 133, graduateCredit: 133)
+            TotalReportCard(gpa: 4.34, earnedCredit: 133, graduateCredit: 133, generalRank: 1, overallStudentCount: 100)
         }, getAllSemesterGrades: {
             [
                 GradeSummary(year: 2024, semester: "여름 학기", gpa: 4.0, earnedCredit: 18, semesterRank: 11, semesterStudentCount: 100, overallRank: 22, overallStudentCount: 22, lectures: [LectureDetail(code: "202", title: "getAll", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")]),

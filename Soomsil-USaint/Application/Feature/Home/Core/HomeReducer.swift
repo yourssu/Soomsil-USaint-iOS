@@ -26,6 +26,8 @@ struct HomeReducer {
         
         var path = StackState<Path.State>()
         
+         var currentSemesterGrades = false
+        
         var studentInfo: StudentInfo
         var totalReportCard: TotalReportCard
     }
@@ -38,6 +40,10 @@ struct HomeReducer {
         case settingPressed
         case semesterListPressed
         case semesterDetailPressed
+
+        case currentSemesterGradesPressed
+        case currentSemesterGradesDismissed
+        case semesterGradesPressed
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -88,6 +94,12 @@ struct HomeReducer {
                 state.path.append(.semesterList(SemesterListReducer.State(totalReportCard: state.totalReportCard)))
                 return .none
             case .semesterDetailPressed:
+                state.path.append(.semesterDetail(SemesterDetailReducer.State()))
+                return .none
+            case .currentSemesterGradesPressed:
+                state.currentSemesterGrades = true
+                return .none
+            case .semesterGradesPressed:
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
             default:
