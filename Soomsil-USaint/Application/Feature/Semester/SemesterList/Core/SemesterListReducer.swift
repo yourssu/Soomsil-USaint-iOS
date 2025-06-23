@@ -39,6 +39,7 @@ struct SemesterListReducer {
             switch action {
             case .onAppear:
                 return .run { send in
+
                     await send(.totalReportCardResponse(Result {
                         return try await gradeClient.getTotalReportCard()
                     }))
@@ -101,5 +102,4 @@ struct SemesterListReducer {
         let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
         try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
     }
-
 }

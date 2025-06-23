@@ -21,7 +21,7 @@ struct SemesterDetailReducer {
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case onAppear
-        case refresh
+        case refreshButtonTapped
         case backButtonTapped
         case semesterListResponse(Result<[GradeSummary], Error>)
     }
@@ -36,11 +36,21 @@ struct SemesterDetailReducer {
             case .onAppear:
                 return .run { send in
                     await send(.semesterListResponse(Result {
-                        try await gradeClient.fetchAllSemesterGrades()
+                        try await gradeClient.getAllSemesterGrades()
                     }))
                 }
-            case .refresh:
-                return .none
+            case .refreshButtonTapped:
+                state.isLoading = true
+                return .run { send in
+                    do {
+                        try await refreshGradeData()
+                        await send(.semesterListResponse(.success(
+                            try await gradeClient.getAllSemesterGrades()
+                        )))
+                    } catch {
+                        await send(.semesterListResponse(.failure(error)))
+                    }
+                }
             case .backButtonTapped:
                 return .run { _ in
                     await dismiss()
@@ -62,5 +72,16 @@ struct SemesterDetailReducer {
                 return .none
             }
         }
+    }
+
+    private func refreshGradeData() async throws {
+        try await gradeClient.deleteTotalReportCard()
+        try await gradeClient.deleteAllSemesterGrades()
+
+        let totalReportCard = try await gradeClient.fetchTotalReportCard()
+        try await gradeClient.updateTotalReportCard(totalReportCard)
+
+        let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
+        try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
     }
 }

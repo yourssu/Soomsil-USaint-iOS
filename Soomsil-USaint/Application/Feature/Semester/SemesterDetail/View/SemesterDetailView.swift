@@ -70,14 +70,32 @@ struct SemesterDetailView: View {
                 }
             }
         }
+        .overlay(
+            store.isLoading ? CircleLoadingView() : nil
+        )
         .onAppear() {
             store.send(.onAppear)
         }
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                BackButton {
-                    store.send(.backButtonTapped)
+                HStack(spacing: 0) {
+                    BackButton {
+                        store.send(.backButtonTapped)
+                    }
+                    Text("성적")
+                        .font(.system(size: 20, weight: .bold))
+                }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    Task {
+                        store.send(.refreshButtonTapped)
+                    }
+                } label: {
+                    YDSIcon.refreshLine
+                        .renderingMode(.template)
+                        .foregroundStyle(.grayText)
                 }
             }
         }
