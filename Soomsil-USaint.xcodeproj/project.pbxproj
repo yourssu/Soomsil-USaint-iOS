@@ -13,7 +13,7 @@
 		02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8C2D0F45B200A3E717 /* RxBlocking */; };
 		02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8E2D0F45B200A3E717 /* RxCocoa */; };
 		02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D902D0F45B200A3E717 /* RxRelay */; };
-		7B75DB312D3A374B00FF2FBE /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 7B75DB302D3A374B00FF2FBE /* ComposableArchitecture */; };
+		7B07475E2E095DDF00A055C7 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 7B07475D2E095DDF00A055C7 /* ComposableArchitecture */; };
 		7BA4D7D32D17FAE700CF6689 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = 7BA4D7D22D17FAE700CF6689 /* Rusaint */; };
 		B96F06662D63882B0047D33D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06652D63882B0047D33D /* FirebaseCore */; };
 		B96F06682D63882B0047D33D /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06672D63882B0047D33D /* FirebaseRemoteConfig */; };
@@ -49,13 +49,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7B07475E2E095DDF00A055C7 /* ComposableArchitecture in Frameworks */,
 				7BA4D7D32D17FAE700CF6689 /* Rusaint in Frameworks */,
 				02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */,
 				02C46CED2D0F2DFC00A3E717 /* KeychainAccess in Frameworks */,
 				02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */,
 				02C46CF52D0F2E9300A3E717 /* YDS-SwiftUI in Frameworks */,
 				02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */,
-				7B75DB312D3A374B00FF2FBE /* ComposableArchitecture in Frameworks */,
 				B96F06662D63882B0047D33D /* FirebaseCore in Frameworks */,
 				02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */,
 				B96F06682D63882B0047D33D /* FirebaseRemoteConfig in Frameworks */,
@@ -108,9 +108,9 @@
 				02C46D8E2D0F45B200A3E717 /* RxCocoa */,
 				02C46D902D0F45B200A3E717 /* RxRelay */,
 				7BA4D7D22D17FAE700CF6689 /* Rusaint */,
-				7B75DB302D3A374B00FF2FBE /* ComposableArchitecture */,
 				B96F06652D63882B0047D33D /* FirebaseCore */,
 				B96F06672D63882B0047D33D /* FirebaseRemoteConfig */,
+				7B07475D2E095DDF00A055C7 /* ComposableArchitecture */,
 			);
 			productName = "Rusaint-iOS";
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
@@ -145,8 +145,8 @@
 				02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */,
 				02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
-				7B75DB2F2D3A374B00FF2FBE /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				B96F06642D63882B0047D33D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
@@ -424,12 +424,12 @@
 				minimumVersion = 6.8.0;
 			};
 		};
-		7B75DB2F2D3A374B00FF2FBE /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+		7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.17.1;
+				minimumVersion = 1.20.2;
 			};
 		};
 		7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
@@ -481,9 +481,9 @@
 			package = 02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxRelay;
 		};
-		7B75DB302D3A374B00FF2FBE /* ComposableArchitecture */ = {
+		7B07475D2E095DDF00A055C7 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 7B75DB2F2D3A374B00FF2FBE /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			package = 7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
 		};
 		7BA4D7D22D17FAE700CF6689 /* Rusaint */ = {

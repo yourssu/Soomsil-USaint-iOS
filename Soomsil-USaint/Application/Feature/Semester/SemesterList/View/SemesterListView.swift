@@ -133,7 +133,7 @@ private extension SemesterListView {
 }
 
 #Preview {
-    SemesterListView(store: Store(initialState: SemesterListReducer.State(totalReportCard: TotalReportCard(gpa: 4.5, earnedCredit: 133.0, graduateCredit: 123.0))) {
+    SemesterListView(store: Store(initialState: SemesterListReducer.State(totalReportCard: TotalReportCard(gpa: 4.5, earnedCredit: 133.0, graduateCredit: 123.0, generalRank: 10, overallStudentCount: 100))) {
         SemesterListReducer()
     })
 }

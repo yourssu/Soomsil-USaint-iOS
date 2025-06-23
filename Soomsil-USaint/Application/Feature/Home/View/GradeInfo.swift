@@ -78,35 +78,37 @@ struct GradeInfo: View {
     }
 }
 
-struct CreditLine: View {
-    let title: String
-    let earned: Float
-    let graduated: Float
-    let isInt: Bool
-    
-    var body: some View {
-        HStack {
-            Text(title)
-                .font(YDSFont.body1)
-                .foregroundStyle(.titleText)
-            Spacer()
-            Text(isInt ? String(Int(earned)) : String(format: "%.2f", earned))
-                .font(YDSFont.subtitle2)
-                .foregroundStyle(.vPrimary)
-            Text("/ \(isInt ? String(Int(graduated)) : String(format: "%.2f", graduated))")
-                .font(YDSFont.subtitle3)
-                .foregroundStyle(.grayText)
-        }
-        .frame(height: 23)
-        .padding(.vertical, 8)
-        .padding(.horizontal, 24)
-    }
-}
+// TODO: delete (GradeInfo->ReportCardView)
+
+//struct CreditLine: View {
+//    let title: String
+//    let earned: Float
+//    let graduated: Float
+//    let isInt: Bool
+//    
+//    var body: some View {
+//        HStack {
+//            Text(title)
+//                .font(YDSFont.body1)
+//                .foregroundStyle(.titleText)
+//            Spacer()
+//            Text(isInt ? String(Int(earned)) : String(format: "%.2f", earned))
+//                .font(YDSFont.subtitle2)
+//                .foregroundStyle(.vPrimary)
+//            Text("/ \(isInt ? String(Int(graduated)) : String(format: "%.2f", graduated))")
+//                .font(YDSFont.subtitle3)
+//                .foregroundStyle(.grayText)
+//        }
+//        .frame(height: 23)
+//        .padding(.vertical, 8)
+//        .padding(.horizontal, 24)
+//    }
+//}
 
 #Preview {
     GradeInfo(
-        reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188),
+        reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188, generalRank: 10, overallStudentCount: 100),
         onSemesterListPressed: {},
-        onSemesterDetailPressed: {}
+         onSemesterDetailPressed: {}
     )
 }
