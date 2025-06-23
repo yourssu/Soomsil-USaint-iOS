@@ -65,7 +65,7 @@ struct CurrentSemesterGradesView: View {
     CurrentSemesterGradesView(store: Store(
         initialState: HomeReducer.State(
             studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "6학년"),
-            totalReportCard: TotalReportCard(gpa: 4.22, earnedCredit: 34.5, graduateCredit: 124.0, generalRank: 10, overallStudentCount: 100)
+            totalReportCard: TotalReportCard(gpa: 4.22, earnedCredit: 34.5, graduateCredit: 124.0, generalRank: 10, overallStudentCount: 100), chapelCard: ChapelCard(attendance: 4, seatPosition: "E-10-4", floorLevel: 1)
         )
     ) {
         HomeReducer()
