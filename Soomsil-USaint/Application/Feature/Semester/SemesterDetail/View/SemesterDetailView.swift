@@ -20,6 +20,9 @@ struct SemesterDetailView: View {
     var body: some View {
 
         VStack(spacing: 0) {
+            GPAGraphView(semesterList: store.semesterList)
+                .padding(.horizontal, 17.5)
+
             TabView(tabs: $store.tabs,
                     activeTab: $store.activeTab,
                     mainViewScrollState: $mainViewScrollState,

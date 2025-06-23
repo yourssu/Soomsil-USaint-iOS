@@ -36,7 +36,7 @@ struct SemesterDetailReducer {
             case .onAppear:
                 return .run { send in
                     await send(.semesterListResponse(Result {
-                        try await gradeClient.getAllSemesterGrades()
+                        try await gradeClient.fetchAllSemesterGrades()
                     }))
                 }
             case .refresh:
@@ -46,8 +46,9 @@ struct SemesterDetailReducer {
                     await dismiss()
                 }
             case .semesterListResponse(.success(let semesterList)):
-                state.semesterList = semesterList
-                state.tabs = semesterList.map {
+                let descendingList = semesterList.sortedDescending()
+                state.semesterList = descendingList
+                state.tabs = descendingList.map {
                     SemesterTab(id: "\($0.year)년 \($0.semester)")
                 }
                 state.activeTab = state.tabs.first?.id ?? ""

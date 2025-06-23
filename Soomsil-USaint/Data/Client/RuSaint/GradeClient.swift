@@ -92,10 +92,33 @@ extension GradeClient: DependencyKey {
                 )
             }, fetchAllSemesterGrades: {
                 let session = try await studentClient.createSaintSession()
-                let response = try await CourseGradesApplicationBuilder()
-                    .build(session: session)
-                    .semesters(courseType: CourseType.bachelor)
-                return response.toGradeSummaryModels()
+                let builder = try await CourseGradesApplicationBuilder().build(session: session)
+                let semesterResponse = try await builder.semesters(courseType: .bachelor)
+                var summaryModels = semesterResponse.toGradeSummaryModels()
+
+                // TaskGroup으로 병렬 실행
+                summaryModels = try await withThrowingTaskGroup(of: (Int, [LectureDetail]).self) { group in
+                    // 1) 각 인덱스별로 그룹에 태스크 추가
+                    for idx in semesterResponse.indices {
+                        group.addTask {
+                            let semester = semesterResponse[idx]
+                            let classesResponse = try await builder.classes(
+                                                                courseType: .bachelor,
+                                                                year: semester.year,
+                                                                semester: semester.semester.toSemesterType(),
+                                                                includeDetails: false
+                                                            )
+                            let lectures = classesResponse.toLectureDetails()
+                            return (idx, lectures)
+                        }
+                    }
+                    // 2) 결과 수집
+                    var models = summaryModels
+                    for try await (idx, lectures) in group { models[idx].lectures = lectures }
+                    return models
+                }
+
+                return summaryModels
             }, fetchGrades: { year, semester in
                 let session = try await studentClient.createSaintSession()
                 let response = try await CourseGradesApplicationBuilder()
