@@ -21,7 +21,7 @@ struct SplashReducer {
         case checkMinimumVersion
         case checkMinimumVersionResponse(Result<String, Error>)
         case initialize
-        case initResponse(Result<(StudentInfo, TotalReportCard), Error>)
+        case initResponse(Result<(StudentInfo, TotalReportCard, ChapelCard), Error>)
         
         enum Alert: Equatable {
             case confirmTapped
@@ -32,6 +32,7 @@ struct SplashReducer {
     @Dependency(\.remoteConfigClient) var remoteConfigClient
     @Dependency(\.gradeClient) var gradeClient
     @Dependency(\.studentClient) var studentClient
+    @Dependency(\.chapelClient) var chapelClient
     @Dependency(\.openURL) var openURL
     
     var body: some Reducer<State, Action> {
@@ -85,7 +86,8 @@ struct SplashReducer {
                     await send(.initResponse(Result {
                         let info = try await studentClient.getStudentInfo()
                         let card = try await gradeClient.getTotalReportCard()
-                        return (info, card)
+                        let chapel = try await chapelClient.getChapelCard()
+                        return (info, card, chapel)
                     }))
                 }
             default:

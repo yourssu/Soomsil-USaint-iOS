@@ -42,14 +42,14 @@ struct AppReducer {
                 return .run { send in
                     try await scheduleChangedGardeLecturePush()
                 }
-            case .splash(.initResponse(.success(let (studentInfo, totalReportCard)))):
-                state = .loggedIn(HomeReducer.State(studentInfo: studentInfo, totalReportCard: totalReportCard))
+            case .splash(.initResponse(.success(let (studentInfo, totalReportCard, chapelCard)))):
+                state = .loggedIn(HomeReducer.State(studentInfo: studentInfo, totalReportCard: totalReportCard, chapelCard: chapelCard))
                 return .none
             case .splash(.initResponse(.failure)):
                 state = .loggedOut(LoginReducer.State())
                 return .none
-            case .login(.loginResponse(.success(let (info, report)))):
-                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report))
+            case .login(.loginResponse(.success(let (info, report, chapel)))):
+                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report, chapelCard: chapel))
                 return .none
             case .home(.path(.element(id: _, action: .setting(.logoutCompleted)))):
                 state = .loggedOut(LoginReducer.State())

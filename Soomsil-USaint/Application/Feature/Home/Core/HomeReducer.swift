@@ -28,6 +28,7 @@ struct HomeReducer {
         
         var studentInfo: StudentInfo
         var totalReportCard: TotalReportCard
+        var chapelCard: ChapelCard
     }
     
     enum Action: BindableAction {
