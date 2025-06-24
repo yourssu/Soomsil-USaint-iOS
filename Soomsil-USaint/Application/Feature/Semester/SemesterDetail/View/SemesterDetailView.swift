@@ -88,7 +88,7 @@ struct SemesterDetailView: View {
                 Button {
                     store.send(.backButtonTapped)
                 } label: {
-                    HStack(spacing: 0) {
+                    HStack(spacing: 5) {
                         Image("ic_arrow_left_line")
                             .resizable()
                             .frame(width: 19, height: 19)
