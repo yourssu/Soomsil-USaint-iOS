@@ -26,11 +26,14 @@ struct HomeReducer {
         
         var path = StackState<Path.State>()
         
-         var currentSemesterGrades = false
+        var currentSemesterGrades = false
         
         var studentInfo: StudentInfo
         var totalReportCard: TotalReportCard
         var chapelCard: ChapelCard
+        var semesterList: [GradeSummary] = []
+        var isLoading: Bool = false
+        var toastMessage: String = ""
     }
     
     enum Action: BindableAction {
@@ -45,6 +48,8 @@ struct HomeReducer {
         case currentSemesterGradesPressed
         case currentSemesterGradesDismissed
         case semesterGradesPressed
+        case getGradeDataResponse(Result<[GradeSummary], Error>)
+        case fetchGradeDataResponse(Result<Void, Error>)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -71,6 +76,7 @@ struct HomeReducer {
                     return .none
                 }
             case .onAppear:
+                state.isLoading = true
                 let isFirst = state.isFirst
                 state.$isFirst.withLock { $0 = false }
                 return .run { send in
@@ -81,7 +87,16 @@ struct HomeReducer {
                             return await localNotificationClient.getPushAuthorizationStatus()
                         }
                     }))
+                    
+                    do {
+                        await send(.getGradeDataResponse(.success(
+                            try await gradeClient.getAllSemesterGrades()
+                        )))
+                    } catch {
+                        await send(.getGradeDataResponse(.failure(error)))
+                    }
                 }
+                
             case .checkPushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
                 return .none
@@ -100,13 +115,57 @@ struct HomeReducer {
             case .currentSemesterGradesPressed:
                 state.currentSemesterGrades = true
                 return .none
+            case .currentSemesterGradesDismissed:
+                state.currentSemesterGrades = false
+                return .none
             case .semesterGradesPressed:
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
+            case .getGradeDataResponse(.success(let semesterList)):
+                if(semesterList.isEmpty) {
+//                    try await fetchGradeData()
+                    print("✅✅✅ 새로 fetch 됨✅✅✅✅")
+                    return .run { send in
+                        await send(.fetchGradeDataResponse(Result {
+                            try await fetchGradeData()
+                            
+                            do {
+                                await send(.getGradeDataResponse(.success(
+                                    try await gradeClient.getAllSemesterGrades()
+                                )))
+                            } catch {
+                                await send(.getGradeDataResponse(.failure(error)))
+                            }
+                            
+                        }))
+                    }
+                }
+                state.semesterList = semesterList.sortedDescending()
+                state.totalReportCard.generalRank = semesterList.first?.overallRank ?? 0
+                state.totalReportCard.overallStudentCount = semesterList.first?.overallStudentCount ?? 0 
+                print("✅✅✅✅✅✅✅✅✅✅✅✅")
+                print("\(semesterList)")
+                state.isLoading = false
+                return .none
+            case .getGradeDataResponse(.failure(let error)):
+                state.isLoading = false
+                state.toastMessage = String(describing: error)
+                return .none
+                
+                
             default:
                 return .none
             }
         }
         .forEach(\.path, action: \.path)
+    }
+    
+    private func fetchGradeData() async throws {
+        try await gradeClient.deleteTotalReportCard()
+        try await gradeClient.deleteAllSemesterGrades()
+        let totalReportCard = try await gradeClient.fetchTotalReportCard()
+        try await gradeClient.updateTotalReportCard(totalReportCard)
+        let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
+        try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
     }
 }

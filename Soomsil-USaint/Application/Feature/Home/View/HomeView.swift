@@ -12,22 +12,17 @@ import YDS_SwiftUI
 
 struct HomeView: View {
     @Bindable var store: StoreOf<HomeReducer>
-
+    
     var body: some View {
         NavigationStack(
             path: $store.scope(state: \.path, action: \.path)
-        ) {
+        ){
             VStack {
                 title
                 VStack {
                     Student(student: store.studentInfo) {
                         store.send(.settingPressed)
                     }
-//                    GradeInfo(reportCard: store.totalReportCard) {
-//                        store.send(.semesterListPressed)
-//                    } onSemesterDetailPressed: {
-//                        store.send(.semesterDetailPressed)
-//                    }
                     ReportCardView(reportCard: store.totalReportCard) {
                         store.send(.currentSemesterGradesPressed)
                     } onSemesterGradesPressed: {

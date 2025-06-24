@@ -22,10 +22,14 @@ struct CurrentSemesterGradesView: View {
                                  LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
                                  LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
                                  LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
+                                 LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
+                                 LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
+                                 LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
                                  LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")])
             Spacer()
         }
-//        .padding(
+        .padding(.top, 58)
+        .padding(.horizontal, 20)
     }
     
     struct TopSummary: View {
@@ -51,7 +55,7 @@ struct CurrentSemesterGradesView: View {
         var lectures: [LectureDetail]
         
         var body: some View {
-            VStack {
+            ScrollView {
                 ForEach(lectures, id: \.self.code) { lecture in
                     GradeRowView(lectureDetail: lecture)
                 }

@@ -9,15 +9,15 @@ import Foundation
 
 public struct TotalReportCard: Hashable {
     /// 평균학점
-    let gpa: Float
+    var gpa: Float
     // 취득학점
-    let earnedCredit: Float
+    var earnedCredit: Float
     /// 학부-졸업학점
-    let graduateCredit: Float
+    var graduateCredit: Float
     /// 전체석차
-    let generalRank: Int
+    var generalRank: Int
     /// 전체 수강생 수
-    let overallStudentCount: Int
+    var overallStudentCount: Int
 }
 
 public extension Array where Element == CDTotalReportCard {
