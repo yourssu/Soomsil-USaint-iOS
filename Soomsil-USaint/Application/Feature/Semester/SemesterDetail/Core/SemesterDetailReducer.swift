@@ -21,7 +21,7 @@ struct SemesterDetailReducer {
     enum Action: BindableAction {
         case binding(BindingAction<State>)
         case onAppear
-        case refresh
+        case refreshButtonTapped
         case backButtonTapped
         case semesterListResponse(Result<[GradeSummary], Error>)
     }
@@ -39,15 +39,26 @@ struct SemesterDetailReducer {
                         try await gradeClient.getAllSemesterGrades()
                     }))
                 }
-            case .refresh:
-                return .none
+            case .refreshButtonTapped:
+                state.isLoading = true
+                return .run { send in
+                    do {
+                        try await refreshGradeData()
+                        await send(.semesterListResponse(.success(
+                            try await gradeClient.getAllSemesterGrades()
+                        )))
+                    } catch {
+                        await send(.semesterListResponse(.failure(error)))
+                    }
+                }
             case .backButtonTapped:
                 return .run { _ in
                     await dismiss()
                 }
             case .semesterListResponse(.success(let semesterList)):
-                state.semesterList = semesterList
-                state.tabs = semesterList.map {
+                let descendingList = semesterList.sortedDescending()
+                state.semesterList = descendingList
+                state.tabs = descendingList.map {
                     SemesterTab(id: "\($0.year)년 \($0.semester)")
                 }
                 state.activeTab = state.tabs.first?.id ?? ""
@@ -61,5 +72,16 @@ struct SemesterDetailReducer {
                 return .none
             }
         }
+    }
+
+    private func refreshGradeData() async throws {
+        try await gradeClient.deleteTotalReportCard()
+        try await gradeClient.deleteAllSemesterGrades()
+
+        let totalReportCard = try await gradeClient.fetchTotalReportCard()
+        try await gradeClient.updateTotalReportCard(totalReportCard)
+
+        let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
+        try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
     }
 }
