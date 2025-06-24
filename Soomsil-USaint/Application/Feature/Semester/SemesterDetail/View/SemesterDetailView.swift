@@ -95,6 +95,7 @@ struct SemesterDetailView: View {
                         Text("성적")
                             .font(.custom("AppleSDGothicNeo-Bold", size: 20))
                     }
+                    .foregroundStyle(.titleText)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
