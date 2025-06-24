@@ -36,10 +36,9 @@ struct SemesterDetailView: View {
 
                 GeometryReader {
                     let size = $0.size
-
                     ScrollView(.horizontal) {
-                        LazyHStack(spacing: 0) {
 
+                        LazyHStack(spacing: 0) {
                             ForEach(store.tabs) { tab in
                                 ScrollView(.vertical) {
                                     let tappedSemester = findTappedSemester(
@@ -168,7 +167,7 @@ extension SemesterDetailView {
         var body: some View {
             ScrollView(.horizontal) {
                 HStack(spacing: 0) {
-                    ForEach($tabs) { $tab in
+                    ForEach($tabs, id: \.uuid) { $tab in
                         Button {
                             withAnimation(.snappy) {
                                 activeTab = tab.id
@@ -191,12 +190,7 @@ extension SemesterDetailView {
                 }
                 .scrollTargetLayout()
             }
-            .scrollPosition(id: .init(get: {
-                return tabBarScrollState
-            }, set: { _ in
-
-            }), anchor: .center)
-
+            .scrollPosition(id: $tabBarScrollState, anchor: .center)
             .overlay(alignment: .bottom) {
                 ZStack(alignment: .leading) {
                     Rectangle()
