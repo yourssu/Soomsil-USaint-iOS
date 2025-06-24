@@ -17,15 +17,11 @@ struct CurrentSemesterGradesView: View {
     var body: some View {
         VStack(alignment: .leading) {
             TopSummary(gradeSummary: GradeSummary(year: 2025, semester: "1학기"))
-            GradeList(lectures: [LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
-                                 LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
-                                 LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
-                                 LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
-                                 LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우"),
-                                 LectureDetail(code: "202", title: "기업가정신", credit: 3.0, score: "4.0", grade: .aZero, professorName: "최지우")])
+            GradeList(lectures: store.currentSemesterLectures)
             Spacer()
         }
-//        .padding(
+        .padding(.top, 58)
+        .padding(.horizontal, 20)
     }
     
     struct TopSummary: View {
@@ -33,7 +29,7 @@ struct CurrentSemesterGradesView: View {
         
         var body: some View {
             VStack(alignment: .leading) {
-                Text("\(gradeSummary.year)년 \(gradeSummary.semester)")
+                Text("\(Int(gradeSummary.year).formatted(.number.grouping(.never)))년 \(gradeSummary.semester)")
                     .font(YDSFont.subtitle2)
                     .foregroundStyle(.titleText)
                 HStack(alignment: .lastTextBaseline) {
@@ -51,7 +47,10 @@ struct CurrentSemesterGradesView: View {
         var lectures: [LectureDetail]
         
         var body: some View {
-            VStack {
+            ScrollView {
+                if(lectures.isEmpty) {
+                    Text("이번 학기 성적이 아직 없습니다.")
+                }
                 ForEach(lectures, id: \.self.code) { lecture in
                     GradeRowView(lectureDetail: lecture)
                 }
@@ -61,7 +60,7 @@ struct CurrentSemesterGradesView: View {
 }
 
 #Preview {
-    // FIXME:
+    // FIXME
     CurrentSemesterGradesView(store: Store(
         initialState: HomeReducer.State(
             studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "6학년"),
