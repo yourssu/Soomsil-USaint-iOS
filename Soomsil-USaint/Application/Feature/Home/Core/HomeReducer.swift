@@ -116,6 +116,8 @@ struct HomeReducer {
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
             case .currentSemesterGradesPressed:
+                state.currentSemesterGrades = true
+                state.isLoading = true
                 return .run { send in
                     await send(.fetchCurrentSemesterGradeResponse(Result {
                         if let currentSemester = try await gradeClient.currentYearAndSemester() {
@@ -163,10 +165,11 @@ struct HomeReducer {
                 return .none
             case .fetchCurrentSemesterGradeResponse(.success(let lectures)):
                 state.currentSemesterLectures = lectures
-                state.currentSemesterGrades = true
+                state.isLoading = false
                 return .none
             case .fetchCurrentSemesterGradeResponse(.failure(let error)):
                 state.toastMessage = String(describing: error)
+                state.isLoading = false
                 return .none
             default:
                 return .none
