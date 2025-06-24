@@ -60,7 +60,7 @@ struct CurrentSemesterGradesView: View {
 }
 
 #Preview {
-    // FIXME:
+    // FIXME
     CurrentSemesterGradesView(store: Store(
         initialState: HomeReducer.State(
             studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "6학년"),

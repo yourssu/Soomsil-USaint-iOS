@@ -58,7 +58,6 @@ struct HomeView: View {
         {
             NavigationStack {
                 CurrentSemesterGradesView(
-//                    grades: store.totalReportCard.currentSemesterGrades,
                     store: store, onDismiss: {
                         store.send(.currentSemesterGradesDismissed)
                     }
