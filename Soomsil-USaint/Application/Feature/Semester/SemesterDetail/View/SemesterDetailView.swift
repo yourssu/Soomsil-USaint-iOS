@@ -86,7 +86,7 @@ struct SemesterDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    store.send(\.backButtonTapped)
+                    store.send(.backButtonTapped)
                 } label: {
                     HStack(spacing: 0) {
                         Image("ic_arrow_left_line")
