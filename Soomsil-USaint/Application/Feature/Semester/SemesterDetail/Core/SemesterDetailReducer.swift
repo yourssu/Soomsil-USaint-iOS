@@ -75,7 +75,7 @@ struct SemesterDetailReducer {
                 state.tabs = descendingList.map {
                     SemesterTab(id: "\($0.year)년 \($0.semester)")
                 }
-                state.activeTab = state.tabs.first?.id ?? ""
+                if state.activeTab.isEmpty { state.activeTab = state.tabs.first?.id ?? "" }
                 state.isLoading = false
                 return .none
             case .semesterListResponse(.failure(let error)):
