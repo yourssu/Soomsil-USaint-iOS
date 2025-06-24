@@ -32,6 +32,7 @@ struct HomeReducer {
         var totalReportCard: TotalReportCard
         var chapelCard: ChapelCard
         var semesterList: [GradeSummary] = []
+        var currentSemesterLectures: [LectureDetail] = []
         var isLoading: Bool = false
         var toastMessage: String = ""
     }
@@ -50,6 +51,7 @@ struct HomeReducer {
         case semesterGradesPressed
         case getGradeDataResponse(Result<[GradeSummary], Error>)
         case fetchGradeDataResponse(Result<Void, Error>)
+        case fetchCurrentSemesterGradeResponse(Result<[LectureDetail], Error>)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -80,6 +82,7 @@ struct HomeReducer {
                 let isFirst = state.isFirst
                 state.$isFirst.withLock { $0 = false }
                 return .run { send in
+                    /// 알림 권한 확인
                     await send(.checkPushAuthorizationResponse(Result {
                         if (isFirst) {
                             return try await localNotificationClient.requestPushAuthorization()
@@ -88,6 +91,7 @@ struct HomeReducer {
                         }
                     }))
                     
+                    /// TotalReportCard 정보를 위한 GradeSummary 정보 불러옴
                     do {
                         await send(.getGradeDataResponse(.success(
                             try await gradeClient.getAllSemesterGrades()
@@ -96,7 +100,6 @@ struct HomeReducer {
                         await send(.getGradeDataResponse(.failure(error)))
                     }
                 }
-                
             case .checkPushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
                 return .none
@@ -113,8 +116,19 @@ struct HomeReducer {
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
             case .currentSemesterGradesPressed:
-                state.currentSemesterGrades = true
-                return .none
+                return .run { send in
+                    await send(.fetchCurrentSemesterGradeResponse(Result {
+                        if let currentSemester = try await gradeClient.currentYearAndSemester() {
+                            let lectures = try await gradeClient.fetchGrades(currentSemester.year,
+                                                                           currentSemester.semester)
+                            return lectures.toLectureDetails()
+                        } else {
+                            let lectures = try await gradeClient.fetchGrades(2025,
+                                                                             .one)
+                            return lectures.toLectureDetails()
+                        }
+                    }))
+                }
             case .currentSemesterGradesDismissed:
                 state.currentSemesterGrades = false
                 return .none
@@ -123,8 +137,6 @@ struct HomeReducer {
                 return .none
             case .getGradeDataResponse(.success(let semesterList)):
                 if(semesterList.isEmpty) {
-//                    try await fetchGradeData()
-                    print("✅✅✅ 새로 fetch 됨✅✅✅✅")
                     return .run { send in
                         await send(.fetchGradeDataResponse(Result {
                             try await fetchGradeData()
@@ -142,17 +154,20 @@ struct HomeReducer {
                 }
                 state.semesterList = semesterList.sortedDescending()
                 state.totalReportCard.generalRank = semesterList.first?.overallRank ?? 0
-                state.totalReportCard.overallStudentCount = semesterList.first?.overallStudentCount ?? 0 
-                print("✅✅✅✅✅✅✅✅✅✅✅✅")
-                print("\(semesterList)")
+                state.totalReportCard.overallStudentCount = semesterList.first?.overallStudentCount ?? 0
                 state.isLoading = false
                 return .none
             case .getGradeDataResponse(.failure(let error)):
                 state.isLoading = false
                 state.toastMessage = String(describing: error)
                 return .none
-                
-                
+            case .fetchCurrentSemesterGradeResponse(.success(let lectures)):
+                state.currentSemesterLectures = lectures
+                state.currentSemesterGrades = true
+                return .none
+            case .fetchCurrentSemesterGradeResponse(.failure(let error)):
+                state.toastMessage = String(describing: error)
+                return .none
             default:
                 return .none
             }
