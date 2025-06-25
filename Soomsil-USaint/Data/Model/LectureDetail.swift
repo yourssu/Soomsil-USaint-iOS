@@ -96,6 +96,27 @@ enum Grade: String {
 //    }
 //}
 
+/**
+ 현재 등록된 성적을 기준으로 학점을 계산하는 확장입니다.
+ */
+public extension Array where Element == LectureDetail {
+    var averageGPA: Double {
+        var creditSum = 0.0
+        var gpaSum = 0.0
+        
+        self.forEach { lecture in
+            
+            guard lecture.grade.gpa > 0.0 else { return }
+            
+            let credit = lecture.credit
+            creditSum += credit
+            gpaSum += credit * lecture.grade.gpa
+        }
+        
+        return gpaSum == 0 ? 0.0 : round((gpaSum / creditSum) * 100) / 100
+    }
+}
+
 public extension Array where Element == Rusaint.ClassGrade {
     func toLectureDetails() -> [LectureDetail] {
         self.map {

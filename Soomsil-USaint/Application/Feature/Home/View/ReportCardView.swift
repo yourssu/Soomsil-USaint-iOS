@@ -18,7 +18,8 @@ struct ReportCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("내 성적")
-                .font(YDSFont.title3)
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(.titleText)
                 .padding(.bottom, 15)
             
             Button(action: {

@@ -16,9 +16,15 @@ struct CurrentSemesterGradesView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            TopSummary(gradeSummary: GradeSummary(year: 2025, semester: "1학기"))
-            GradeList(lectures: store.currentSemesterLectures)
-            Spacer()
+            if store.state.isLoading {
+                ProgressView()
+            } else {
+                TopSummary(gradeSummary: GradeSummary(year: 2025, semester: "1학기"),
+                           lectures: store.state.currentSemesterLectures)
+                GradeList(lectures: store.currentSemesterLectures)
+                Spacer()
+            }
+            
         }
         .padding(.top, 58)
         .padding(.horizontal, 20)
@@ -26,6 +32,7 @@ struct CurrentSemesterGradesView: View {
     
     struct TopSummary: View {
         var gradeSummary: GradeSummary
+        var lectures: [LectureDetail]
         
         var body: some View {
             VStack(alignment: .leading) {
@@ -33,11 +40,14 @@ struct CurrentSemesterGradesView: View {
                     .font(YDSFont.subtitle2)
                     .foregroundStyle(.titleText)
                 HStack(alignment: .lastTextBaseline) {
-                    Text(String(format: "%.2f", gradeSummary.gpa))
+                    Text(String(format: "%.2f", lectures.averageGPA))
                         .font(YDSFont.display1)
                     Text("/ 4.50")
                         .foregroundStyle(.grayText)
                 }
+                Text("해당 학점은 현재 등록된 학점을 기준으로 계산되었습니다. \n P/F 과목은 GPA 계산에서 제외됩니다.")
+                    .foregroundStyle(.grayText)
+                    .font(YDSFont.body2)
                 Divider()
             }
         }
@@ -48,13 +58,41 @@ struct CurrentSemesterGradesView: View {
         
         var body: some View {
             ScrollView {
-                if(lectures.isEmpty) {
-                    Text("이번 학기 성적이 아직 없습니다.")
-                }
-                ForEach(lectures, id: \.self.code) { lecture in
-                    GradeRowView(lectureDetail: lecture)
+                ZStack(alignment: .center) {
+                  if lectures.isEmpty {
+                        EmptyGradesView()
+                    } else {
+                        LazyVStack {
+                            ForEach(lectures, id: \.self.code) { lecture in
+                                GradeRowView(lectureDetail: lecture)
+                            }
+                        }
+                    }
                 }
             }
+        }
+    }
+    
+    struct EmptyGradesView: View {
+        var body: some View {
+            VStack(spacing: 16) {
+                Image(systemName: "doc.text")
+                    .font(.system(size: 60))
+                    .foregroundColor(.gray.opacity(0.5))
+                
+                VStack(spacing: 8) {
+                    Text("아직 등록된 성적이 없어요")
+                        .font(YDSFont.subtitle2)
+                        .foregroundColor(.titleText)
+                    
+                    Text("성적이 등록되면 여기에 표시됩니다")
+                        .font(YDSFont.body2)
+                        .foregroundColor(.grayText)
+                        .multilineTextAlignment(.center)
+                }
+            }
+            .padding(.vertical, 60)
+            .frame(maxWidth: .infinity)
         }
     }
 }

@@ -74,16 +74,6 @@ public extension GradeSummary {
 }
 
 public extension Array where Element == GradeSummary {
-//    var averageGPA: Double {
-//        var creditSum = 0.0
-//        var gpaSum = 0.0
-//        self.forEach { report in
-//            let credit = report.credit - report.pfCredit
-//            creditSum += credit
-//            gpaSum += credit * report.gpa
-//        }
-//        return gpaSum == 0 ? 0.0 : round((gpaSum / creditSum) * 100) / 100
-//    }
     func sortedAscending() -> Self {
         self.sorted(by: compareReportModelsAscending)
     }
