@@ -20,52 +20,57 @@ struct SemesterDetailView: View {
     var body: some View {
 
         VStack(spacing: 0) {
-            GPAGraphView(semesterList: store.semesterList)
-                .padding(.horizontal, 17.5)
+            if store.semesterList.isEmpty {
+                ProgressView("성적을 불러오는 중입니다")
+                    .tint(.vPrimary)
+                    .controlSize(.large)
+            } else {
+                GPAGraphView(semesterList: store.semesterList)
+                    .padding(.horizontal, 17.5)
 
-            TabView(tabs: $store.tabs,
-                    activeTab: $store.activeTab,
-                    mainViewScrollState: $mainViewScrollState,
-                    tabBarScrollState: $tabBarScrollState,
-                    progress: $progress)
+                TabView(tabs: $store.tabs,
+                        activeTab: $store.activeTab,
+                        mainViewScrollState: $mainViewScrollState,
+                        tabBarScrollState: $tabBarScrollState,
+                        progress: $progress)
 
-            GeometryReader {
-                let size = $0.size
+                GeometryReader {
+                    let size = $0.size
+                    ScrollView(.horizontal) {
 
-                ScrollView(.horizontal) {
-                    LazyHStack(spacing: 0) {
-
-                        ForEach(store.tabs) { tab in
-                            ScrollView(.vertical) {
-                                let tappedSemester = findTappedSemester(
-                                    semesterList: store.semesterList,
-                                    tabId: tab.id
-                                )
-                                if let semester = tappedSemester {
-                                    TopSummary(gradeSummary: semester)
-                                    GradeList(lectures: semester.lectures ?? [])
+                        LazyHStack(spacing: 0) {
+                            ForEach(store.tabs) { tab in
+                                ScrollView(.vertical) {
+                                    let tappedSemester = findTappedSemester(
+                                        semesterList: store.semesterList,
+                                        tabId: tab.id
+                                    )
+                                    if let semester = tappedSemester {
+                                        TopSummary(gradeSummary: semester)
+                                        GradeList(lectures: semester.lectures ?? [])
+                                    }
                                 }
+                                .padding(20)
+                                .frame(width: size.width, height: size.height)
+                                .contentShape(.rect)
                             }
-                            .padding(20)
-                            .frame(width: size.width, height: size.height)
-                            .contentShape(.rect)
+                        }
+                        .scrollTargetLayout()
+                        .rect { rect in
+                            progress = -rect.minX / size.width
                         }
                     }
-                    .scrollTargetLayout()
-                    .rect { rect in
-                        progress = -rect.minX / size.width
-                    }
                 }
-            }
-            .scrollPosition(id: $mainViewScrollState)
-            .scrollIndicators(.hidden)
-            .scrollTargetBehavior(.paging)
-            .onChange(of: mainViewScrollState) { oldValue, newValue in
-                if let newValue {
-                    debugPrint(newValue)
-                    withAnimation(.snappy) {
-                        tabBarScrollState = newValue
-                        store.activeTab = newValue
+                .scrollPosition(id: $mainViewScrollState)
+                .scrollIndicators(.hidden)
+                .scrollTargetBehavior(.paging)
+                .onChange(of: mainViewScrollState) { oldValue, newValue in
+                    if let newValue {
+                        debugPrint(newValue)
+                        withAnimation(.snappy) {
+                            tabBarScrollState = newValue
+                            store.activeTab = newValue
+                        }
                     }
                 }
             }
@@ -79,12 +84,17 @@ struct SemesterDetailView: View {
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                HStack(spacing: 0) {
-                    BackButton {
-                        store.send(.backButtonTapped)
+                Button {
+                    store.send(.backButtonTapped)
+                } label: {
+                    HStack(spacing: 5) {
+                        Image("ic_arrow_left_line")
+                            .resizable()
+                            .frame(width: 19, height: 19)
+                        Text("성적")
+                            .font(.custom("AppleSDGothicNeo-Bold", size: 20))
                     }
-                    Text("성적")
-                        .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.titleText)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -108,8 +118,10 @@ struct SemesterDetailView: View {
             VStack(alignment: .leading) {
                 HStack(alignment: .lastTextBaseline) {
                     Text(String(format: "%.2f", gradeSummary.gpa))
-                        .font(YDSFont.display1)
+                        .font(.custom("AppleSDGothicNeo-Bold", size: 40))
+                        .offset(x: 0, y: -6)
                     Text("/ 4.50")
+                        .font(.custom("AppleSDGothicNeo-Medium", size: 16))
                         .foregroundStyle(.grayText)
                 }
                 GradeOverView(title: "취득 학점",
@@ -117,9 +129,6 @@ struct SemesterDetailView: View {
                 GradeOverView(title: "학기별 석차",
                                 accentText: "\(gradeSummary.semesterRank)",
                                 subText: "\(gradeSummary.semesterStudentCount)")
-                GradeOverView(title: "전체 석차",
-                                accentText: "\(gradeSummary.overallRank)",
-                                subText: "\(gradeSummary.overallStudentCount)")
                 Divider()
             }
         }
@@ -157,18 +166,18 @@ extension SemesterDetailView {
 
         var body: some View {
             ScrollView(.horizontal) {
-                HStack(spacing: 20) {
-                    ForEach($tabs) { $tab in
-                        Button(action: {
+                HStack(spacing: 0) {
+                    ForEach($tabs, id: \.uuid) { $tab in
+                        Button {
                             withAnimation(.snappy) {
                                 activeTab = tab.id
                                 tabBarScrollState = tab.id
                                 mainViewScrollState = tab.id
                             }
-                        }) {
+                        } label: {
                             Text(formatShortedYear(tab.id))
-                                .font(YDSFont.button2)
-                                .padding(.vertical, 12)
+                                .font(.custom("AppleSDGothicNeo-SemiBold", size: 14))
+                                .padding(12)
                                 .foregroundStyle(activeTab == tab.id ? .primary : Color.gray)
                                 .contentShape(.rect)
                         }
@@ -181,12 +190,7 @@ extension SemesterDetailView {
                 }
                 .scrollTargetLayout()
             }
-            .scrollPosition(id: .init(get: {
-                return tabBarScrollState
-            }, set: { _ in
-
-            }), anchor: .center)
-
+            .scrollPosition(id: $tabBarScrollState, anchor: .center)
             .overlay(alignment: .bottom) {
                 ZStack(alignment: .leading) {
                     Rectangle()

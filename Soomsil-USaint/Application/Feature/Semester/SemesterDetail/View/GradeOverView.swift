@@ -22,17 +22,17 @@ struct GradeOverView: View {
     }
     
     var body: some View {
-        HStack {
+        HStack(alignment: .firstTextBaseline) {
             Text(transformIfZero(title))
-                .font(YDSFont.body1)
+                .font(.custom("AppleSDGothicNeo-Regular", size: 15))
                 .foregroundStyle(.grayText)
             Spacer()
             Text(transformIfZero(accentText))
-                .font(YDSFont.subtitle2)
+                .font(.custom("AppleSDGothicNeo-Bold", size: 16))
                 .foregroundStyle(.titleText)
             if let subText {
                 Text("/ \(transformIfZero(subText))")
-                    .font(YDSFont.caption0)
+                    .font(.custom("AppleSDGothicNeo-Bold", size: 12))
                     .foregroundStyle(.grayText)
             }
         }

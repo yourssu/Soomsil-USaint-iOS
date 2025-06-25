@@ -32,10 +32,10 @@ struct GradeRowView: View {
             
             VStack(alignment: .leading, spacing: 3) {
                 Text(title)
-                    .font(YDSFont.subtitle2)
+                    .font(.custom("AppleSDGothicNeo-Bold", size: 16))
                     .foregroundStyle(.titleText)
                 Text("\(professorName) · \(String(format: "%.1f", credit)) 학점")
-                    .font(YDSFont.body2)
+                    .font(.custom("AppleSDGothicNeo-Regular", size: 14))
                     .foregroundStyle(.grayText)
             }
             Spacer()

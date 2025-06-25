@@ -111,16 +111,22 @@ private extension GPAGraphView {
                     }
                 }
             }
+            .chartXScale(range: .plotDimension(startPadding: -16, endPadding: -16))
             .chartYScale(domain: 0...2.5)
             .chartYAxis {
                 AxisMarks(position: .leading, values: ySymbols) { axis in
                     AxisGridLine()
                     AxisValueLabel("\(String(format: "%.1F", ySymbols[axis.index] + 2))")
+                        .font(.custom("AppleSDGothicNeo-Regular", size: 14))
                 }
             }
             .chartXAxis {
                 AxisMarks(values: gpaList.map { $0.semester }) { axis in
-                    AxisValueLabel("\(gpaList[axis.index].shortedSemester)")
+                    AxisValueLabel {
+                        Text("\(gpaList[axis.index].shortedSemester)")
+                            .font(.custom("AppleSDGothicNeo-Regular", size: 14))
+                            .minimumScaleFactor(0.5)
+                    }
                 }
             }
             .frame(height: 183)

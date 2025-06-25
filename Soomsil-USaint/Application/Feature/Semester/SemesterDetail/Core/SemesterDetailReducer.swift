@@ -56,12 +56,26 @@ struct SemesterDetailReducer {
                     await dismiss()
                 }
             case .semesterListResponse(.success(let semesterList)):
+                guard !semesterList.isEmpty
+                else {
+                    return .run { send in
+                        do {
+                            try await refreshGradeData()
+                            await send(.semesterListResponse(.success(
+                                try await gradeClient.getAllSemesterGrades()
+                            )))
+                        } catch {
+                            await send(.semesterListResponse(.failure(error)))
+                        }
+                    }
+                }
+
                 let descendingList = semesterList.sortedDescending()
                 state.semesterList = descendingList
                 state.tabs = descendingList.map {
                     SemesterTab(id: "\($0.year)년 \($0.semester)")
                 }
-                state.activeTab = state.tabs.first?.id ?? ""
+                if state.activeTab.isEmpty { state.activeTab = state.tabs.first?.id ?? "" }
                 state.isLoading = false
                 return .none
             case .semesterListResponse(.failure(let error)):
