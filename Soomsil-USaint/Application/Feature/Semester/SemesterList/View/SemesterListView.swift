@@ -72,7 +72,7 @@ struct SemesterListView: View {
                 }
                 .padding()
             }
-            .background(.onSurface)
+            .background(.buttonSurface)
             .onAppear {
                 store.send(.onAppear)
             }

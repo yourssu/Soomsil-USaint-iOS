@@ -30,7 +30,7 @@ struct ChapelInfo: View {
                 Rectangle()
                     .frame(width: 350, height: 130)
                     .cornerRadius(16)
-                    .foregroundStyle(.onSurface)
+                    .foregroundStyle(.buttonSurface)
                     .shadow(color: .shadow, radius: 7)
                 
                 switch status {
@@ -185,7 +185,7 @@ private struct CustomLinearProgressViewStyle: ProgressViewStyle {
 
 #Preview {
     ZStack {
-        Color(.surface)
+        Color(.navigationBarSurface)
             .ignoresSafeArea(.all)
         VStack {
             ChapelInfo(chapelCard: ChapelCard(attendance: 4, seatPosition: "E-10-4", floorLevel: 1))

@@ -39,7 +39,7 @@ struct ReportCardView: View {
                         .scaledToFill()
                 }
                 .padding(.horizontal, 28)
-                .background(.white)
+                .background(.buttonSurface)
                 .cornerRadius(16)
             }
             .padding(.bottom, 10)
@@ -53,10 +53,11 @@ struct ReportCardView: View {
                     CreditLine(title: "전체석차", earned: Float(reportCard.generalRank), graduated: Float(reportCard.overallStudentCount), isInt: true)
                 }
                 .padding(.vertical, 20)
-                .background(.white)
+                .background(.buttonSurface)
                 .cornerRadius(16)
             }
         }
+        .padding(.horizontal, 20)
     }
 }
 
@@ -87,6 +88,6 @@ struct CreditLine: View {
 
 #Preview {
     ReportCardView(reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188, generalRank: 10, overallStudentCount: 100)) {} onSemesterGradesPressed: {}
-        .background(.surface)
+        .background(.navigationBarSurface)
         .padding(.horizontal, 20)
 }
