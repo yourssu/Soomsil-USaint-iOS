@@ -19,7 +19,7 @@ struct HomeView: View {
         ){
             VStack {
                 title
-                VStack {
+                VStack(alignment: .leading, spacing: 0) {
                     Student(student: store.studentInfo) {
                         store.send(.settingPressed)
                     }
@@ -37,9 +37,8 @@ struct HomeView: View {
                     
                     Spacer()
                 }
-                .padding(.horizontal, 20)
             }
-            .background(.surface)
+            .background(.backgroundSurface)
         } destination: { store in
             switch store.case {
             case .setting(let store):
@@ -101,8 +100,8 @@ struct HomeView: View {
                     Image("ic_setting_fill")
                 })
             }
-            .padding(.horizontal, 16.0)
-            .padding(.vertical, 20.0)
+            .padding(.vertical, 20)
+            .padding(.horizontal, 32)
         }
     }
 }
@@ -112,12 +111,12 @@ private extension HomeView {
         HStack {
             Text("유세인트")
                 .font(YDSFont.title2)
-                .foregroundStyle(.titleText)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 10)
             Spacer()
         }
-        .background(.bgTitle)
+        .frame(maxWidth: .infinity)
+        .background(.navigationBarSurface)
     }
 }
 
