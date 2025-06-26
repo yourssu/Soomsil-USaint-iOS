@@ -44,7 +44,7 @@ struct GradeInfo: View {
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    .background(.onSurface)
+                    .background(.buttonSurface)
                     .frame(height: 72)
                 }
                 
@@ -73,7 +73,7 @@ struct GradeInfo: View {
             .padding(.horizontal, 16)
         }
         .foregroundStyle(.titleText)
-        .background(.onSurface)
+        .background(.buttonSurface)
         .cornerRadius(8)
     }
 }
