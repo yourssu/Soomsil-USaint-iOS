@@ -13,8 +13,8 @@
 		02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8C2D0F45B200A3E717 /* RxBlocking */; };
 		02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8E2D0F45B200A3E717 /* RxCocoa */; };
 		02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D902D0F45B200A3E717 /* RxRelay */; };
+		7B046DA32E106ECA0051989A /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = 7B046DA22E106ECA0051989A /* Rusaint */; };
 		7B07475E2E095DDF00A055C7 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 7B07475D2E095DDF00A055C7 /* ComposableArchitecture */; };
-		7BA4D7D32D17FAE700CF6689 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = 7BA4D7D22D17FAE700CF6689 /* Rusaint */; };
 		B96F06662D63882B0047D33D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06652D63882B0047D33D /* FirebaseCore */; };
 		B96F06682D63882B0047D33D /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06672D63882B0047D33D /* FirebaseRemoteConfig */; };
 /* End PBXBuildFile section */
@@ -50,7 +50,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7B07475E2E095DDF00A055C7 /* ComposableArchitecture in Frameworks */,
-				7BA4D7D32D17FAE700CF6689 /* Rusaint in Frameworks */,
+				7B046DA32E106ECA0051989A /* Rusaint in Frameworks */,
 				02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */,
 				02C46CED2D0F2DFC00A3E717 /* KeychainAccess in Frameworks */,
 				02C46CF32D0F2E9300A3E717 /* YDS in Frameworks */,
@@ -107,10 +107,10 @@
 				02C46D8C2D0F45B200A3E717 /* RxBlocking */,
 				02C46D8E2D0F45B200A3E717 /* RxCocoa */,
 				02C46D902D0F45B200A3E717 /* RxRelay */,
-				7BA4D7D22D17FAE700CF6689 /* Rusaint */,
 				B96F06652D63882B0047D33D /* FirebaseCore */,
 				B96F06672D63882B0047D33D /* FirebaseRemoteConfig */,
 				7B07475D2E095DDF00A055C7 /* ComposableArchitecture */,
+				7B046DA22E106ECA0051989A /* Rusaint */,
 			);
 			productName = "Rusaint-iOS";
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
@@ -144,9 +144,9 @@
 				02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */,
 				02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */,
-				7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
 				B96F06642D63882B0047D33D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				7B046DA12E106ECA0051989A /* XCRemoteSwiftPackageReference "rusaint-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
@@ -306,7 +306,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2025062501;
+				CURRENT_PROJECT_VERSION = 2025062601;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2N3PMJ78CA;
 				ENABLE_PREVIEWS = YES;
@@ -324,7 +324,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.3;
+				MARKETING_VERSION = 3.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourssu.SaintKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -345,7 +345,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2025062501;
+				CURRENT_PROJECT_VERSION = 2025062601;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 2N3PMJ78CA;
 				ENABLE_PREVIEWS = YES;
@@ -363,7 +363,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.3;
+				MARKETING_VERSION = 3.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourssu.SaintKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -424,20 +424,20 @@
 				minimumVersion = 6.8.0;
 			};
 		};
+		7B046DA12E106ECA0051989A /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.20.2;
-			};
-		};
-		7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios.git";
-			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 0.8.2;
 			};
 		};
 		B96F06642D63882B0047D33D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -481,15 +481,15 @@
 			package = 02C46D8B2D0F45B200A3E717 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxRelay;
 		};
+		7B046DA22E106ECA0051989A /* Rusaint */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7B046DA12E106ECA0051989A /* XCRemoteSwiftPackageReference "rusaint-ios" */;
+			productName = Rusaint;
+		};
 		7B07475D2E095DDF00A055C7 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
-		};
-		7BA4D7D22D17FAE700CF6689 /* Rusaint */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 7BA4D7D12D17FAE700CF6689 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
-			productName = Rusaint;
 		};
 		B96F06652D63882B0047D33D /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -134,8 +134,8 @@ public extension Array where Element == Rusaint.SemesterGrade {
         self.map {
             GradeSummary(
                 year: Int($0.year),
-                semester: $0.semester,
-                gpa: $0.gradePointsAvarage,
+                semester: $0.semester.toString(),
+                gpa: $0.gradePointsAverage,
                 earnedCredit: $0.earnedCredits,
                 semesterRank: Int($0.semesterRank.first),
                 semesterStudentCount: Int($0.semesterRank.second),

@@ -83,7 +83,7 @@ extension GradeClient: DependencyKey {
                     throw RusaintError.invalidClientError
                 }
                 return TotalReportCard(
-                    gpa: courseGrades.gradePointsAvarage,
+                    gpa: courseGrades.gradePointsAverage,
                     earnedCredit: courseGrades.earnedCredits,
                     graduateCredit: Float(graduateCredit),
                     // FIXME: - home에서 SemesterGrade fetch후, 해당 필드에 넣어줘야 함
@@ -105,7 +105,7 @@ extension GradeClient: DependencyKey {
                             let classesResponse = try await builder.classes(
                                                                 courseType: .bachelor,
                                                                 year: semester.year,
-                                                                semester: semester.semester.toSemesterType(),
+                                                                semester: semester.semester,
                                                                 includeDetails: false
                                                             )
                             let lectures = classesResponse.toLectureDetails()
@@ -290,7 +290,7 @@ extension GradeClient: DependencyKey {
             ]
         }, fetchGrades: { year, semester in
             [
-                Rusaint.ClassGrade(year: "2024", semester: "2 학기", code: "", className: "", gradePoints: 0.0, score: .empty, rank: "", professor: "", detail: nil)
+                Rusaint.ClassGrade(year: 2024, semester: .two, code: "", className: "", gradePoints: 0.0, score: .empty, rank: "", professor: "", detail: nil)
             ]
         }, getTotalReportCard: {
             TotalReportCard(gpa: 4.34, earnedCredit: 133, graduateCredit: 133, generalRank: 1, overallStudentCount: 100)
