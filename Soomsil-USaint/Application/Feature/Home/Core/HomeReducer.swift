@@ -176,10 +176,7 @@ struct HomeReducer {
                 state.isLoading = false
                 return .none
             case .openGiftLinkPressed:
-                state.path.append(.web(WebReducer.State(
-                    url: URL(string: "https://naver.com")!
-                )))
-                return .none
+                return handleGiftLinkPressed(&state)
             default:
                 return .none
             }
@@ -195,4 +192,32 @@ struct HomeReducer {
         let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
         try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
     }
+
+    //MARK: - Events
+
+    private func handleGiftLinkPressed(_ state: inout State) -> Effect<Action> {
+        let student = state.studentInfo
+
+        guard let saintID = StudentClient.keychain["saintID"] else {
+            state.toastMessage = "학번을 불러올 수 없습니다."
+            return .none
+        }
+
+        let baseURL = "https://lottery-one.vercel.app"
+
+        let major = student.major.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let name = student.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let schoolNumber = saintID.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+
+        let fullURLString = "\(baseURL)?major=\(major)&name=\(name)&schoolNumber=\(schoolNumber)"
+
+        guard let url = URL(string: fullURLString) else {
+            state.toastMessage = "복권 페이지 링크를 열 수 없습니다."
+            return .none
+        }
+
+        state.path.append(.web(WebReducer.State(url: url)))
+        return .none
+    }
+
 }
