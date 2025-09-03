@@ -61,7 +61,8 @@ struct HomeReducer {
     @Dependency(\.localNotificationClient) var localNotificationClient
     @Dependency(\.studentClient) var studentClient
     @Dependency(\.gradeClient) var gradeClient
-    
+    @Dependency(\.mixpanelClient) var mixpanelClient
+
     var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce { state, action in
@@ -120,6 +121,12 @@ struct HomeReducer {
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
             case .currentSemesterGradesPressed:
+                let student = state.studentInfo
+                let saintId = Int(StudentClient.keychain["saintID"] ?? "") ?? -1
+
+                let (event, props) = AnalyticsEvent.thisSemesterGradeClick(student: student, saintId: saintId)
+                mixpanelClient.track(event, properties: props)
+
                 state.currentSemesterGrades = true
                 state.isLoading = true
                 return .run { send in
@@ -139,6 +146,16 @@ struct HomeReducer {
                 state.currentSemesterGrades = false
                 return .none
             case .semesterGradesPressed:
+                let student = state.studentInfo
+                let saintId = Int(StudentClient.keychain["saintID"] ?? "") ?? -1
+                let chapel = state.chapelCard.status == .active  
+
+                let (event, props) = AnalyticsEvent.allSemesterGradeClick(
+                    student: student,
+                    saintId: saintId,
+                    chapel: chapel
+                )
+                mixpanelClient.track(event, properties: props)
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
             case .getGradeDataResponse(.success(let semesterList)):

@@ -17,6 +17,7 @@
 		7B07475E2E095DDF00A055C7 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 7B07475D2E095DDF00A055C7 /* ComposableArchitecture */; };
 		B96F06662D63882B0047D33D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06652D63882B0047D33D /* FirebaseCore */; };
 		B96F06682D63882B0047D33D /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06672D63882B0047D33D /* FirebaseRemoteConfig */; };
+		E50A23E12E68994B00EB7129 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = E50A23E02E68994B00EB7129 /* Mixpanel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +60,7 @@
 				B96F06662D63882B0047D33D /* FirebaseCore in Frameworks */,
 				02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */,
 				B96F06682D63882B0047D33D /* FirebaseRemoteConfig in Frameworks */,
+				E50A23E12E68994B00EB7129 /* Mixpanel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +113,7 @@
 				B96F06672D63882B0047D33D /* FirebaseRemoteConfig */,
 				7B07475D2E095DDF00A055C7 /* ComposableArchitecture */,
 				7B046DA22E106ECA0051989A /* Rusaint */,
+				E50A23E02E68994B00EB7129 /* Mixpanel */,
 			);
 			productName = "Rusaint-iOS";
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
@@ -147,6 +150,7 @@
 				B96F06642D63882B0047D33D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				7B046DA12E106ECA0051989A /* XCRemoteSwiftPackageReference "rusaint-ios" */,
+				E50A23DF2E68994B00EB7129 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
@@ -428,8 +432,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios.git";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.0.0;
 			};
 		};
 		7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
@@ -446,6 +450,14 @@
 			requirement = {
 				kind = upToNextMinorVersion;
 				minimumVersion = 11.8.1;
+			};
+		};
+		E50A23DF2E68994B00EB7129 /* XCRemoteSwiftPackageReference "mixpanel-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mixpanel/mixpanel-swift";
+			requirement = {
+				branch = master;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -500,6 +512,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B96F06642D63882B0047D33D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseRemoteConfig;
+		};
+		E50A23E02E68994B00EB7129 /* Mixpanel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E50A23DF2E68994B00EB7129 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
+			productName = Mixpanel;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
