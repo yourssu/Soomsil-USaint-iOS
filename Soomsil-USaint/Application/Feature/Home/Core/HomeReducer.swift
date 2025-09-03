@@ -52,6 +52,10 @@ struct HomeReducer {
         case getGradeDataResponse(Result<[GradeSummary], Error>)
         case fetchGradeDataResponse(Result<Void, Error>)
         case fetchCurrentSemesterGradeResponse(Result<[LectureDetail], Error>)
+
+        //MARK: - Events
+
+        case openGiftLinkPressed
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -170,6 +174,11 @@ struct HomeReducer {
             case .fetchCurrentSemesterGradeResponse(.failure(let error)):
                 state.toastMessage = String(describing: error)
                 state.isLoading = false
+                return .none
+            case .openGiftLinkPressed:
+                state.path.append(.web(WebReducer.State(
+                    url: URL(string: "https://naver.com")!
+                )))
                 return .none
             default:
                 return .none

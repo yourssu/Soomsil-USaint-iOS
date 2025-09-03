@@ -12,9 +12,13 @@ import YDS_SwiftUI
 struct ReportCardView: View {
     var reportCard: TotalReportCard
     
-    let onCurrentSemesterPressed: () -> Void
+    //let onCurrentSemesterPressed: () -> Void
     let onSemesterGradesPressed: () -> Void
-    
+
+    //MARK: - Events
+
+    let onGiftLinkPressed: () -> Void
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("내 성적")
@@ -23,10 +27,11 @@ struct ReportCardView: View {
                 .padding(.bottom, 15)
             
             Button(action: {
-                onCurrentSemesterPressed()
+                onGiftLinkPressed()
             }) {
                 HStack(spacing: 0) {
-                    Text("이번 학기 성적 확인")
+                    //Text("이번 학기 성적 확인")
+                    Text("🎁 개강 선물 도착, 복권 뽑으러 가기!")
                         .foregroundStyle(.titleText)
                         .font(YDSFont.body1)
                         .padding(.vertical, 19)
@@ -87,7 +92,7 @@ struct CreditLine: View {
 }
 
 #Preview {
-    ReportCardView(reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188, generalRank: 10, overallStudentCount: 100)) {} onSemesterGradesPressed: {}
+    ReportCardView(reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188, generalRank: 10, overallStudentCount: 100)) {} /*onSemesterGradesPressed: {}*/ onGiftLinkPressed: {}
         .background(.navigationBarSurface)
         .padding(.horizontal, 20)
 }
