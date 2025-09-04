@@ -8,6 +8,7 @@
 import Foundation
 
 import ComposableArchitecture
+import UIKit
 
 @Reducer
 struct HomeReducer {
@@ -233,8 +234,11 @@ struct HomeReducer {
             return .none
         }
 
-        state.path.append(.web(WebReducer.State(url: url)))
-        return .none
+        return .run { _ in
+            await MainActor.run {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        }
     }
 
 }
