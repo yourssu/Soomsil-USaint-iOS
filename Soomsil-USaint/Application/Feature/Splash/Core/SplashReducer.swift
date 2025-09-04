@@ -50,8 +50,28 @@ struct SplashReducer {
                         return try await remoteConfigClient.getMinimumVersion()
                     }))
                 }
-            case .checkMinimumVersionResponse(.success(let minimumVersion)):
-                if checkMinimumVersion(minimum: minimumVersion) {
+                /// remote Config 수정문제로 인한 주석처리
+//            case .checkMinimumVersionResponse(.success(let minimumVersion)):
+//                if checkMinimumVersion(minimum: minimumVersion) {
+//                    return .send(.initialize)
+//                } else {
+//                    state.alert = AlertState(
+//                        title: { TextState("앱 업데이트가 있어요") },
+//                        actions: {
+//                            ButtonState(action: .send(.moveAppStoreTapped)) {
+//                                TextState("스토어로 이동하기")
+//                            }
+//                        },
+//                        message: {
+//                            TextState("원활한 서비스 이용을 위해\n업데이트가 필요해요")
+//                        }
+//                    )
+//                    return .none
+//                }
+            case .checkMinimumVersionResponse(.success):
+                let forcedMinimumVersion = "3.1.3"
+                let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
+                if checkMinimumVersion(minimum: forcedMinimumVersion) {
                     return .send(.initialize)
                 } else {
                     state.alert = AlertState(

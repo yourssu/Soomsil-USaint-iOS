@@ -11,7 +11,7 @@ import Dependencies
 struct MixpanelClient {
     func track(_ event: String, properties: Properties = [:]) {
 #if DEBUG
-        print("📊 [Mixpanel Track] \(event)")
+        print("[Mixpanel Track] \(event)")
         if !properties.isEmpty {
             print("Properties: \(properties)")
         }
@@ -28,7 +28,7 @@ struct MixpanelClient {
 
     func reset() {
 #if DEBUG
-        print("🔄 [Mixpanel Reset]")
+        print("[Mixpanel Reset]")
 #endif
         Mixpanel.mainInstance().reset()
     }
