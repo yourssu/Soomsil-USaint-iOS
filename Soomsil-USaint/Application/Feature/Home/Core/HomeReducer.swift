@@ -8,6 +8,7 @@
 import Foundation
 
 import ComposableArchitecture
+import UIKit
 
 @Reducer
 struct HomeReducer {
@@ -52,12 +53,17 @@ struct HomeReducer {
         case getGradeDataResponse(Result<[GradeSummary], Error>)
         case fetchGradeDataResponse(Result<Void, Error>)
         case fetchCurrentSemesterGradeResponse(Result<[LectureDetail], Error>)
+
+        //MARK: - Events
+
+        case openGiftLinkPressed
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
     @Dependency(\.studentClient) var studentClient
     @Dependency(\.gradeClient) var gradeClient
-    
+    @Dependency(\.mixpanelClient) var mixpanelClient
+
     var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce { state, action in
@@ -116,6 +122,12 @@ struct HomeReducer {
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
             case .currentSemesterGradesPressed:
+                let student = state.studentInfo
+                let saintId = Int(StudentClient.keychain["saintID"] ?? "") ?? -1
+
+                let (event, props) = AnalyticsEvent.thisSemesterGradeClick(student: student, saintId: saintId)
+                mixpanelClient.track(event, properties: props)
+
                 state.currentSemesterGrades = true
                 state.isLoading = true
                 return .run { send in
@@ -135,6 +147,16 @@ struct HomeReducer {
                 state.currentSemesterGrades = false
                 return .none
             case .semesterGradesPressed:
+                let student = state.studentInfo
+                let saintId = Int(StudentClient.keychain["saintID"] ?? "") ?? -1
+                let chapel = state.chapelCard.status == .active  
+
+                let (event, props) = AnalyticsEvent.allSemesterGradeClick(
+                    student: student,
+                    saintId: saintId,
+                    chapel: chapel
+                )
+                mixpanelClient.track(event, properties: props)
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
             case .getGradeDataResponse(.success(let semesterList)):
@@ -171,6 +193,8 @@ struct HomeReducer {
                 state.toastMessage = String(describing: error)
                 state.isLoading = false
                 return .none
+            case .openGiftLinkPressed:
+                return handleGiftLinkPressed(&state)
             default:
                 return .none
             }
@@ -186,4 +210,35 @@ struct HomeReducer {
         let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
         try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
     }
+
+    //MARK: - Events
+
+    private func handleGiftLinkPressed(_ state: inout State) -> Effect<Action> {
+        let student = state.studentInfo
+
+        guard let saintID = StudentClient.keychain["saintID"] else {
+            state.toastMessage = "학번을 불러올 수 없습니다."
+            return .none
+        }
+
+        let baseURL = "https://lottery-one.vercel.app"
+
+        let major = student.major.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let name = student.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+        let schoolNumber = saintID.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+
+        let fullURLString = "\(baseURL)?major=\(major)&name=\(name)&schoolNumber=\(schoolNumber)"
+
+        guard let url = URL(string: fullURLString) else {
+            state.toastMessage = "복권 페이지 링크를 열 수 없습니다."
+            return .none
+        }
+
+        return .run { _ in
+            await MainActor.run {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            }
+        }
+    }
+
 }

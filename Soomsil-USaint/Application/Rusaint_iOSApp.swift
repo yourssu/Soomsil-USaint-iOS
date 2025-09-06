@@ -11,10 +11,12 @@ import BackgroundTasks
 import ComposableArchitecture
 import FirebaseCore
 import Rusaint
+import Mixpanel
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
+        Mixpanel.initialize(token: "토큰이 없네요,, ㅠ", trackAutomaticEvents: true)
         return true
     }
 }

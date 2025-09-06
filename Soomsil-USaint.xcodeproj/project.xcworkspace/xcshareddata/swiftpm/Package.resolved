@@ -1,5 +1,5 @@
 {
-  "originHash" : "3cb427ed57d3ec72b7bfff03c1040d35d0b31299d08cd8c5dc07d00639bdca74",
+  "originHash" : "db92476935e9490d8e09092d8fa0e81314c0bbd69c4c0ae90bd4c9780f1a09cd",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -110,6 +110,15 @@
       }
     },
     {
+      "identity" : "mixpanel-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mixpanel/mixpanel-swift",
+      "state" : {
+        "branch" : "master",
+        "revision" : "7459dd6b61665cce9f4f284ccd5dfd1d902aa568"
+      }
+    },
+    {
       "identity" : "nanopb",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/nanopb.git",
@@ -151,7 +160,7 @@
       "location" : "https://github.com/EATSTEAK/rusaint-ios.git",
       "state" : {
         "branch" : "main",
-        "revision" : "6c455443825681569f8bd4cb4f3af8b53c5a64d3"
+        "revision" : "57a60b01912dea997fca50e99f303863b4dbb2b7"
       }
     },
     {

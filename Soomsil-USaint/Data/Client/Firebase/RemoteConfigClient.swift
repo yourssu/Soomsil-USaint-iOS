@@ -13,7 +13,7 @@ import FirebaseRemoteConfig
 @DependencyClient
 struct RemoteConfigClient {
     private static let minimumVersionkey: String = "min_version_ios"
-    
+
     var getMinimumVersion: @Sendable () async throws -> String
 }
 
@@ -29,17 +29,17 @@ extension RemoteConfigClient: DependencyKey {
         getMinimumVersion: {
             let remoteConfig = RemoteConfig.remoteConfig()
             try await remoteConfig.fetchAndActivate()
-            
+
             let minimumVersion = remoteConfig[minimumVersionkey].stringValue
             return minimumVersion
         }
     )
-    
+
     static let previewValue: RemoteConfigClient = Self(
         getMinimumVersion: {
             return "3.0.3"
         }
     )
-    
+
     static let testValue: RemoteConfigClient = previewValue
 }
