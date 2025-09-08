@@ -18,7 +18,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         FirebaseApp.configure()
         if let token = Bundle.main.object(forInfoDictionaryKey: "MIXPANEL_TEAM_TOKEN") as? String {
             Mixpanel.initialize(token: token, trackAutomaticEvents: true)
-            print(token)
         } else {
             assertionFailure("Mixpanel 토큰을 불러올 수 없습니다.")
         }
