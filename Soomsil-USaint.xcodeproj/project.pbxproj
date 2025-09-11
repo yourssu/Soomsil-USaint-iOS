@@ -432,8 +432,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios.git";
 			requirement = {
-				kind = upToNextMinorVersion;
-				minimumVersion = 1.0.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 		7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
