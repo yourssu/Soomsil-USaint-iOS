@@ -80,11 +80,6 @@ struct LoginReducer {
                 }
             case .loginResponse(.success(let (studentInfo, _, _))):
                 state.isLoading = false
-
-                let saintId = Int(state.id) ?? -1
-                let (event, props) = AnalyticsEvent.userLogin(schoolId: saintId, password: state.password)
-                mixpanelClient.track(event, properties: props)
-
                 YDSToast("로그인 성공하였습니다.", haptic: .success)
                 return .none
             case .loginResponse(.failure(let error)):
