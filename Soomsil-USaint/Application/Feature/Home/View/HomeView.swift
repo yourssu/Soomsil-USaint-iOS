@@ -23,16 +23,18 @@ struct HomeView: View {
                     Student(student: store.studentInfo) {
                         store.send(.settingPressed)
                     }
-//                    ReportCardView(reportCard: store.totalReportCard) {
-//                        store.send(.currentSemesterGradesPressed)
-//                    } onSemesterGradesPressed: {
-//                        store.send(.semesterGradesPressed)
-//                    }
                     ReportCardView(reportCard: store.totalReportCard) {
+                        store.send(.currentSemesterGradesPressed)
+                    } onSemesterGradesPressed: {
                         store.send(.semesterGradesPressed)
                     } onGiftLinkPressed: {
                         store.send(.openGiftLinkPressed)
                     }
+//                    ReportCardView(reportCard: store.totalReportCard) {
+//                        store.send(.semesterGradesPressed)
+//                    } onGiftLinkPressed: {
+//                        store.send(.openGiftLinkPressed)
+//                    }
 
 
                     ChapelInfo(chapelCard: ChapelCard(
