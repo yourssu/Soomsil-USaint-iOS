@@ -28,7 +28,7 @@ struct ChapelInfo: View {
             
             ZStack {
                 Rectangle()
-                    .frame(width: 350, height: 130)
+                    .frame(height: 130)
                     .cornerRadius(16)
                     .foregroundStyle(.buttonSurface)
                     .shadow(color: .shadow, radius: 7)
@@ -62,7 +62,7 @@ private struct ActiveStatusView: View {
         VStack(spacing: 0) {
             AttendanceView(attendanceCount)
             Divider()
-                .frame(width: 330)
+                .padding(.horizontal, 10)
                 .padding(.vertical, 18)
             SeatPositionView(seatPosition, floorLevel)
             Spacer()
@@ -116,11 +116,13 @@ private struct AttendanceView: View {
                     .fontWeight(.regular)
                     .foregroundStyle(.grayText)
             }
-            .frame(width: 304, height: 23)
+            .frame(height: 23)
+            .padding(.horizontal, 23)
             .padding(.bottom, 5)
             
             ProgressView (value: Double(attendanceCount), total: Double(maxAttendanceCount))
-                .frame(width: 304, height: 6.6)
+                .frame(height: 6.6)
+                .padding(.horizontal, 23)
                 .progressViewStyle(
                     CustomLinearProgressViewStyle(
                         progressColor: .vPrimary,

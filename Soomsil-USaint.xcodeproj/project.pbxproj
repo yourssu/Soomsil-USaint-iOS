@@ -428,6 +428,14 @@
 				minimumVersion = 6.8.0;
 			};
 		};
+		7B046DA12E106ECA0051989A /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture.git";

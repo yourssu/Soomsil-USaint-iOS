@@ -12,7 +12,7 @@ import YDS_SwiftUI
 struct ReportCardView: View {
     var reportCard: TotalReportCard
     
-    //let onCurrentSemesterPressed: () -> Void
+    let onCurrentSemesterPressed: () -> Void
     let onSemesterGradesPressed: () -> Void
 
     //MARK: - Events
@@ -27,21 +27,27 @@ struct ReportCardView: View {
                 .padding(.bottom, 15)
             
             Button(action: {
-                onGiftLinkPressed()
+                onCurrentSemesterPressed()
+//                onGiftLinkPressed()
             }) {
                 HStack(spacing: 0) {
-                    //Text("이번 학기 성적 확인")
+                    Text("이번 학기 성적 확인")
+                        .foregroundStyle(.titleText)
+                        .font(YDSFont.body1)
+                        .padding(.vertical, 19)
+                    /*
                     Text("🎁 개강 선물 도착, 복권 뽑으러 가기!")
                         .foregroundStyle(.titleText)
                         .font(YDSFont.body1)
                         .padding(.vertical, 19)
-
+                     */
                     Spacer()
                     Image(systemName: "chevron.right")
                         .resizable()
                         .foregroundStyle(.grayText)
                         .frame(width: 10, height: 15)
                         .scaledToFill()
+                     
                 }
                 .padding(.horizontal, 28)
                 .background(.buttonSurface)
@@ -92,7 +98,7 @@ struct CreditLine: View {
 }
 
 #Preview {
-    ReportCardView(reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188, generalRank: 10, overallStudentCount: 100)) {} /*onSemesterGradesPressed: {}*/ onGiftLinkPressed: {}
+    ReportCardView(reportCard: TotalReportCard(gpa: 4.5, earnedCredit: 123, graduateCredit: 188, generalRank: 10, overallStudentCount: 100)) {} onSemesterGradesPressed: {} onGiftLinkPressed: {}
         .background(.navigationBarSurface)
         .padding(.horizontal, 20)
 }

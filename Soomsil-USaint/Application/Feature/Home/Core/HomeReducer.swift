@@ -51,6 +51,7 @@ struct HomeReducer {
         case currentSemesterGradesDismissed
         case semesterGradesPressed
         case getGradeDataResponse(Result<[GradeSummary], Error>)
+        case getChapelDataResponse(Result<ChapelCard, Error>)
         case fetchGradeDataResponse(Result<Void, Error>)
         case fetchCurrentSemesterGradeResponse(Result<[LectureDetail], Error>)
 
@@ -62,6 +63,7 @@ struct HomeReducer {
     @Dependency(\.localNotificationClient) var localNotificationClient
     @Dependency(\.studentClient) var studentClient
     @Dependency(\.gradeClient) var gradeClient
+    @Dependency(\.chapelClient) var chapelClient
     @Dependency(\.mixpanelClient) var mixpanelClient
 
     var body: some Reducer<State, Action> {
@@ -89,6 +91,9 @@ struct HomeReducer {
                 state.$isFirst.withLock { $0 = false }
 
                 return .run { send in
+                    // 비동기로 채플 정보 fetch
+                    async let chapelTask = fetchChapelData()
+
                     // 먼저 기존 값 보여주기
                     do {
                         await send(.getGradeDataResponse(.success(
@@ -119,6 +124,14 @@ struct HomeReducer {
                         )))
                     } catch {
                         await send(.getGradeDataResponse(.failure(error)))
+                    }
+                    
+                    /// 새로운 fetch한 채플 정보
+                    do {
+                        let chapelResult = try await chapelTask
+                        await send(.getChapelDataResponse(.success(chapelResult)))
+                    } catch {
+                        await send(.getChapelDataResponse(.failure(error)))
                     }
                 }
 
@@ -201,6 +214,15 @@ struct HomeReducer {
                 state.isLoading = false
                 state.toastMessage = String(describing: error)
                 return .none
+            case .getChapelDataResponse(.success(let chapel)):
+                state.chapelCard = chapel
+                return .none
+                
+            case .getChapelDataResponse(.failure(let error)):
+                print(String(describing: error))
+                state.toastMessage = "채플 정보 불러오기 실패"
+                return .none
+                
             case .fetchCurrentSemesterGradeResponse(.success(let lectures)):
                 state.currentSemesterLectures = lectures
                 state.isLoading = false
@@ -225,6 +247,13 @@ struct HomeReducer {
         try await gradeClient.updateTotalReportCard(totalReportCard)
         let allSemesterGrades = try await gradeClient.fetchAllSemesterGrades()
         try await gradeClient.updateAllSemesterGrades(allSemesterGrades)
+    }
+    
+    private func fetchChapelData() async throws -> ChapelCard {
+        try await chapelClient.deleteChapelCard()
+        let chapelCard = try await chapelClient.fetchChapelCard()
+        try await chapelClient.updateChapelCard(chapelCard)
+        return chapelCard
     }
 
     //MARK: - Events
