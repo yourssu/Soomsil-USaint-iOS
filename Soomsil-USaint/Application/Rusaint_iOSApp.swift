@@ -16,7 +16,11 @@ import Mixpanel
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
-        Mixpanel.initialize(token: "토큰이 없네요,, ㅠ", trackAutomaticEvents: true)
+        if let token = Bundle.main.object(forInfoDictionaryKey: "MIXPANEL_TEAM_TOKEN") as? String {
+            Mixpanel.initialize(token: "4cb8a3b1aabf9715a4db3005904a744d", trackAutomaticEvents: false)
+        } else {
+            assertionFailure("Mixpanel 토큰을 불러올 수 없습니다.")
+        }
         return true
     }
 }

@@ -87,8 +87,18 @@ struct HomeReducer {
                 state.isLoading = true
                 let isFirst = state.isFirst
                 state.$isFirst.withLock { $0 = false }
+
                 return .run { send in
-                    /// 알림 권한 확인
+                    // 먼저 기존 값 보여주기
+                    do {
+                        await send(.getGradeDataResponse(.success(
+                            try await gradeClient.getAllSemesterGrades()
+                        )))
+                    } catch {
+                        await send(.getGradeDataResponse(.failure(error)))
+                    }
+
+                    // 알림 권한 요청
                     await send(.checkPushAuthorizationResponse(Result {
                         if (isFirst) {
                             return try await localNotificationClient.requestPushAuthorization()
@@ -96,8 +106,13 @@ struct HomeReducer {
                             return await localNotificationClient.getPushAuthorizationStatus()
                         }
                     }))
-                    
-                    /// TotalReportCard 정보를 위한 GradeSummary 정보 불러옴
+
+                    // 서버에서 최신 값 다시 fetch
+                    await send(.fetchGradeDataResponse(Result {
+                        try await fetchGradeData()
+                    }))
+
+                    // 최신 데이터 다시 불러오기
                     do {
                         await send(.getGradeDataResponse(.success(
                             try await gradeClient.getAllSemesterGrades()
@@ -106,6 +121,7 @@ struct HomeReducer {
                         await send(.getGradeDataResponse(.failure(error)))
                     }
                 }
+
             case .checkPushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
                 return .none
@@ -234,11 +250,8 @@ struct HomeReducer {
             return .none
         }
 
-        return .run { _ in
-            await MainActor.run {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }
-        }
+        state.path.append(.web(WebReducer.State(url: url)))
+        return .none
     }
 
 }
