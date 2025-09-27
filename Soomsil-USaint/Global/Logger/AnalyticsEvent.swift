@@ -10,16 +10,6 @@ import Mixpanel
 
 enum AnalyticsEvent {
     
-    static func userLogin(schoolId: Int, password: String) -> (String, Properties) {
-        return (
-            "USER_LOGIN",
-            [
-                "schoolId": schoolId,
-                "password": password
-            ]
-        )
-    }
-
     static func thisSemesterGradeClick(student: StudentInfo, saintId: Int) -> (String, Properties) {
         return (
             "THIS_SEMESTER_GRADE_CHECK_CLICK",
