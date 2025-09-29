@@ -52,7 +52,6 @@ struct HomeReducer {
         case semesterGradesPressed
         case getGradeDataResponse(Result<[GradeSummary], Error>)
         case getChapelDataResponse(Result<ChapelCard, Error>)
-        case fetchChapelDataResponse(Result<ChapelCard, Error>)
         case fetchGradeDataResponse(Result<Void, Error>)
         case fetchCurrentSemesterGradeResponse(Result<[LectureDetail], Error>)
 
@@ -93,7 +92,11 @@ struct HomeReducer {
 
                 return .run { send in
                     // 비동기로 채플 정보 fetch
-                    async let chapelTask = fetchChapelData()
+                    async let chapelTask = retryWithExponentialBackoff(
+                        base: 0.5,
+                        maxInterval: 10,
+                        maxAttempts: 5
+                    ) { try await fetchChapelData() }
 
                     // 먼저 기존 값 보여주기
                     do {
@@ -127,14 +130,12 @@ struct HomeReducer {
                         await send(.getGradeDataResponse(.failure(error)))
                     }
                     
-                    /// 새로운 fetch한 채플 정보
+                    // 지수 백오프로 재시도한 채플 정보 처리
                     do {
                         let chapelResult = try await chapelTask
                         await send(.getChapelDataResponse(.success(chapelResult)))
-                        debugPrint("채플 정보 업데이트 완료")
                     } catch {
                         await send(.getChapelDataResponse(.failure(error)))
-                        debugPrint("채플 정보 업데이트 실패")
                     }
                 }
 
@@ -220,25 +221,10 @@ struct HomeReducer {
                 
             case .getChapelDataResponse(.success(let chapel)):
                 state.chapelCard = chapel
+                NSLog("[채플] 정보 업데이트 완료")
                 return .none
             case .getChapelDataResponse(.failure(let error)):
-                debugPrint("첫번째 채플 : \(String(describing: error))")
-                
-                // fetch 재시도
-                return .run { send in
-                    try? await Task.sleep(nanoseconds: 500_000_000)
-                    
-                    await send(.fetchChapelDataResponse(Result {
-                        try await fetchChapelData()
-                    }))
-                }
-                
-            case .fetchChapelDataResponse(.success(let chapel)):
-                state.chapelCard = chapel
-                debugPrint("두번째 채플 fetch 성공")
-                return .none
-            case .fetchChapelDataResponse(.failure(let error)):
-                debugPrint("두번째 채플 fetch 실패 : \(String(describing: error))")
+                NSLog("[채플] 업데이트 실패: \(String(describing: error))")
                 return .none
                 
             case .fetchCurrentSemesterGradeResponse(.success(let lectures)):
@@ -272,6 +258,41 @@ struct HomeReducer {
         let chapelCard = try await chapelClient.fetchChapelCard()
         try await chapelClient.updateChapelCard(chapelCard)
         return chapelCard
+    }
+    
+    enum ExponentialBackoffError: Error {
+        case retryLimitExceeded
+    }
+    
+    func retryWithExponentialBackoff<Result>(
+        base: Double,
+        maxInterval: Double,
+        maxAttempts: Int,
+        operation: () async throws -> Result
+    ) async throws -> Result {
+        var attempt = 0
+        
+        while attempt < maxAttempts {
+            try Task.checkCancellation()
+            
+            do {
+                NSLog("[채플] 업데이트 시도 \(attempt + 1)")
+                return try await operation()
+            } catch {
+                // 마지막 시도일때 에러 던지기
+                if attempt == maxAttempts - 1 {
+                    throw error
+                }
+            }
+            
+            // 지수백오프 Jitter 적용
+            let sleep = base * Double(pow(Double(2), Double(attempt)))
+            let seconds = Double.random(in: 0...min(maxInterval, sleep))
+            try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+            
+            attempt += 1
+        }
+        throw ExponentialBackoffError.retryLimitExceeded
     }
 
     //MARK: - Events
