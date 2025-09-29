@@ -14,10 +14,10 @@
 		02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8E2D0F45B200A3E717 /* RxCocoa */; };
 		02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D902D0F45B200A3E717 /* RxRelay */; };
 		7B07475E2E095DDF00A055C7 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 7B07475D2E095DDF00A055C7 /* ComposableArchitecture */; };
+		A5B8C6152E894D2E00727818 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = A5B8C6142E894D2E00727818 /* Rusaint */; };
 		B96F06662D63882B0047D33D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06652D63882B0047D33D /* FirebaseCore */; };
 		B96F06682D63882B0047D33D /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06672D63882B0047D33D /* FirebaseRemoteConfig */; };
 		E50A23E12E68994B00EB7129 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = E50A23E02E68994B00EB7129 /* Mixpanel */; };
-		E517DC4E2E6E6CCB00C87E25 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = E517DC4D2E6E6CCB00C87E25 /* Rusaint */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,7 +59,7 @@
 				B96F06662D63882B0047D33D /* FirebaseCore in Frameworks */,
 				02C46D8D2D0F45B200A3E717 /* RxBlocking in Frameworks */,
 				B96F06682D63882B0047D33D /* FirebaseRemoteConfig in Frameworks */,
-				E517DC4E2E6E6CCB00C87E25 /* Rusaint in Frameworks */,
+				A5B8C6152E894D2E00727818 /* Rusaint in Frameworks */,
 				E50A23E12E68994B00EB7129 /* Mixpanel in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -113,7 +113,7 @@
 				B96F06672D63882B0047D33D /* FirebaseRemoteConfig */,
 				7B07475D2E095DDF00A055C7 /* ComposableArchitecture */,
 				E50A23E02E68994B00EB7129 /* Mixpanel */,
-				E517DC4D2E6E6CCB00C87E25 /* Rusaint */,
+				A5B8C6142E894D2E00727818 /* Rusaint */,
 			);
 			productName = "Rusaint-iOS";
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
@@ -150,7 +150,7 @@
 				B96F06642D63882B0047D33D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 				E50A23DF2E68994B00EB7129 /* XCRemoteSwiftPackageReference "mixpanel-swift" */,
-				E517DC4C2E6E6CCB00C87E25 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
+				A5B8C6132E894D2E00727818 /* XCRemoteSwiftPackageReference "rusaint-ios" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 02C46CBF2D0F138700A3E717 /* Products */;
@@ -428,20 +428,20 @@
 				minimumVersion = 6.8.0;
 			};
 		};
-		7B046DA12E106ECA0051989A /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios.git";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture.git";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.20.2;
+			};
+		};
+		A5B8C6132E894D2E00727818 /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios.git";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		B96F06642D63882B0047D33D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
@@ -458,14 +458,6 @@
 			requirement = {
 				branch = master;
 				kind = branch;
-			};
-		};
-		E517DC4C2E6E6CCB00C87E25 /* XCRemoteSwiftPackageReference "rusaint-ios" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/EATSTEAK/rusaint-ios";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -506,6 +498,11 @@
 			package = 7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
 		};
+		A5B8C6142E894D2E00727818 /* Rusaint */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5B8C6132E894D2E00727818 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
+			productName = Rusaint;
+		};
 		B96F06652D63882B0047D33D /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B96F06642D63882B0047D33D /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -520,11 +517,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E50A23DF2E68994B00EB7129 /* XCRemoteSwiftPackageReference "mixpanel-swift" */;
 			productName = Mixpanel;
-		};
-		E517DC4D2E6E6CCB00C87E25 /* Rusaint */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E517DC4C2E6E6CCB00C87E25 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
-			productName = Rusaint;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

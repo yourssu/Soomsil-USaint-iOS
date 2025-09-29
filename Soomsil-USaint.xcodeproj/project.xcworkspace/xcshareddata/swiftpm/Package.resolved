@@ -1,5 +1,5 @@
 {
-  "originHash" : "acb0ba7673b7066901047201ecee930cbc2b24c0bf1c5b39241959aabf895011",
+  "originHash" : "447f72823116a5c4f25be8b9ac9868fa03ee3a2b32f3ef33d91fbd84199b4791",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -157,10 +157,10 @@
     {
       "identity" : "rusaint-ios",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/EATSTEAK/rusaint-ios",
+      "location" : "https://github.com/EATSTEAK/rusaint-ios.git",
       "state" : {
         "branch" : "main",
-        "revision" : "57a60b01912dea997fca50e99f303863b4dbb2b7"
+        "revision" : "7d461bf6b02a99cb517af1ba83ebb6dea4649c8d"
       }
     },
     {
