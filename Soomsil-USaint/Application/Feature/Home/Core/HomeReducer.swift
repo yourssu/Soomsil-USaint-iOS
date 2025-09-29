@@ -52,6 +52,7 @@ struct HomeReducer {
         case semesterGradesPressed
         case getGradeDataResponse(Result<[GradeSummary], Error>)
         case getChapelDataResponse(Result<ChapelCard, Error>)
+        case fetchChapelDataResponse(Result<ChapelCard, Error>)
         case fetchGradeDataResponse(Result<Void, Error>)
         case fetchCurrentSemesterGradeResponse(Result<[LectureDetail], Error>)
 
@@ -130,8 +131,10 @@ struct HomeReducer {
                     do {
                         let chapelResult = try await chapelTask
                         await send(.getChapelDataResponse(.success(chapelResult)))
+                        debugPrint("채플 정보 업데이트 완료")
                     } catch {
                         await send(.getChapelDataResponse(.failure(error)))
+                        debugPrint("채플 정보 업데이트 실패")
                     }
                 }
 
@@ -214,13 +217,28 @@ struct HomeReducer {
                 state.isLoading = false
                 state.toastMessage = String(describing: error)
                 return .none
+                
             case .getChapelDataResponse(.success(let chapel)):
                 state.chapelCard = chapel
                 return .none
-                
             case .getChapelDataResponse(.failure(let error)):
-                print(String(describing: error))
-                state.toastMessage = "채플 정보 불러오기 실패"
+                debugPrint("첫번째 채플 : \(String(describing: error))")
+                
+                // fetch 재시도
+                return .run { send in
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    
+                    await send(.fetchChapelDataResponse(Result {
+                        try await fetchChapelData()
+                    }))
+                }
+                
+            case .fetchChapelDataResponse(.success(let chapel)):
+                state.chapelCard = chapel
+                debugPrint("두번째 채플 fetch 성공")
+                return .none
+            case .fetchChapelDataResponse(.failure(let error)):
+                debugPrint("두번째 채플 fetch 실패 : \(String(describing: error))")
                 return .none
                 
             case .fetchCurrentSemesterGradeResponse(.success(let lectures)):
