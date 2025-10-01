@@ -95,7 +95,7 @@ struct HomeReducer {
                     async let chapelTask = retryWithExponentialBackoff(
                         base: 0.5,
                         maxInterval: 10,
-                        maxAttempts: 5
+                        maxAttempts: 3
                     ) { try await fetchChapelData() }
 
                     // 먼저 기존 값 보여주기
