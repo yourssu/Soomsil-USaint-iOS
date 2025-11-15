@@ -14,14 +14,45 @@
 		02C46D8F2D0F45B200A3E717 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D8E2D0F45B200A3E717 /* RxCocoa */; };
 		02C46D912D0F45B200A3E717 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 02C46D902D0F45B200A3E717 /* RxRelay */; };
 		7B07475E2E095DDF00A055C7 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 7B07475D2E095DDF00A055C7 /* ComposableArchitecture */; };
+		A51D49172EC8CD7A0007A499 /* YDS-SwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = A51D49162EC8CD7A0007A499 /* YDS-SwiftUI */; };
+		A51D491A2EC8CE450007A499 /* YDS in Frameworks */ = {isa = PBXBuildFile; productRef = A51D49192EC8CE450007A499 /* YDS */; };
+		A51D49282EC8E8C90007A499 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = A51D49272EC8E8C90007A499 /* Rusaint */; };
+		A51D492A2EC8E8CF0007A499 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = A51D49292EC8E8CF0007A499 /* KeychainAccess */; };
+		A51D492C2EC8E8D80007A499 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = A51D492B2EC8E8D80007A499 /* ComposableArchitecture */; };
+		A54019BF2EC4CED100459834 /* Soomsil-USaintAppClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = A54019B32EC4CED000459834 /* Soomsil-USaintAppClip.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A5B8C6152E894D2E00727818 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = A5B8C6142E894D2E00727818 /* Rusaint */; };
 		B96F06662D63882B0047D33D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06652D63882B0047D33D /* FirebaseCore */; };
 		B96F06682D63882B0047D33D /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = B96F06672D63882B0047D33D /* FirebaseRemoteConfig */; };
 		E50A23E12E68994B00EB7129 /* Mixpanel in Frameworks */ = {isa = PBXBuildFile; productRef = E50A23E02E68994B00EB7129 /* Mixpanel */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A54019BD2EC4CED100459834 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 02C46CB62D0F138700A3E717 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A54019B22EC4CED000459834;
+			remoteInfo = "Soomsil-USaintAppClip";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A54019C42EC4CED100459834 /* Embed App Clips */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/AppClips";
+			dstSubfolderSpec = 16;
+			files = (
+				A54019BF2EC4CED100459834 /* Soomsil-USaintAppClip.app in Embed App Clips */,
+			);
+			name = "Embed App Clips";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Soomsil-USaint.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A54019B32EC4CED000459834 /* Soomsil-USaintAppClip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Soomsil-USaintAppClip.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -32,6 +63,28 @@
 			);
 			target = 02C46CBD2D0F138700A3E717 /* Soomsil-USaint */;
 		};
+		A51D49132EC8C75F0007A499 /* Exceptions for "Soomsil-USaint" folder in "Soomsil-USaintAppClip" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Application/Feature/Component/LoadingView.swift,
+				Application/Feature/Home/View/ChapelInfo.swift,
+				Application/Feature/Login/View/SecureTextField.swift,
+				Data/Client/RuSaint/StudentClient.swift,
+				Data/CoreData/CoreDataStack.swift,
+				Data/Model/ChapelCard.swift,
+				Data/Model/SaintInfo.swift,
+				Data/Model/StudentInfo.swift,
+				Global/Utils/TapToHideKeyboard.swift,
+			);
+			target = A54019B22EC4CED000459834 /* Soomsil-USaintAppClip */;
+		};
+		A54019C32EC4CED100459834 /* Exceptions for "Soomsil-USaintAppClip" folder in "Soomsil-USaintAppClip" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A54019B22EC4CED000459834 /* Soomsil-USaintAppClip */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -39,8 +92,17 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				0263CD152D1711FD002B044A /* Exceptions for "Soomsil-USaint" folder in "Soomsil-USaint" target */,
+				A51D49132EC8C75F0007A499 /* Exceptions for "Soomsil-USaint" folder in "Soomsil-USaintAppClip" target */,
 			);
 			path = "Soomsil-USaint";
+			sourceTree = "<group>";
+		};
+		A54019B42EC4CED000459834 /* Soomsil-USaintAppClip */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				A54019C32EC4CED100459834 /* Exceptions for "Soomsil-USaintAppClip" folder in "Soomsil-USaintAppClip" target */,
+			);
+			path = "Soomsil-USaintAppClip";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -64,6 +126,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A54019B02EC4CED000459834 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A51D492C2EC8E8D80007A499 /* ComposableArchitecture in Frameworks */,
+				A51D492A2EC8E8CF0007A499 /* KeychainAccess in Frameworks */,
+				A51D49282EC8E8C90007A499 /* Rusaint in Frameworks */,
+				A51D49172EC8CD7A0007A499 /* YDS-SwiftUI in Frameworks */,
+				A51D491A2EC8CE450007A499 /* YDS in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -71,6 +145,8 @@
 			isa = PBXGroup;
 			children = (
 				02C46CC02D0F138700A3E717 /* Soomsil-USaint */,
+				A54019B42EC4CED000459834 /* Soomsil-USaintAppClip */,
+				A51D49152EC8CD7A0007A499 /* Frameworks */,
 				02C46CBF2D0F138700A3E717 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -79,8 +155,16 @@
 			isa = PBXGroup;
 			children = (
 				02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */,
+				A54019B32EC4CED000459834 /* Soomsil-USaintAppClip.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A51D49152EC8CD7A0007A499 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -93,10 +177,12 @@
 				02C46CBA2D0F138700A3E717 /* Sources */,
 				02C46CBB2D0F138700A3E717 /* Frameworks */,
 				02C46CBC2D0F138700A3E717 /* Resources */,
+				A54019C42EC4CED100459834 /* Embed App Clips */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A54019BE2EC4CED100459834 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				02C46CC02D0F138700A3E717 /* Soomsil-USaint */,
@@ -119,6 +205,33 @@
 			productReference = 02C46CBE2D0F138700A3E717 /* Soomsil-USaint.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A54019B22EC4CED000459834 /* Soomsil-USaintAppClip */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A54019C02EC4CED100459834 /* Build configuration list for PBXNativeTarget "Soomsil-USaintAppClip" */;
+			buildPhases = (
+				A54019AF2EC4CED000459834 /* Sources */,
+				A54019B02EC4CED000459834 /* Frameworks */,
+				A54019B12EC4CED000459834 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A54019B42EC4CED000459834 /* Soomsil-USaintAppClip */,
+			);
+			name = "Soomsil-USaintAppClip";
+			packageProductDependencies = (
+				A51D49162EC8CD7A0007A499 /* YDS-SwiftUI */,
+				A51D49192EC8CE450007A499 /* YDS */,
+				A51D49272EC8E8C90007A499 /* Rusaint */,
+				A51D49292EC8E8CF0007A499 /* KeychainAccess */,
+				A51D492B2EC8E8D80007A499 /* ComposableArchitecture */,
+			);
+			productName = "Soomsil-USaintAppClip";
+			productReference = A54019B32EC4CED000459834 /* Soomsil-USaintAppClip.app */;
+			productType = "com.apple.product-type.application.on-demand-install-capable";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -126,11 +239,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1600;
+				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					02C46CBD2D0F138700A3E717 = {
 						CreatedOnToolsVersion = 16.0;
+					};
+					A54019B22EC4CED000459834 = {
+						CreatedOnToolsVersion = 26.0.1;
 					};
 				};
 			};
@@ -158,12 +274,20 @@
 			projectRoot = "";
 			targets = (
 				02C46CBD2D0F138700A3E717 /* Soomsil-USaint */,
+				A54019B22EC4CED000459834 /* Soomsil-USaintAppClip */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		02C46CBC2D0F138700A3E717 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A54019B12EC4CED000459834 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -180,7 +304,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A54019AF2EC4CED000459834 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A54019BE2EC4CED100459834 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A54019B22EC4CED000459834 /* Soomsil-USaintAppClip */;
+			targetProxy = A54019BD2EC4CED100459834 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		02C46CCF2D0F138800A3E717 /* Debug */ = {
@@ -380,6 +519,78 @@
 			};
 			name = Release;
 		};
+		A54019C12EC4CED100459834 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Soomsil-USaintAppClip/Soomsil_USaintAppClip.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2N3PMJ78CA;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Soomsil-USaintAppClip/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Soomsil-USaint";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourssu.SaintKit.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A54019C22EC4CED100459834 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Soomsil-USaintAppClip/Soomsil_USaintAppClip.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 2N3PMJ78CA;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Soomsil-USaintAppClip/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Soomsil-USaint";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourssu.SaintKit.Clip;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -397,6 +608,15 @@
 			buildConfigurations = (
 				02C46CD22D0F138800A3E717 /* Debug */,
 				02C46CD32D0F138800A3E717 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A54019C02EC4CED100459834 /* Build configuration list for PBXNativeTarget "Soomsil-USaintAppClip" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A54019C12EC4CED100459834 /* Debug */,
+				A54019C22EC4CED100459834 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -494,6 +714,31 @@
 			productName = RxRelay;
 		};
 		7B07475D2E095DDF00A055C7 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
+		A51D49162EC8CD7A0007A499 /* YDS-SwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */;
+			productName = "YDS-SwiftUI";
+		};
+		A51D49192EC8CE450007A499 /* YDS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46CF12D0F2E9300A3E717 /* XCRemoteSwiftPackageReference "YDS-iOS" */;
+			productName = YDS;
+		};
+		A51D49272EC8E8C90007A499 /* Rusaint */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A5B8C6132E894D2E00727818 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
+			productName = Rusaint;
+		};
+		A51D49292EC8E8CF0007A499 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+		A51D492B2EC8E8D80007A499 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 7B07475C2E095DDF00A055C7 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
