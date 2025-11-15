@@ -69,7 +69,6 @@
 				Application/Feature/Component/LoadingView.swift,
 				Application/Feature/Home/View/ChapelInfo.swift,
 				Application/Feature/Login/View/SecureTextField.swift,
-				Data/Client/RuSaint/StudentClient.swift,
 				Data/CoreData/CoreDataStack.swift,
 				Data/Model/ChapelCard.swift,
 				Data/Model/SaintInfo.swift,
