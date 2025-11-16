@@ -17,7 +17,6 @@
 		A51D49172EC8CD7A0007A499 /* YDS-SwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = A51D49162EC8CD7A0007A499 /* YDS-SwiftUI */; };
 		A51D491A2EC8CE450007A499 /* YDS in Frameworks */ = {isa = PBXBuildFile; productRef = A51D49192EC8CE450007A499 /* YDS */; };
 		A51D49282EC8E8C90007A499 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = A51D49272EC8E8C90007A499 /* Rusaint */; };
-		A51D492A2EC8E8CF0007A499 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = A51D49292EC8E8CF0007A499 /* KeychainAccess */; };
 		A51D492C2EC8E8D80007A499 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = A51D492B2EC8E8D80007A499 /* ComposableArchitecture */; };
 		A54019BF2EC4CED100459834 /* Soomsil-USaintAppClip.app in Embed App Clips */ = {isa = PBXBuildFile; fileRef = A54019B32EC4CED000459834 /* Soomsil-USaintAppClip.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A5B8C6152E894D2E00727818 /* Rusaint in Frameworks */ = {isa = PBXBuildFile; productRef = A5B8C6142E894D2E00727818 /* Rusaint */; };
@@ -130,7 +129,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A51D492C2EC8E8D80007A499 /* ComposableArchitecture in Frameworks */,
-				A51D492A2EC8E8CF0007A499 /* KeychainAccess in Frameworks */,
 				A51D49282EC8E8C90007A499 /* Rusaint in Frameworks */,
 				A51D49172EC8CD7A0007A499 /* YDS-SwiftUI in Frameworks */,
 				A51D491A2EC8CE450007A499 /* YDS in Frameworks */,
@@ -224,7 +222,6 @@
 				A51D49162EC8CD7A0007A499 /* YDS-SwiftUI */,
 				A51D49192EC8CE450007A499 /* YDS */,
 				A51D49272EC8E8C90007A499 /* Rusaint */,
-				A51D49292EC8E8CF0007A499 /* KeychainAccess */,
 				A51D492B2EC8E8D80007A499 /* ComposableArchitecture */,
 			);
 			productName = "Soomsil-USaintAppClip";
@@ -525,32 +522,37 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Soomsil-USaintAppClip/Soomsil_USaintAppClip.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2025090803;
 				DEVELOPMENT_TEAM = 2N3PMJ78CA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Soomsil-USaintAppClip/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Soomsil-USaint";
+				INFOPLIST_KEY_CFBundleDisplayName = "숨쉴때 유세인트";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 3.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourssu.SaintKit.Clip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -561,32 +563,37 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Soomsil-USaintAppClip/Soomsil_USaintAppClip.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2025090803;
 				DEVELOPMENT_TEAM = 2N3PMJ78CA;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Soomsil-USaintAppClip/Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = "Soomsil-USaint";
+				INFOPLIST_KEY_CFBundleDisplayName = "숨쉴때 유세인트";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 3.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.yourssu.SaintKit.Clip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -731,11 +738,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A5B8C6132E894D2E00727818 /* XCRemoteSwiftPackageReference "rusaint-ios" */;
 			productName = Rusaint;
-		};
-		A51D49292EC8E8CF0007A499 /* KeychainAccess */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 02C46CEB2D0F2DFC00A3E717 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
-			productName = KeychainAccess;
 		};
 		A51D492B2EC8E8D80007A499 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
