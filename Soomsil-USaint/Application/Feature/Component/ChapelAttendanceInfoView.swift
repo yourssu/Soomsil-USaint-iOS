@@ -131,6 +131,10 @@ struct ChapelAttendanceInfoView: View {
         .frame(maxWidth: .infinity)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(.slate100, lineWidth: 1)
+        )
     }
 
     private var attendedBody: some View {
@@ -177,6 +181,10 @@ struct ChapelAttendanceInfoView: View {
         .frame(maxWidth: .infinity)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(.slate100, lineWidth: 1)
+        )
     }
 
     private var completedBody: some View {
@@ -186,6 +194,10 @@ struct ChapelAttendanceInfoView: View {
             .frame(maxWidth: .infinity, minHeight: 80)
             .background(.buttonSurface)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(.slate100, lineWidth: 1)
+            )
     }
 }
 

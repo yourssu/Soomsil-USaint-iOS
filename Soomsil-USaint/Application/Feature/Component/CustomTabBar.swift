@@ -50,7 +50,6 @@ struct CustomTabBar: View {
         )
         .padding(.horizontal, 20)
         .padding(.top, 10)
-        .padding(.bottom, 20)
     }
 
     @ViewBuilder

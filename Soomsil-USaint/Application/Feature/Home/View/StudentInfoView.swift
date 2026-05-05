@@ -42,6 +42,10 @@ struct StudentInfoView: View {
         .frame(maxWidth: .infinity)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                .stroke(.slate100, lineWidth: 1)
+        )
         .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }

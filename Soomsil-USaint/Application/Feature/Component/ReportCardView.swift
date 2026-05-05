@@ -20,24 +20,20 @@ struct ReportCardView: View {
     private let type: ViewType
     private let reportCard: TotalReportCard
     private let lectureCount: Int?
-    private let onCurrentSemesterPressed: (() -> Void)?
 
     /// 성적 카드 구성
     /// - Parameters:
     ///   - type: 카드 표시 타입 (overview, summary중 택 1)
     ///   - reportCard: 전체 성적 모델
     ///   - lectureCount: 과목 수
-    ///   - onCurrentSemesterPressed: 이번 학기 성적 액션
     init(
         type: ViewType = .overview,
         reportCard: TotalReportCard,
-        lectureCount: Int? = nil,
-        onCurrentSemesterPressed: (() -> Void)? = nil
+        lectureCount: Int? = nil
     ) {
         self.type = type
         self.reportCard = reportCard
         self.lectureCount = lectureCount
-        self.onCurrentSemesterPressed = onCurrentSemesterPressed
     }
 
     // MARK: - Body
@@ -78,22 +74,17 @@ private extension ReportCardView {
                     .foregroundStyle(.white.opacity(0.5))
             }
 
-            Button {
-                onCurrentSemesterPressed?()
-            } label: {
-                HStack(spacing: 6) {
-                    Text(TextLiteral.ReportCardView.currentSemesterButtonTitle)
-                    Image(systemName: "arrow.right")
-                        .frame(width: 14, height: 14)
-                }
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.gray950)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(.white)
-                .clipShape(Capsule())
+            HStack(spacing: 6) {
+                Text(TextLiteral.ReportCardView.currentSemesterButtonTitle)
+                Image(systemName: "arrow.right")
+                    .frame(width: 14, height: 14)
             }
-            .buttonStyle(.plain)
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(.gray950)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(.white)
+            .clipShape(Capsule())
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 24)
@@ -182,7 +173,7 @@ private extension ReportCardView {
                     generalRank: 12,
                     overallStudentCount: 100
                 ),
-                onCurrentSemesterPressed: {}
+                lectureCount: nil
             )
 
             ReportCardView(
