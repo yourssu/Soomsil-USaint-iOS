@@ -14,7 +14,6 @@ import UIKit
 struct HomeReducer {
     @Reducer
     enum Path {
-        case setting(SettingReducer)
         case semesterList(SemesterListReducer)
         case semesterDetail(SemesterDetailReducer)
         case web(WebReducer)
@@ -43,7 +42,6 @@ struct HomeReducer {
         case path(StackActionOf<Path>)
         case onAppear
         case checkPushAuthorizationResponse(Result<Bool, Error>)
-        case settingPressed
         case semesterListPressed
         case semesterDetailPressed
 
@@ -70,21 +68,8 @@ struct HomeReducer {
         BindingReducer()
         Reduce { state, action in
             switch action {
-            case .path(let action):
-                switch action {
-                case .element(id: _, action: .setting(.termsOfServiceButtonTapped)):
-                    state.path.append(.web(WebReducer.State(
-                        url: URL(string: "https://auth.yourssu.com/terms/service.html")!
-                    )))
-                    return .none
-                case .element(id: _, action: .setting(.privacyPolicyButtonTapped)):
-                    state.path.append(.web(WebReducer.State(
-                        url: URL(string: "https://auth.yourssu.com/terms/information.html")!
-                    )))
-                    return .none
-                default:
-                    return .none
-                }
+            case .path:
+                return .none
             case .onAppear:
                 state.isLoading = true
                 let isFirst = state.isFirst
@@ -144,9 +129,6 @@ struct HomeReducer {
                 return .none
             case .checkPushAuthorizationResponse(.failure(let error)):
                 debugPrint("Home Reducer: CheckPushAuthorization Error - \(error)")
-                return .none
-            case .settingPressed:
-                state.path.append(.setting(SettingReducer.State()))
                 return .none
             case .semesterListPressed:
                 state.path.append(.semesterList(SemesterListReducer.State(totalReportCard: state.totalReportCard)))

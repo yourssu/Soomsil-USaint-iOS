@@ -1,0 +1,77 @@
+//
+//  StudentInfoView.swift
+//  Soomsil-USaint
+//
+//  Created by Codex on 5/6/26.
+//
+
+import SwiftUI
+
+struct StudentInfoView: View {
+    var student: StudentInfo
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            VStack(alignment: .leading, spacing: 3) {
+                Text(student.name)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.gray950)
+                    .lineLimit(1)
+
+                Text(student.subtitle)
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundStyle(.slate600)
+                    .lineLimit(1)
+            }
+
+            Spacer()
+
+            if let studentID = student.trimmedStudentID {
+                Text("학번 \(studentID)")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.gray950)
+                    .lineLimit(1)
+                    .padding(.horizontal, 15)
+                    .padding(.vertical, 10)
+                    .background(.gray50)
+                    .clipShape(Capsule())
+            }
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 18)
+        .frame(maxWidth: .infinity)
+        .background(.white)
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+}
+
+private extension StudentInfo {
+    var subtitle: String {
+        "\(major) · \(schoolYear) · 재학"
+    }
+
+    var trimmedStudentID: String? {
+        guard let studentID = studentID?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !studentID.isEmpty else {
+            return nil
+        }
+        return studentID
+    }
+}
+
+#Preview {
+    ZStack(alignment: .center) {
+        Color.gray.ignoresSafeArea()
+        
+        StudentInfoView(
+            student: StudentInfo(
+                name: "김숨실",
+                major: "글로벌미디어학부",
+                schoolYear: "4학년",
+                studentID: "20201234"
+            )
+        )
+        .padding(.horizontal, 20)
+    }
+}
