@@ -36,6 +36,44 @@ enum TextLiteral {
         }
     }
 
+    // MARK: - ReportCardView
+
+    enum ReportCardView {
+        static let title = "내 성적"
+        static let totalSubtitle = "전체"
+        static let currentSemesterButtonTitle = "이번 학기 성적보기"
+        static let totalGPATitle = "총 평점 평균"
+        static let maxGPA = "/ 4.5"
+        static let earnedCreditTitle = "취득 학점"
+        static let lectureCountTitle = "과목"
+        static let totalRankTitle = "전체 석차"
+
+        /// 학점 문구 생성
+        /// - Parameter credit: 학점
+        static func credit(_ credit: Float) -> String {
+            let value = Double(credit)
+            let roundedInteger = value.rounded()
+
+            if abs(value - roundedInteger) < 0.001 {
+                return String(Int(roundedInteger))
+            }
+
+            return String(format: "%.1f", value)
+        }
+
+        /// 석차 문구 생성
+        /// - Parameter rank: 석차
+        static func rank(_ rank: Int) -> String {
+            "\(rank)위"
+        }
+
+        /// 과목 수 문구 생성
+        /// - Parameter count: 과목 수
+        static func lectureCount(_ count: Int) -> String {
+            "\(count)"
+        }
+    }
+
     // MARK: - ChapelAttendanceInfoView
 
     enum ChapelAttendanceInfoView {

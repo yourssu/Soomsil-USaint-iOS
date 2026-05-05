@@ -21,19 +21,27 @@ struct HomeView: View {
                 title
                 VStack(alignment: .leading, spacing: 0) {
                     StudentInfoView(student: store.studentInfo)
-                    ReportCardView(reportCard: store.totalReportCard) {
-                        store.send(.currentSemesterGradesPressed)
-                    } onSemesterGradesPressed: {
-                        store.send(.semesterGradesPressed)
-                    } onGiftLinkPressed: {
-                        store.send(.openGiftLinkPressed)
-                    }
-//                    ReportCardView(reportCard: store.totalReportCard) {
-//                        store.send(.semesterGradesPressed)
-//                    } onGiftLinkPressed: {
-//                        store.send(.openGiftLinkPressed)
-//                    }
+                    ReportCardView(
+                        type: .overview,
+                        reportCard: store.totalReportCard,
+                        onCurrentSemesterPressed: {
+                            store.send(.currentSemesterGradesPressed)
+                        }
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.top, 24)
 
+                    Button {
+                        store.send(.semesterGradesPressed)
+                    } label: {
+                        ReportCardView(
+                            type: .summary,
+                            reportCard: store.totalReportCard
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
 
                     ChapelAttendanceInfoView(
                         type: .attended,
