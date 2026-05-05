@@ -27,7 +27,7 @@ struct StudentInfoView: View {
             Spacer()
 
             if let studentID = student.trimmedStudentID {
-                Text("학번 \(studentID)")
+                Text(TextLiteral.StudentInfoView.studentID(studentID))
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(.gray950)
                     .lineLimit(1)
@@ -48,7 +48,10 @@ struct StudentInfoView: View {
 
 private extension StudentInfo {
     var subtitle: String {
-        "\(major) · \(schoolYear) · 재학"
+        TextLiteral.StudentInfoView.subtitle(
+            major: major,
+            schoolYear: schoolYear
+        )
     }
 
     var trimmedStudentID: String? {

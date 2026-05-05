@@ -26,14 +26,19 @@ struct ChapelSeatInfoView: View {
     }
 
     private var seatZone: String {
-        guard let zone = seatPosition.split(separator: "-").first else {
-            return "A"
+        guard let zone = seatPosition
+            .split(separator: Character(TextLiteral.ChapelSeatInfoView.zoneSeparator))
+            .first else {
+            return TextLiteral.ChapelSeatInfoView.defaultZone
         }
         return String(zone)
     }
     
     private var seatDescription: String {
-        "\(chapelCard.floorLevel)층 앞자리 · \(seatZone)구역"
+        TextLiteral.ChapelSeatInfoView.seatDescription(
+            floorLevel: chapelCard.floorLevel,
+            seatZone: seatZone
+        )
     }
 
     // MARK: - Init
@@ -66,7 +71,7 @@ struct ChapelSeatInfoView: View {
 
     private var summaryCardBody: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("내 자리")
+            Text(TextLiteral.ChapelSeatInfoView.title)
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(.slate600)
 
@@ -87,7 +92,7 @@ struct ChapelSeatInfoView: View {
 
     private var actionCardBody: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("내 자리")
+            Text(TextLiteral.ChapelSeatInfoView.title)
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(.white.opacity(0.8))
 
@@ -109,7 +114,7 @@ struct ChapelSeatInfoView: View {
                 Spacer()
 
                 HStack(spacing: 4) {
-                    Text("좌석 위치 보기")
+                    Text(TextLiteral.ChapelSeatInfoView.locationButtonTitle)
                         .font(.system(size: 12, weight: .bold))
                         .foregroundStyle(.white)
                         .lineLimit(1)
@@ -138,11 +143,19 @@ struct ChapelSeatInfoView: View {
         VStack(spacing: 24) {
             ChapelSeatInfoView(
                 type: .summaryCard,
-                chapelCard: ChapelCard(attendance: 5, seatPosition: "B-12", floorLevel: 1)
+                chapelCard: ChapelCard(
+                    attendance: 5,
+                    seatPosition: "B-12",
+                    floorLevel: 1
+                )
             )
             ChapelSeatInfoView(
                 type: .actionCard,
-                chapelCard: ChapelCard(attendance: 5, seatPosition: "B-12", floorLevel: 1)
+                chapelCard: ChapelCard(
+                    attendance: 5,
+                    seatPosition: "B-12",
+                    floorLevel: 1
+                )
             )
         }
         .padding(20)

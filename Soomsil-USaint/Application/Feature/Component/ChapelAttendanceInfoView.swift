@@ -40,9 +40,9 @@ struct ChapelAttendanceInfoView: View {
 
         switch type {
         case .semester:
-            return "이번 학기 출석"
+            return TextLiteral.ChapelAttendanceInfoView.semesterTitle
         case .attended:
-            return "채플 출석"
+            return TextLiteral.ChapelAttendanceInfoView.attendedTitle
         }
     }
 
@@ -95,11 +95,11 @@ struct ChapelAttendanceInfoView: View {
                 Spacer()
 
                 HStack(alignment: .firstTextBaseline, spacing: 3) {
-                    Text("\(attendanceCount)")
+                    Text(String(attendanceCount))
                         .font(.system(size: 18, weight: .black))
                         .foregroundStyle(.blue500)
 
-                    Text("/ \(requiredAttendanceCount)회")
+                    Text(TextLiteral.ChapelAttendanceInfoView.requiredCount(requiredAttendanceCount))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.slate400)
                 }
@@ -121,7 +121,7 @@ struct ChapelAttendanceInfoView: View {
             HStack(alignment: .center, spacing: 12) {
                 Spacer()
                 
-                Text("\(attendancePercent)%")
+                Text(TextLiteral.ChapelAttendanceInfoView.attendancePercent(attendancePercent))
                     .font(.system(size: 11, weight: .bold))
                     .foregroundStyle(.blue500)
             }
@@ -141,7 +141,12 @@ struct ChapelAttendanceInfoView: View {
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundStyle(.gray950)
 
-                    Text("\(attendanceCount)/\(requiredAttendanceCount)회 출석")
+                    Text(
+                        TextLiteral.ChapelAttendanceInfoView.attendanceSummary(
+                            attendanceCount: attendanceCount,
+                            requiredAttendanceCount: requiredAttendanceCount
+                        )
+                    )
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(.blue500)
                 }
@@ -175,7 +180,7 @@ struct ChapelAttendanceInfoView: View {
     }
 
     private var completedBody: some View {
-        Text(completedText ?? "채플 수료 완료!")
+        Text(completedText ?? TextLiteral.ChapelAttendanceInfoView.completedTitle)
             .font(.system(size: 16, weight: .bold))
             .foregroundStyle(.blue500)
             .frame(maxWidth: .infinity, minHeight: 80)
@@ -194,12 +199,20 @@ struct ChapelAttendanceInfoView: View {
         VStack(alignment: .leading, spacing: 16) {
             ChapelAttendanceInfoView(
                 type: .semester,
-                chapelCard: ChapelCard(attendance: 4, seatPosition: "B-12", floorLevel: 1)
+                chapelCard: ChapelCard(
+                    attendance: 4,
+                    seatPosition: "B-12",
+                    floorLevel: 1
+                )
             )
 
             ChapelAttendanceInfoView(
                 type: .attended,
-                chapelCard: ChapelCard(attendance: 5, seatPosition: "B-12", floorLevel: 1)
+                chapelCard: ChapelCard(
+                    attendance: 5,
+                    seatPosition: "B-12",
+                    floorLevel: 1
+                )
             )
 
             ChapelAttendanceInfoView(
