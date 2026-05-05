@@ -64,7 +64,10 @@ struct CurrentSemesterGradesView: View {
                     } else {
                         LazyVStack {
                             ForEach(lectures, id: \.self.code) { lecture in
-                                GradeRowView(lectureDetail: lecture)
+                                GradeRowView(
+                                    type: .compact,
+                                    lectureDetail: lecture
+                                )
                             }
                         }
                     }

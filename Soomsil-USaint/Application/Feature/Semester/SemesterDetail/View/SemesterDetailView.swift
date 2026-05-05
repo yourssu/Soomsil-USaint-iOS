@@ -25,7 +25,7 @@ struct SemesterDetailView: View {
                     .tint(.vPrimary)
                     .controlSize(.large)
             } else {
-                GPAGraphView(semesterList: store.semesterList)
+                GPAGraphView(type: .line, semesterList: store.semesterList)
                     .padding(.horizontal, 17.5)
 
                 TabView(tabs: $store.tabs,
@@ -140,7 +140,10 @@ struct SemesterDetailView: View {
         var body: some View {
             VStack {
                 ForEach(lectures, id: \.self.code) { lecture in
-                    GradeRowView(lectureDetail: lecture)
+                    GradeRowView(
+                        type: .detailed,
+                        lectureDetail: lecture
+                    )
                 }
             }
         }

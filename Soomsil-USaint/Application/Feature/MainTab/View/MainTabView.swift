@@ -26,9 +26,9 @@ struct MainTabView: View {
         case .home:
             HomeView(store: store.scope(state: \.homeState, action: \.home))
         case .chapel:
-            placeholderView("채플 화면")
+            placeholderView(TextLiteral.MainTabView.chapelPlaceholder)
         case .notification:
-            placeholderView("알림 화면")
+            placeholderView(TextLiteral.MainTabView.notificationPlaceholder)
         case .my:
             SettingView(
                 store: store.scope(state: \.settingState, action: \.setting),
@@ -47,9 +47,17 @@ struct MainTabView: View {
 #Preview {
     MainTabView(store: Store(
         initialState: MainTabReducer.State(
-            studentInfo: StudentInfo(name: "000", major: "글로벌미디어학부", schoolYear: "4학년"),
+            studentInfo: StudentInfo(
+                name: "000",
+                major: "글로벌미디어학부",
+                schoolYear: "4학년"
+            ),
             totalReportCard: TotalReportCard(gpa: 4.22, earnedCredit: 34.5, graduateCredit: 124.0, generalRank: 10, overallStudentCount: 100),
-            chapelCard: ChapelCard(attendance: 4, seatPosition: "E-10-4", floorLevel: 1)
+            chapelCard: ChapelCard(
+                attendance: 4,
+                seatPosition: "E-10-4",
+                floorLevel: 1
+            )
         )
     ) {
         MainTabReducer()

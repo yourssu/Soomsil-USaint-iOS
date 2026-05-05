@@ -20,28 +20,35 @@ struct HomeView: View {
             VStack {
                 title
                 VStack(alignment: .leading, spacing: 0) {
-                    Student(student: store.studentInfo) {
-                        store.send(.settingPressed)
-                    }
-                    ReportCardView(reportCard: store.totalReportCard) {
-                        store.send(.currentSemesterGradesPressed)
-                    } onSemesterGradesPressed: {
+                    StudentInfoView(student: store.studentInfo)
+                    ReportCardView(
+                        type: .overview,
+                        reportCard: store.totalReportCard,
+                        onCurrentSemesterPressed: {
+                            store.send(.currentSemesterGradesPressed)
+                        }
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.top, 24)
+
+                    Button {
                         store.send(.semesterGradesPressed)
-                    } onGiftLinkPressed: {
-                        store.send(.openGiftLinkPressed)
+                    } label: {
+                        ReportCardView(
+                            type: .summary,
+                            reportCard: store.totalReportCard
+                        )
                     }
-//                    ReportCardView(reportCard: store.totalReportCard) {
-//                        store.send(.semesterGradesPressed)
-//                    } onGiftLinkPressed: {
-//                        store.send(.openGiftLinkPressed)
-//                    }
+                    .buttonStyle(.plain)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 16)
 
-
-                    ChapelInfo(chapelCard: ChapelCard(
-                        attendance: store.chapelCard.attendance,
-                        seatPosition: store.chapelCard.seatPosition,
-                        floorLevel: store.chapelCard.floorLevel,
-                        status: store.chapelCard.status))
+                    ChapelAttendanceInfoView(
+                        type: .attended,
+                        chapelCard: store.chapelCard
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.top, 24)
                     
                     Spacer()
                 }
@@ -49,8 +56,6 @@ struct HomeView: View {
             .background(.backgroundSurface)
         } destination: { store in
             switch store.case {
-            case .setting(let store):
-                SettingView(store: store)
             case .semesterList(let store):
                 SemesterListView(store: store)
             case .web(let store):
@@ -81,37 +86,6 @@ struct HomeView: View {
         }
     }
 
-    struct Student: View {
-        var student: StudentInfo
-
-        let onSettingPressed: () -> Void
-
-        var body: some View {
-            HStack {
-                Image("DefaultProfileImage")
-                    .resizable()
-                    .cornerRadius(16)
-                    .frame(width: 48, height: 48)
-                VStack(alignment: .leading) {
-                    Text(student.name)
-                        .font(YDSFont.subtitle1)
-                        .padding(.bottom, 1.0)
-                    Text("\(student.major) \(student.schoolYear)")
-                        .font(YDSFont.body1)
-                }
-                .foregroundStyle(.titleText)
-                .padding(.leading)
-                Spacer()
-                Button(action: {
-                    onSettingPressed()
-                }, label: {
-                    Image("ic_setting_fill")
-                })
-            }
-            .padding(.vertical, 20)
-            .padding(.horizontal, 32)
-        }
-    }
 }
 
 private extension HomeView {

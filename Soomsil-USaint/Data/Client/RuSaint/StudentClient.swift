@@ -70,7 +70,7 @@ extension StudentClient: DependencyKey {
         getStudentInfo: {
             guard let name = keychain["name"], let major = keychain["major"], let schoolYear = keychain["schoolYear"]
             else { throw StudentError.accessKeychainError }
-            return StudentInfo(name: name, major: major, schoolYear: schoolYear)
+            return StudentInfo(name: name, major: major, schoolYear: schoolYear, studentID: keychain["saintID"])
         },
         setStudentInfo: {
             guard let id = keychain["saintID"], let password = keychain["saintPW"]
@@ -116,7 +116,7 @@ extension StudentClient: DependencyKey {
         getStudentInfo: {
             guard let name = keychain["name"], let major = keychain["major"], let schoolYear = keychain["schoolYear"]
             else { throw StudentError.accessKeychainError }
-            return StudentInfo(name: name, major: major, schoolYear: schoolYear)
+            return StudentInfo(name: name, major: major, schoolYear: schoolYear, studentID: keychain["saintID"])
         },
         setStudentInfo: {
             guard let id = Bundle.main.object(forInfoDictionaryKey: "SAINT_ID") as? String else { throw StudentError.accessSecretConfigError }
