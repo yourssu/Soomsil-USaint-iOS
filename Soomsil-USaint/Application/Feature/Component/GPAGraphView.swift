@@ -20,7 +20,6 @@ struct GPAGraphView: View {
 
     private let type: GraphType
     private let semesterList: [GradeSummary]
-    private let onDetailTap: (() -> Void)?
 
     @State var isOnSeasonalSemester: Bool = false
 
@@ -28,15 +27,12 @@ struct GPAGraphView: View {
     /// - Parameters:
     ///   - type: 그래프 타입
     ///   - semesterList: 학기별 성적 목록
-    ///   - onDetailTap: 상세 버튼 액션
     init(
         type: GraphType = .line,
-        semesterList: [GradeSummary],
-        onDetailTap: (() -> Void)? = nil
+        semesterList: [GradeSummary]
     ) {
         self.type = type
         self.semesterList = semesterList
-        self.onDetailTap = onDetailTap
     }
 
     // MARK: - Body
@@ -104,6 +100,10 @@ private extension GPAGraphView {
         .padding(.vertical, 20)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(.slate100, lineWidth: 1)
+        )
     }
 
     var barGraphView: some View {
@@ -115,17 +115,12 @@ private extension GPAGraphView {
 
                 Spacer()
 
-                Button {
-                    onDetailTap?()
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(TextLiteral.GPAGraphView.detailButtonTitle)
-                        Image(systemName: "arrow.right")
-                    }
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(.blue600)
+                HStack(spacing: 4) {
+                    Text(TextLiteral.GPAGraphView.detailButtonTitle)
+                    Image(systemName: "arrow.right")
                 }
-                .buttonStyle(.plain)
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(.blue600)
             }
 
             GPABarGraphView(
@@ -136,6 +131,10 @@ private extension GPAGraphView {
         .padding(.vertical, 18)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(.slate100, lineWidth: 1)
+        )
     }
 
     var regularSemesterList: [GradeSummary] {

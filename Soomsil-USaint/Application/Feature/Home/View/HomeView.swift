@@ -8,7 +8,6 @@
 import SwiftUI
 
 import ComposableArchitecture
-import YDS_SwiftUI
 
 struct HomeView: View {
     @Bindable var store: StoreOf<HomeReducer>
@@ -17,43 +16,46 @@ struct HomeView: View {
         NavigationStack(
             path: $store.scope(state: \.path, action: \.path)
         ){
-            VStack {
-                title
-                VStack(alignment: .leading, spacing: 0) {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 16) {
+                    header
+
                     StudentInfoView(student: store.studentInfo)
-                    ReportCardView(
-                        type: .overview,
-                        reportCard: store.totalReportCard,
-                        onCurrentSemesterPressed: {
-                            store.send(.currentSemesterGradesPressed)
-                        }
-                    )
-                    .padding(.horizontal, 20)
-                    .padding(.top, 24)
 
                     Button {
-                        store.send(.semesterGradesPressed)
+                        store.send(.currentSemesterGradesPressed)
                     } label: {
                         ReportCardView(
-                            type: .summary,
+                            type: .overview,
                             reportCard: store.totalReportCard
                         )
                     }
                     .buttonStyle(.plain)
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
 
-                    ChapelAttendanceInfoView(
-                        type: .attended,
-                        chapelCard: store.chapelCard
-                    )
-                    .padding(.horizontal, 20)
-                    .padding(.top, 24)
-                    
-                    Spacer()
+                    Button {
+                        store.send(.semesterGradesPressed)
+                    } label: {
+                        GPAGraphView(
+                            type: .bar,
+                            semesterList: store.semesterList
+                        )
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        store.send(.chapelAttendancePressed)
+                    } label: {
+                        ChapelAttendanceInfoView(
+                            type: .attended,
+                            chapelCard: store.chapelCard
+                        )
+                    }
+                    .buttonStyle(.plain)
                 }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 110)
             }
-            .background(.backgroundSurface)
+            .background(.white)
         } destination: { store in
             switch store.case {
             case .semesterList(let store):
@@ -89,16 +91,17 @@ struct HomeView: View {
 }
 
 private extension HomeView {
-    var title: some View {
-        HStack {
-            Text("유세인트")
-                .font(YDSFont.title2)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 10)
-            Spacer()
+    var header: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(TextLiteral.HomeView.greeting(store.studentInfo.name))
+                .font(.system(size: 20, weight: .bold))
+                .foregroundStyle(.gray850)
+                .lineLimit(1)
+
+            Text(TextLiteral.HomeView.notificationSummary(count: 0))
+                .font(.system(size: 12, weight: .regular))
+                .foregroundStyle(.gray500)
         }
-        .frame(maxWidth: .infinity)
-        .background(.navigationBarSurface)
     }
 }
 

@@ -48,14 +48,11 @@ struct HomeReducer {
         case currentSemesterGradesPressed
         case currentSemesterGradesDismissed
         case semesterGradesPressed
+        case chapelAttendancePressed
         case getGradeDataResponse(Result<[GradeSummary], Error>)
         case getChapelDataResponse(Result<ChapelCard, Error>)
         case fetchGradeDataResponse(Result<Void, Error>)
         case fetchCurrentSemesterGradeResponse(Result<[LectureDetail], Error>)
-
-        //MARK: - Events
-
-        case openGiftLinkPressed
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -174,6 +171,18 @@ struct HomeReducer {
                 mixpanelClient.track(event, properties: props)
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
+            case .chapelAttendancePressed:
+                let student = state.studentInfo
+                let saintId = Int(StudentClient.keychain["saintID"] ?? "") ?? -1
+                let chapel = state.chapelCard.status == .active
+
+                let (event, props) = AnalyticsEvent.chapelCheckClick(
+                    student: student,
+                    saintId: saintId,
+                    chapel: chapel
+                )
+                mixpanelClient.track(event, properties: props)
+                return .none
             case .getGradeDataResponse(.success(let semesterList)):
                 if(semesterList.isEmpty) {
                     return .run { send in
@@ -217,8 +226,6 @@ struct HomeReducer {
                 state.toastMessage = String(describing: error)
                 state.isLoading = false
                 return .none
-            case .openGiftLinkPressed:
-                return handleGiftLinkPressed(&state)
             default:
                 return .none
             }
@@ -275,33 +282,6 @@ struct HomeReducer {
             attempt += 1
         }
         throw ExponentialBackoffError.retryLimitExceeded
-    }
-
-    //MARK: - Events
-
-    private func handleGiftLinkPressed(_ state: inout State) -> Effect<Action> {
-        let student = state.studentInfo
-
-        guard let saintID = StudentClient.keychain["saintID"] else {
-            state.toastMessage = "학번을 불러올 수 없습니다."
-            return .none
-        }
-
-        let baseURL = "https://lottery-one.vercel.app"
-
-        let major = student.major.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let name = student.name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-        let schoolNumber = saintID.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-
-        let fullURLString = "\(baseURL)?major=\(major)&name=\(name)&schoolNumber=\(schoolNumber)"
-
-        guard let url = URL(string: fullURLString) else {
-            state.toastMessage = "복권 페이지 링크를 열 수 없습니다."
-            return .none
-        }
-
-        state.path.append(.web(WebReducer.State(url: url)))
-        return .none
     }
 
 }

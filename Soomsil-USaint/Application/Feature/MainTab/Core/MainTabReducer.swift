@@ -36,6 +36,9 @@ struct MainTabReducer {
             case .tabSelected(let tab):
                 state.selectedTab = tab
                 return .none
+            case .home(.chapelAttendancePressed):
+                state.selectedTab = .chapel
+                return .none
             default:
                 return .none
             }
