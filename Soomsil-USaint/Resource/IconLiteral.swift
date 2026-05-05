@@ -31,7 +31,13 @@ public enum Icon {
     public static var drawerIcon: Image { .load(name: "ic_drawer_main") }
     public static var dotsVerticalLine: Image { .load(name: "ic_dots_vertical_line") }
     public static var xLineGrey: Image { .load(name: "ic_x_line") }
-    
+    public static var home: Image { .load(name: "ic_home") }
+    public static var sofa: Image { .load(name: "ic_sofa") }
+    public static var bell: Image { .load(name: "ic_bell") }
+    public static var person: Image { .load(name: "ic_person") }
+    public static var info: Image { .load(name: "ic_info") }
+    public static var qr: Image { .load(name: "ic_qr") }
+
     public static func grade(from string: String) -> Image {
         return Image(string, bundle: Bundle(identifier: "com.yourssu.SoomsilUI"))
     }
