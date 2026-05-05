@@ -74,6 +74,31 @@ enum TextLiteral {
         }
     }
 
+    // MARK: - GradeRowView
+
+    enum GradeRowView {
+        static let creditUnit = "학점"
+        static let separator = "·"
+
+        /// 학점 문구 생성
+        /// - Parameter credit: 학점
+        static func credit(_ credit: Double) -> String {
+            "\(String(format: "%.1f", credit))\(creditUnit)"
+        }
+
+        /// 과목 부가 정보 문구 생성
+        static func detailText(
+            professorName: String,
+            credit: Double
+        ) -> String {
+            if professorName.isEmpty {
+                return Self.credit(credit)
+            }
+
+            return "\(professorName) \(separator) \(Self.credit(credit))"
+        }
+    }
+
     // MARK: - ChapelAttendanceInfoView
 
     enum ChapelAttendanceInfoView {

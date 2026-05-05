@@ -140,7 +140,10 @@ struct SemesterDetailView: View {
         var body: some View {
             VStack {
                 ForEach(lectures, id: \.self.code) { lecture in
-                    GradeRowView(lectureDetail: lecture)
+                    GradeRowView(
+                        type: .detailed,
+                        lectureDetail: lecture
+                    )
                 }
             }
         }
