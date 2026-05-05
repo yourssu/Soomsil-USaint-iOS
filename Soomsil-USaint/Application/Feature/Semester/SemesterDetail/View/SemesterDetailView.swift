@@ -25,7 +25,7 @@ struct SemesterDetailView: View {
                     .tint(.vPrimary)
                     .controlSize(.large)
             } else {
-                GPAGraphView(semesterList: store.semesterList)
+                GPAGraphView(type: .line, semesterList: store.semesterList)
                     .padding(.horizontal, 17.5)
 
                 TabView(tabs: $store.tabs,

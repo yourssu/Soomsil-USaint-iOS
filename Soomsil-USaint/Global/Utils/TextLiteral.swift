@@ -8,6 +8,34 @@
 import Foundation
 
 enum TextLiteral {
+    // MARK: - GPAGraphView
+
+    enum GPAGraphView {
+        static let title = "성적 추이"
+        static let overallTrendTitle = "전체 학기 추이"
+        static let includeSeasonalSemester = "계절학기 포함"
+        static let detailButtonTitle = "자세히"
+
+        /// GPA 문구 생성
+        /// - Parameter gpa: 평점
+        static func gpaValue(_ gpa: Float) -> String {
+            let value = Double(gpa)
+            let roundedOneDecimal = (value * 10).rounded() / 10
+
+            if abs(value - roundedOneDecimal) < 0.001 {
+                return String(format: "%.1f", value)
+            }
+
+            return String(format: "%.2f", value)
+        }
+
+        /// 축 문구 생성
+        /// - Parameter value: 축 값
+        static func axisValue(_ value: Double) -> String {
+            String(format: "%.1F", value)
+        }
+    }
+
     // MARK: - ChapelAttendanceInfoView
 
     enum ChapelAttendanceInfoView {

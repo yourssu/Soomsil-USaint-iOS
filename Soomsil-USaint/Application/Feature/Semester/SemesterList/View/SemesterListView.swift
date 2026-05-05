@@ -26,7 +26,7 @@ struct SemesterListView: View {
                         EmphasizedView(title: "평점 평균", emphasized: String(format: "%.2f", creditCard.gpa), sub: "4.50")
                         EmphasizedView(title: "취득 학점", emphasized: String(format: "%.1f", creditCard.earnedCredit), sub: String(creditCard.graduateCredit))
                     }
-                    GPAGraphView(semesterList: store.semesterList)
+                    GPAGraphView(type: .bar, semesterList: store.semesterList)
                 }
                 .padding()
 
