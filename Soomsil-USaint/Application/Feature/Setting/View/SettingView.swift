@@ -12,6 +12,7 @@ import YDS_SwiftUI
 
 struct SettingView: View {
     @Bindable var store: StoreOf<SettingReducer>
+    var showsBackButton = true
     
     var body: some View {
         VStack(spacing: 4) {
@@ -39,11 +40,13 @@ struct SettingView: View {
             store.send(.onAppear)
         }
         .navigationTitle("설정")
-        .navigationBarBackButtonHidden()
+        .navigationBarBackButtonHidden(showsBackButton)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                BackButton {
-                    store.send(.backButtonTapped)
+            if showsBackButton {
+                ToolbarItem(placement: .topBarLeading) {
+                    BackButton {
+                        store.send(.backButtonTapped)
+                    }
                 }
             }
         }

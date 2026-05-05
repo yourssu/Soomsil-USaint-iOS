@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum TabItem: CaseIterable, Hashable {
+enum MainTabItem: CaseIterable, Hashable {
     case home
     case chapel
     case notification
@@ -33,11 +33,11 @@ enum TabItem: CaseIterable, Hashable {
 }
 
 struct CustomTabBar: View {
-    @Binding var selectedTab: TabItem
+    @Binding var selectedTab: MainTabItem
 
     var body: some View {
         HStack(spacing: 4) {
-            ForEach(TabItem.allCases, id: \.self) { tab in
+            ForEach(MainTabItem.allCases, id: \.self) { tab in
                 tabItem(for: tab)
             }
         }
@@ -54,7 +54,7 @@ struct CustomTabBar: View {
     }
 
     @ViewBuilder
-    private func tabItem(for tab: TabItem) -> some View {
+    private func tabItem(for tab: MainTabItem) -> some View {
         let isSelected = selectedTab == tab
         Button {
             selectedTab = tab
@@ -81,12 +81,14 @@ struct CustomTabBar: View {
             .clipShape(Capsule())
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(tab.title)
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 
 #Preview {
     struct PreviewWrapper: View {
-        @State private var selectedTab: TabItem = .home
+        @State private var selectedTab: MainTabItem = .home
         var body: some View {
             ZStack(alignment: .bottom) {
                 Color.gray.ignoresSafeArea()
