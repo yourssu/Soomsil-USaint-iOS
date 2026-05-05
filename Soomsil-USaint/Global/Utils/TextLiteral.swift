@@ -8,6 +8,22 @@
 import Foundation
 
 enum TextLiteral {
+    // MARK: - HomeView
+
+    enum HomeView {
+        /// 인사 문구 생성
+        /// - Parameter name: 학생 이름
+        static func greeting(_ name: String) -> String {
+            "안녕하세요, \(name)님"
+        }
+
+        /// 알림 요약 문구 생성
+        /// - Parameter count: 알림 개수
+        static func notificationSummary(count: Int) -> String {
+            "이번 주 확인할 알림 \(count)개"
+        }
+    }
+
     // MARK: - GPAGraphView
 
     enum GPAGraphView {
