@@ -2,7 +2,7 @@
 //  StudentInfoView.swift
 //  Soomsil-USaint
 //
-//  Created by Codex on 5/6/26.
+//  Created by 정민지 on 5/6/26.
 //
 
 import SwiftUI

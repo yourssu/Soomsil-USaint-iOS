@@ -35,11 +35,12 @@ struct HomeView: View {
 //                    }
 
 
-                    ChapelInfo(chapelCard: ChapelCard(
-                        attendance: store.chapelCard.attendance,
-                        seatPosition: store.chapelCard.seatPosition,
-                        floorLevel: store.chapelCard.floorLevel,
-                        status: store.chapelCard.status))
+                    ChapelAttendanceInfoView(
+                        type: .attended,
+                        chapelCard: store.chapelCard
+                    )
+                    .padding(.horizontal, 20)
+                    .padding(.top, 24)
                     
                     Spacer()
                 }

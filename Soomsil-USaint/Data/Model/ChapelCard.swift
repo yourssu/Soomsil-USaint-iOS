@@ -10,6 +10,15 @@ import Foundation
 enum ChapelStatus {
     case active
     case inactive
+    
+    var isActive: Bool {
+        switch self {
+        case .active:
+            return true
+        case .inactive:
+            return false
+        }
+    }
 }
 
 public struct ChapelCard: Hashable {
