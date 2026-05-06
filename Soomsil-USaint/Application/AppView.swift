@@ -23,8 +23,8 @@ struct AppView: View {
                 LoginView(store: store)
             }
         case .loggedIn:
-            if let store = store.scope(state: \.loggedIn, action: \.home) {
-                HomeView(store: store)
+            if let store = store.scope(state: \.loggedIn, action: \.mainTab) {
+                MainTabView(store: store)
             }
         }
     }
