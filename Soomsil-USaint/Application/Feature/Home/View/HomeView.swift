@@ -58,8 +58,6 @@ struct HomeView: View {
             .background(.white)
         } destination: { store in
             switch store.case {
-            case .semesterList(let store):
-                SemesterListView(store: store)
             case .web(let store):
                 WebView(store: store)
             case .semesterDetail(let store):

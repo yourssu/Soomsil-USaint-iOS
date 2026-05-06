@@ -36,6 +36,25 @@ struct ReportCardView: View {
         self.lectureCount = lectureCount
     }
 
+    /// 학기 성적 카드 구성
+    /// - Parameters:
+    ///   - reportCard: 카드 표시 타입
+    ///   - semester: 학기 성적 모델
+    init(
+        reportCard type: ViewType,
+        semester: GradeSummary
+    ) {
+        self.type = type
+        self.reportCard = TotalReportCard(
+            gpa: semester.gpa,
+            earnedCredit: semester.earnedCredit,
+            graduateCredit: 4.5,
+            generalRank: semester.overallRank,
+            overallStudentCount: semester.overallStudentCount
+        )
+        self.lectureCount = semester.lectures?.count
+    }
+
     // MARK: - Body
 
     var body: some View {
@@ -147,13 +166,13 @@ private extension ReportCardView {
         title: String,
         value: String
     ) -> some View {
-        Text("\(title) \(value)")
+        Text(TextLiteral.ReportCardView.summaryItem(title: title, value: value))
             .font(.system(size: 13, weight: .regular))
             .foregroundStyle(.gray500)
     }
 
     var separator: some View {
-        Text("·")
+        Text(TextLiteral.ReportCardView.summarySeparator)
             .font(.system(size: 13, weight: .regular))
             .foregroundStyle(.gray800)
     }
@@ -186,6 +205,21 @@ private extension ReportCardView {
                     overallStudentCount: 100
                 ),
                 lectureCount: 5
+            )
+
+            ReportCardView(
+                reportCard: .summary,
+                semester: GradeSummary(
+                    year: 2025,
+                    semester: "1 학기",
+                    gpa: 3.87,
+                    earnedCredit: 11.5,
+                    semesterRank: 12,
+                    semesterStudentCount: 100,
+                    overallRank: 12,
+                    overallStudentCount: 100,
+                    lectures: []
+                )
             )
         }
         .padding()
