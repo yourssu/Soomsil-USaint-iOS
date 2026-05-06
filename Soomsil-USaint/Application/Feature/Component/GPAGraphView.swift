@@ -80,9 +80,7 @@ private extension GPAGraphView {
             GPALineGraphView(
                 gpaList: semesterList.sortedAscending()
                     .filter {
-                        ($0.semester != GPAGraphConstants.winterSemester
-                         && $0.semester != GPAGraphConstants.summerSemester)
-                        || isOnSeasonalSemester
+                        !$0.isSeasonalSemester || isOnSeasonalSemester
                     }
                     .filter { $0.gpa != 0 }
                     .map {
@@ -139,10 +137,7 @@ private extension GPAGraphView {
 
     var regularSemesterList: [GradeSummary] {
         semesterList.sortedAscending()
-            .filter {
-                $0.semester != GPAGraphConstants.winterSemester
-                && $0.semester != GPAGraphConstants.summerSemester
-            }
+            .filter { !$0.isSeasonalSemester }
             .filter { $0.gpa != 0 }
     }
 
@@ -162,8 +157,6 @@ private extension GPAGraphView {
 enum GPAGraphConstants {
     static let semesterAxisLabel = "semester"
     static let gpaAxisLabel = "gpa"
-    static let winterSemester = "겨울학기"
-    static let summerSemester = "여름학기"
     static let semesterFormat = "%d년 %@"
     static let shortenedSemesterRegexPattern = #"(\d{2})(\d{2})년\s*(1|여름|2|겨울)\s*학기"#
     static let yAxisValues = [1.5, 3.0, 4.5]

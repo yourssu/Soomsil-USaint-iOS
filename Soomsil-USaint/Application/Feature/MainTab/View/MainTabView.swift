@@ -13,10 +13,12 @@ struct MainTabView: View {
     var body: some View {
         tabContent
             .safeAreaInset(edge: .bottom) {
-                CustomTabBar(selectedTab: Binding(
-                    get: { store.selectedTab },
-                    set: { store.send(.tabSelected($0)) }
-                ))
+                if showsTabBar {
+                    CustomTabBar(selectedTab: Binding(
+                        get: { store.selectedTab },
+                        set: { store.send(.tabSelected($0)) }
+                    ))
+                }
             }
     }
 
@@ -41,6 +43,15 @@ struct MainTabView: View {
         Text(text)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.backgroundSurface)
+    }
+
+    private var showsTabBar: Bool {
+        switch store.selectedTab {
+        case .home:
+            store.homeState.path.isEmpty
+        case .chapel, .notification, .my:
+            true
+        }
     }
 }
 

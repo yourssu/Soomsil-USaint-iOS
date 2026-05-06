@@ -83,6 +83,10 @@ private extension GradeRowView {
         .padding(.vertical, 16)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(.slate100, lineWidth: 1)
+        )
     }
 
     var detailedView: some View {

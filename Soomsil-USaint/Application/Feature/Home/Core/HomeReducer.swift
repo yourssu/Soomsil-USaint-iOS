@@ -14,7 +14,6 @@ import UIKit
 struct HomeReducer {
     @Reducer
     enum Path {
-        case semesterList(SemesterListReducer)
         case semesterDetail(SemesterDetailReducer)
         case web(WebReducer)
     }
@@ -42,7 +41,6 @@ struct HomeReducer {
         case path(StackActionOf<Path>)
         case onAppear
         case checkPushAuthorizationResponse(Result<Bool, Error>)
-        case semesterListPressed
         case semesterDetailPressed
 
         case currentSemesterGradesPressed
@@ -126,9 +124,6 @@ struct HomeReducer {
                 return .none
             case .checkPushAuthorizationResponse(.failure(let error)):
                 debugPrint("Home Reducer: CheckPushAuthorization Error - \(error)")
-                return .none
-            case .semesterListPressed:
-                state.path.append(.semesterList(SemesterListReducer.State(totalReportCard: state.totalReportCard)))
                 return .none
             case .semesterDetailPressed:
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))

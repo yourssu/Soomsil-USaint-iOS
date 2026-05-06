@@ -63,6 +63,7 @@ enum TextLiteral {
         static let earnedCreditTitle = "취득 학점"
         static let lectureCountTitle = "과목"
         static let totalRankTitle = "전체 석차"
+        static let summarySeparator = "·"
 
         /// 학점 문구 생성
         /// - Parameter credit: 학점
@@ -87,6 +88,17 @@ enum TextLiteral {
         /// - Parameter count: 과목 수
         static func lectureCount(_ count: Int) -> String {
             "\(count)"
+        }
+
+        /// 요약 항목 문구 생성
+        /// - Parameters:
+        ///   - title: 제목
+        ///   - value: 값
+        static func summaryItem(
+            title: String,
+            value: String
+        ) -> String {
+            "\(title) \(value)"
         }
     }
 
@@ -181,6 +193,39 @@ enum TextLiteral {
             schoolYear: String
         ) -> String {
             "\(major) · \(schoolYear) · \(enrollmentStatus)"
+        }
+    }
+
+    // MARK: - SemesterDetailView
+
+    enum SemesterDetailView {
+        static let title = "성적"
+        static let loadingTitle = "성적을 불러오는 중입니다"
+    }
+
+    // MARK: - CurrentSemesterGradesView
+
+    enum CurrentSemesterGradesView {
+        static let maxGPA = "/ 4.50"
+        static let gpaCalculationDescription = "해당 학점은 현재 등록된 학점을 기준으로 계산되었습니다. \n P/F 과목은 GPA 계산에서 제외됩니다."
+        static let emptyTitle = "아직 등록된 성적이 없어요"
+        static let emptyDescription = "성적이 등록되면 여기에 표시됩니다"
+
+        /// 학기 제목 문구 생성
+        /// - Parameters:
+        ///   - year: 학년도
+        ///   - semester: 학기
+        static func semesterTitle(
+            year: Int,
+            semester: String
+        ) -> String {
+            "\(year.formatted(.number.grouping(.never)))년 \(semester)"
+        }
+
+        /// 평균 GPA 문구 생성
+        /// - Parameter gpa: 평균 GPA
+        static func averageGPA(_ gpa: Double) -> String {
+            String(format: "%.2f", gpa)
         }
     }
 }

@@ -24,6 +24,7 @@ struct SemesterDetailReducer {
         case refreshButtonTapped
         case backButtonTapped
         case semesterListResponse(Result<[GradeSummary], Error>)
+        case toastShown
     }
     
     @Dependency(\.gradeClient) var gradeClient
@@ -73,7 +74,7 @@ struct SemesterDetailReducer {
                 let descendingList = semesterList.sortedDescending()
                 state.semesterList = descendingList
                 state.tabs = descendingList.map {
-                    SemesterTab(id: "\($0.year)년 \($0.semester)")
+                    SemesterTab(semester: $0)
                 }
                 if state.activeTab.isEmpty { state.activeTab = state.tabs.first?.id ?? "" }
                 state.isLoading = false
@@ -81,6 +82,9 @@ struct SemesterDetailReducer {
             case .semesterListResponse(.failure(let error)):
                 state.isLoading = false
                 state.toastMessage = String(describing: error)
+                return .none
+            case .toastShown:
+                state.toastMessage = nil
                 return .none
             default:
                 return .none

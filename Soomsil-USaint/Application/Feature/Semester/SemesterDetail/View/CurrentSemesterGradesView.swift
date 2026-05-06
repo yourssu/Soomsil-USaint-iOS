@@ -36,16 +36,19 @@ struct CurrentSemesterGradesView: View {
         
         var body: some View {
             VStack(alignment: .leading) {
-                Text("\(Int(gradeSummary.year).formatted(.number.grouping(.never)))년 \(gradeSummary.semester)")
+                Text(TextLiteral.CurrentSemesterGradesView.semesterTitle(
+                    year: gradeSummary.year,
+                    semester: gradeSummary.semester
+                ))
                     .font(YDSFont.subtitle2)
                     .foregroundStyle(.titleText)
                 HStack(alignment: .lastTextBaseline) {
-                    Text(String(format: "%.2f", lectures.averageGPA))
+                    Text(TextLiteral.CurrentSemesterGradesView.averageGPA(lectures.averageGPA))
                         .font(YDSFont.display1)
-                    Text("/ 4.50")
+                    Text(TextLiteral.CurrentSemesterGradesView.maxGPA)
                         .foregroundStyle(.grayText)
                 }
-                Text("해당 학점은 현재 등록된 학점을 기준으로 계산되었습니다. \n P/F 과목은 GPA 계산에서 제외됩니다.")
+                Text(TextLiteral.CurrentSemesterGradesView.gpaCalculationDescription)
                     .foregroundStyle(.grayText)
                     .font(YDSFont.body2)
                 Divider()
@@ -62,14 +65,10 @@ struct CurrentSemesterGradesView: View {
                   if lectures.isEmpty {
                         EmptyGradesView()
                     } else {
-                        LazyVStack {
-                            ForEach(lectures, id: \.self.code) { lecture in
-                                GradeRowView(
-                                    type: .compact,
-                                    lectureDetail: lecture
-                                )
-                            }
-                        }
+                        GradeListView(
+                            lectures: lectures,
+                            rowType: .compact
+                        )
                     }
                 }
             }
@@ -84,11 +83,11 @@ struct CurrentSemesterGradesView: View {
                     .foregroundColor(.gray.opacity(0.5))
                 
                 VStack(spacing: 8) {
-                    Text("아직 등록된 성적이 없어요")
+                    Text(TextLiteral.CurrentSemesterGradesView.emptyTitle)
                         .font(YDSFont.subtitle2)
                         .foregroundColor(.titleText)
                     
-                    Text("성적이 등록되면 여기에 표시됩니다")
+                    Text(TextLiteral.CurrentSemesterGradesView.emptyDescription)
                         .font(YDSFont.body2)
                         .foregroundColor(.grayText)
                         .multilineTextAlignment(.center)

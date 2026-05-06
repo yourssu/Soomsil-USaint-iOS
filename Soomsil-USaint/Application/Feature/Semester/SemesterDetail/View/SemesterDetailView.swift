@@ -1,86 +1,60 @@
 //
-//  v2SemesterDetailView.swift
+//  SemesterDetailView.swift
 //  Soomsil-USaint
 //
-//  Created by 최지우 on 3/24/25.
+//  Created by 정민지 on 5/6/26.
 //
 
 import SwiftUI
 
-import ComposableArchitecture
 import YDS_SwiftUI
 
+import ComposableArchitecture
+
 struct SemesterDetailView: View {
+    // MARK: - Properties
+    
     @Bindable var store: StoreOf<SemesterDetailReducer>
-
-    @State private var mainViewScrollState: SemesterTab.ID?
-    @State private var tabBarScrollState: SemesterTab.ID?
-    @State private var progress: CGFloat = .zero
-
+    
+    // MARK: - Body
+    
     var body: some View {
-
         VStack(spacing: 0) {
             if store.semesterList.isEmpty {
-                ProgressView("성적을 불러오는 중입니다")
-                    .tint(.vPrimary)
+                ProgressView(TextLiteral.SemesterDetailView.loadingTitle)
+                    .tint(.blue600)
                     .controlSize(.large)
             } else {
-                GPAGraphView(type: .line, semesterList: store.semesterList)
-                    .padding(.horizontal, 17.5)
-
-                TabView(tabs: $store.tabs,
-                        activeTab: $store.activeTab,
-                        mainViewScrollState: $mainViewScrollState,
-                        tabBarScrollState: $tabBarScrollState,
-                        progress: $progress)
-
-                GeometryReader {
-                    let size = $0.size
-                    ScrollView(.horizontal) {
-
-                        LazyHStack(spacing: 0) {
-                            ForEach(store.tabs) { tab in
-                                ScrollView(.vertical) {
-                                    let tappedSemester = findTappedSemester(
-                                        semesterList: store.semesterList,
-                                        tabId: tab.id
-                                    )
-                                    if let semester = tappedSemester {
-                                        TopSummary(gradeSummary: semester)
-                                        GradeList(lectures: semester.lectures ?? [])
-                                    }
-                                }
-                                .padding(20)
-                                .frame(width: size.width, height: size.height)
-                                .contentShape(.rect)
-                            }
-                        }
-                        .scrollTargetLayout()
-                        .rect { rect in
-                            progress = -rect.minX / size.width
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 14) {
+                        SemesterTabView(
+                            tabs: store.tabs,
+                            activeTab: $store.activeTab
+                        )
+                        
+                        if let selectedSemester {
+                            ReportCardView(reportCard: .summary, semester: selectedSemester)
+                            
+                            GPAGraphView(
+                                type: .line,
+                                semesterList: store.semesterList
+                            )
+                            
+                            GradeListView(
+                                lectures: selectedSemester.lectures ?? [],
+                                rowType: .compact
+                            )
                         }
                     }
-                }
-                .scrollPosition(id: $mainViewScrollState)
-                .scrollIndicators(.hidden)
-                .scrollTargetBehavior(.paging)
-                .onChange(of: mainViewScrollState) { oldValue, newValue in
-                    if let newValue {
-                        debugPrint(newValue)
-                        withAnimation(.snappy) {
-                            tabBarScrollState = newValue
-                            store.activeTab = newValue
-                        }
-                    }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 24)
                 }
             }
         }
+        .background(.white)
         .overlay(
             store.isLoading ? CircleLoadingView() : nil
         )
-        .onAppear() {
-            store.send(.onAppear)
-        }
         .navigationBarBackButtonHidden()
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -91,7 +65,7 @@ struct SemesterDetailView: View {
                         Image("ic_arrow_left_line")
                             .resizable()
                             .frame(width: 19, height: 19)
-                        Text("성적")
+                        Text(TextLiteral.SemesterDetailView.title)
                             .font(.custom("AppleSDGothicNeo-Bold", size: 20))
                     }
                     .foregroundStyle(.titleText)
@@ -109,140 +83,118 @@ struct SemesterDetailView: View {
                 }
             }
         }
-    }
-
-    struct TopSummary: View {
-        var gradeSummary: GradeSummary
-
-        var body: some View {
-            VStack(alignment: .leading) {
-                HStack(alignment: .lastTextBaseline) {
-                    Text(String(format: "%.2f", gradeSummary.gpa))
-                        .font(.custom("AppleSDGothicNeo-Bold", size: 40))
-                        .offset(x: 0, y: -6)
-                    Text("/ 4.50")
-                        .font(.custom("AppleSDGothicNeo-Medium", size: 16))
-                        .foregroundStyle(.grayText)
-                }
-                GradeOverView(title: "취득 학점",
-                                accentText: "\(gradeSummary.earnedCredit)")
-                GradeOverView(title: "학기별 석차",
-                                accentText: "\(gradeSummary.semesterRank)",
-                                subText: "\(gradeSummary.semesterStudentCount)")
-                Divider()
-            }
+        .onAppear {
+            store.send(.onAppear)
         }
-    }
+        .onChange(of: store.toastMessage) { _, toastMessage in
+            guard let toastMessage else { return }
 
-    struct GradeList: View {
-        var lectures: [LectureDetail]
-
-        var body: some View {
-            VStack {
-                ForEach(lectures, id: \.self.code) { lecture in
-                    GradeRowView(
-                        type: .detailed,
-                        lectureDetail: lecture
-                    )
-                }
-            }
+            YDSToast(toastMessage, haptic: .failed)
+            store.send(.toastShown)
         }
-    }
-
-    private func findTappedSemester(semesterList: [GradeSummary], tabId: String) -> GradeSummary? {
-        let tappedSemesterList = store.semesterList.filter { list in
-            let id = "\(list.year)년 \(list.semester)"
-            return id == tabId
-        }
-        return tappedSemesterList.first
+        .registerYDSToast()
     }
 }
 
-extension SemesterDetailView {
+// MARK: - Data
 
-    struct TabView: View {
-        @Binding var tabs: [SemesterTab]
-        @Binding var activeTab: SemesterTab.ID
-        @Binding var mainViewScrollState: SemesterTab.ID?
-        @Binding var tabBarScrollState: SemesterTab.ID?
-        @Binding var progress: CGFloat
+private extension SemesterDetailView {
+    var selectedSemester: GradeSummary? {
+        store.semesterList.first {
+            semesterID($0) == store.activeTab
+        } ?? store.semesterList.first
+    }
 
-        var body: some View {
-            ScrollView(.horizontal) {
-                HStack(spacing: 0) {
-                    ForEach($tabs, id: \.uuid) { $tab in
-                        Button {
-                            withAnimation(.snappy) {
-                                activeTab = tab.id
-                                tabBarScrollState = tab.id
-                                mainViewScrollState = tab.id
-                            }
-                        } label: {
-                            Text(formatShortedYear(tab.id))
-                                .font(.custom("AppleSDGothicNeo-SemiBold", size: 14))
-                                .padding(12)
-                                .foregroundStyle(activeTab == tab.id ? .primary : Color.gray)
-                                .contentShape(.rect)
-                        }
-                        .buttonStyle(.plain)
-                        .rect { rect in
-                            tab.size = rect.size
-                            tab.minX = rect.minX
-                        }
-                    }
-                }
-                .scrollTargetLayout()
-            }
-            .scrollPosition(id: $tabBarScrollState, anchor: .center)
-            .overlay(alignment: .bottom) {
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(.gray.opacity(0.3))
-                        .frame(height: 2)
-
-                    let inputRange = tabs.indices.compactMap {
-                        return CGFloat($0)
-                    }
-                    let outputRange = tabs.compactMap {
-                        return $0.size.width
-                    }
-                    let outputPositionRange = tabs.compactMap {
-                        return $0.minX
-                    }
-
-                    if !(inputRange.isEmpty || outputRange.isEmpty || outputPositionRange.isEmpty) {
-                        let indicatorWidth = progress.interpolate(inputRange: inputRange, outputRange: outputRange)
-                        let indicatorPosition = progress.interpolate(inputRange: inputRange, outputRange: outputPositionRange)
-
-                        Rectangle()
-                            .fill(.primary)
-                            .frame(width: indicatorWidth,height: 1.5)
-                            .offset(x: indicatorPosition)
-                    }
-                }
-            }
-            .safeAreaPadding(.horizontal, 15)
-            .scrollIndicators(.hidden)
-        }
-
-        private func formatShortedYear(_ id: String) -> String {
-            let components = id.split(separator: "년")
-            guard let year = components.first, components.count > 1 else {
-                return id
-            }
-            if let year = Int(year) {
-                let shortedYear = year % 100
-                return "\(shortedYear)년\(components[1])"
-            }
-            return id
-        }
+    /// 학기 ID 생성
+    /// - Parameter semester: 학기 성적
+    func semesterID(_ semester: GradeSummary) -> String {
+        "\(semester.year)년 \(semester.normalizedSemester)"
     }
 
 }
+
+// MARK: - Preview
 
 #Preview {
-    let store = Store(initialState: SemesterDetailReducer.State()) {
-        SemesterDetailReducer()
+    NavigationStack {
+        SemesterDetailView(store: Store(
+            initialState: previewSemesterDetailState
+        ) {
+            SemesterDetailReducer()
+        } withDependencies: {
+            $0.gradeClient.getAllSemesterGrades = {
+                previewSemesterDetailState.semesterList
+            }
+            $0.gradeClient.deleteTotalReportCard = {}
+            $0.gradeClient.deleteAllSemesterGrades = {}
+            $0.gradeClient.fetchTotalReportCard = {
+                previewTotalReportCard
+            }
+            $0.gradeClient.updateTotalReportCard = { _ in }
+            $0.gradeClient.fetchAllSemesterGrades = {
+                previewSemesterDetailState.semesterList
+            }
+            $0.gradeClient.updateAllSemesterGrades = { _ in }
+        })
     }
-    SemesterDetailView(store: store)
+}
+
+private let previewSemesterDetailState: SemesterDetailReducer.State = {
+    var state = SemesterDetailReducer.State()
+    state.semesterList = [
+        previewSemester(year: 2025, semester: "1학기", gpa: 3.87, earnedCredit: 20.5, rank: 12, lectures: previewLectureList),
+        previewSemester(year: 2024, semester: "2학기", gpa: 4.12, earnedCredit: 18, rank: 8),
+        previewSemester(year: 2024, semester: "여름 학기", gpa: 4.5, earnedCredit: 6, rank: 1),
+        previewSemester(year: 2024, semester: "1학기", gpa: 3.72, earnedCredit: 17.5, rank: 15),
+        previewSemester(year: 2023, semester: "2학기", gpa: 3.58, earnedCredit: 18, rank: 22)
+    ]
+    state.tabs = state.semesterList.map {
+        SemesterTab(semester: $0)
+    }
+    state.activeTab = "2025년 1학기"
+    return state
+}()
+
+private let previewTotalReportCard = TotalReportCard(
+    gpa: 3.87,
+    earnedCredit: 11.5,
+    graduateCredit: 188,
+    generalRank: 12,
+    overallStudentCount: 100
+)
+
+private let previewLectureList: [LectureDetail] = [
+    LectureDetail(code: "chapel", title: "비전채플", credit: 0.5, score: "P", grade: .pass, professorName: "박영수"),
+    LectureDetail(code: "cte", title: "CTE for IT, Engineering", credit: 3.0, score: "A+", grade: .aPlus, professorName: "최민지"),
+    LectureDetail(code: "human", title: "인간관계론", credit: 2.0, score: "A-", grade: .aMinus, professorName: "이준호"),
+    LectureDetail(code: "media", title: "디지털미디어원리", credit: 3.0, score: "A-", grade: .aMinus, professorName: "김서연"),
+    LectureDetail(code: "database", title: "데이터베이스", credit: 3.0, score: "B+", grade: .bPlus, professorName: "전지훈"),
+    LectureDetail(code: "algorithm", title: "알고리즘", credit: 3.0, score: "A0", grade: .aZero, professorName: "한유진"),
+    LectureDetail(code: "network", title: "컴퓨터네트워크", credit: 3.0, score: "B+", grade: .bPlus, professorName: "오세민"),
+    LectureDetail(code: "os", title: "운영체제", credit: 3.0, score: "A-", grade: .aMinus, professorName: "정다은"),
+    LectureDetail(code: "software", title: "소프트웨어공학", credit: 3.0, score: "A+", grade: .aPlus, professorName: "윤서현"),
+    LectureDetail(code: "ai", title: "인공지능", credit: 3.0, score: "B0", grade: .bZero, professorName: "강민재"),
+    LectureDetail(code: "mobile", title: "모바일프로그래밍", credit: 3.0, score: "A0", grade: .aZero, professorName: "문하린"),
+    LectureDetail(code: "security", title: "정보보호", credit: 3.0, score: "B+", grade: .bPlus, professorName: "서지안")
+]
+
+private func previewSemester(
+    year: Int,
+    semester: String,
+    gpa: Float,
+    earnedCredit: Float,
+    rank: Int,
+    lectures: [LectureDetail] = []
+) -> GradeSummary {
+    GradeSummary(
+        year: year,
+        semester: semester,
+        gpa: gpa,
+        earnedCredit: earnedCredit,
+        semesterRank: rank,
+        semesterStudentCount: 100,
+        overallRank: rank,
+        overallStudentCount: 100,
+        lectures: lectures
+    )
 }
