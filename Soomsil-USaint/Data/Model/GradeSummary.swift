@@ -70,7 +70,15 @@ extension GradeSummary: Identifiable {
 }
 
 public extension GradeSummary {
-    static let semesterOrder = ["1 학기", "여름학기", "2 학기", "겨울학기"]
+    static let semesterOrder = ["1학기", "여름학기", "2학기", "겨울학기"]
+
+    var normalizedSemester: String {
+        semester.replacingOccurrences(of: " ", with: "")
+    }
+
+    var isSeasonalSemester: Bool {
+        normalizedSemester == "여름학기" || normalizedSemester == "겨울학기"
+    }
 }
 
 public extension Array where Element == GradeSummary {
@@ -87,8 +95,8 @@ public extension Array where Element == GradeSummary {
         if year1 != year2 {
             return year1 > year2
         } else {
-            if let index1 = GradeSummary.semesterOrder.firstIndex(of: model1.semester),
-               let index2 = GradeSummary.semesterOrder.firstIndex(of: model2.semester) {
+            if let index1 = GradeSummary.semesterOrder.firstIndex(of: model1.normalizedSemester),
+               let index2 = GradeSummary.semesterOrder.firstIndex(of: model2.normalizedSemester) {
                 return index1 > index2
             }
         }
@@ -102,8 +110,8 @@ public extension Array where Element == GradeSummary {
         if year1 != year2 {
             return year1 < year2
         } else {
-            if let index1 = GradeSummary.semesterOrder.firstIndex(of: model1.semester),
-               let index2 = GradeSummary.semesterOrder.firstIndex(of: model2.semester) {
+            if let index1 = GradeSummary.semesterOrder.firstIndex(of: model1.normalizedSemester),
+               let index2 = GradeSummary.semesterOrder.firstIndex(of: model2.normalizedSemester) {
                 return index1 < index2
             }
         }
@@ -162,5 +170,3 @@ public extension CDSemester {
         )
     }
 }
-
-
