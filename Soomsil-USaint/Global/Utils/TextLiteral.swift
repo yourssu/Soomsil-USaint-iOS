@@ -283,10 +283,14 @@ enum TextLiteral {
     // MARK: - CurrentSemesterGradesView
 
     enum CurrentSemesterGradesView {
-        static let maxGPA = "/ 4.50"
+        static let totalGPATitle = "총 평점 평균"
+        static let earnedCreditTitle = "취득"
+        static let lectureCountTitle = "과목"
+        static let maxGPA = "/ 4.5"
         static let gpaCalculationDescription = "해당 학점은 현재 등록된 학점을 기준으로 계산되었습니다. \n P/F 과목은 GPA 계산에서 제외됩니다."
         static let emptyTitle = "아직 등록된 성적이 없어요"
         static let emptyDescription = "성적이 등록되면 여기에 표시됩니다"
+        static let currentSemesterFallbackTitle = "이번 학기"
 
         /// 학기 제목 문구 생성
         /// - Parameters:
@@ -303,6 +307,24 @@ enum TextLiteral {
         /// - Parameter gpa: 평균 GPA
         static func averageGPA(_ gpa: Double) -> String {
             String(format: "%.2f", gpa)
+        }
+
+        /// 취득 학점 문구 생성
+        /// - Parameter credit: 취득 학점
+        static func credit(_ credit: Double) -> String {
+            let roundedInteger = credit.rounded()
+
+            if abs(credit - roundedInteger) < 0.001 {
+                return String(Int(roundedInteger))
+            }
+
+            return String(format: "%.1f", credit)
+        }
+
+        /// 과목 수 문구 생성
+        /// - Parameter count: 과목 수
+        static func lectureCount(_ count: Int) -> String {
+            "\(count)"
         }
     }
 }

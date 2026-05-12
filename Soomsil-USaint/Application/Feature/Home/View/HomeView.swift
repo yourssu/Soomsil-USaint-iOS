@@ -65,15 +65,13 @@ struct HomeView: View {
             }
         }
         .sheet(
-            isPresented: $store.currentSemesterGrades
+            item: $store.scope(
+                state: \.currentSemesterGrades,
+                action: \.currentSemesterGrades
             )
-        {
+        ) { store in
             NavigationStack {
-                CurrentSemesterGradesView(
-                    store: store, onDismiss: {
-                        store.send(.currentSemesterGradesDismissed)
-                    }
-                )
+                CurrentSemesterGradesView(store: store)
                 .presentationCornerRadius(20)
                 .presentationDragIndicator(.visible)
                 .presentationDetents([.fraction(2/3),
