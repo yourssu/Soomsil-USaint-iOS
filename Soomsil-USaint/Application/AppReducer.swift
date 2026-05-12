@@ -51,6 +51,9 @@ struct AppReducer {
             case .login(.loginResponse(.success(let (info, report, chapel)))):
                 state = .loggedIn(MainTabReducer.State(studentInfo: info, totalReportCard: report, chapelCard: chapel))
                 return .none
+            case .mainTab(.setting(.logoutCompleted)):
+                state = .initial(SplashReducer.State())
+                return .none
             default:
                 return .none
             }

@@ -25,13 +25,12 @@ struct HomeReducer {
         
         var path = StackState<Path.State>()
         
-        var currentSemesterGrades = false
+        @Presents var currentSemesterGrades: CurrentSemesterGradesReducer.State?
         
         var studentInfo: StudentInfo
         var totalReportCard: TotalReportCard
         var chapelCard: ChapelCard
         var semesterList: [GradeSummary] = []
-        var currentSemesterLectures: [LectureDetail] = []
         var isLoading: Bool = false
         var toastMessage: String = ""
     }
@@ -44,13 +43,12 @@ struct HomeReducer {
         case semesterDetailPressed
 
         case currentSemesterGradesPressed
-        case currentSemesterGradesDismissed
+        case currentSemesterGrades(PresentationAction<CurrentSemesterGradesReducer.Action>)
         case semesterGradesPressed
         case chapelAttendancePressed
         case getGradeDataResponse(Result<[GradeSummary], Error>)
         case getChapelDataResponse(Result<ChapelCard, Error>)
         case fetchGradeDataResponse(Result<Void, Error>)
-        case fetchCurrentSemesterGradeResponse(Result<[LectureDetail], Error>)
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
@@ -135,23 +133,7 @@ struct HomeReducer {
                 let (event, props) = AnalyticsEvent.thisSemesterGradeClick(student: student, saintId: saintId)
                 mixpanelClient.track(event, properties: props)
 
-                state.currentSemesterGrades = true
-                state.isLoading = true
-                return .run { send in
-                    await send(.fetchCurrentSemesterGradeResponse(Result {
-                        if let currentSemester = try await gradeClient.currentYearAndSemester() {
-                            let lectures = try await gradeClient.fetchGrades(currentSemester.year,
-                                                                           currentSemester.semester)
-                            return lectures.toLectureDetails()
-                        } else {
-                            let lectures = try await gradeClient.fetchGrades(2025,
-                                                                             .one)
-                            return lectures.toLectureDetails()
-                        }
-                    }))
-                }
-            case .currentSemesterGradesDismissed:
-                state.currentSemesterGrades = false
+                state.currentSemesterGrades = CurrentSemesterGradesReducer.State()
                 return .none
             case .semesterGradesPressed:
                 let student = state.studentInfo
@@ -213,19 +195,14 @@ struct HomeReducer {
                 NSLog("[채플] 업데이트 실패: \(String(describing: error))")
                 return .none
                 
-            case .fetchCurrentSemesterGradeResponse(.success(let lectures)):
-                state.currentSemesterLectures = lectures
-                state.isLoading = false
-                return .none
-            case .fetchCurrentSemesterGradeResponse(.failure(let error)):
-                state.toastMessage = String(describing: error)
-                state.isLoading = false
-                return .none
             default:
                 return .none
             }
         }
         .forEach(\.path, action: \.path)
+        .ifLet(\.$currentSemesterGrades, action: \.currentSemesterGrades) {
+            CurrentSemesterGradesReducer()
+        }
     }
     
     private func fetchGradeData() async throws {

@@ -61,16 +61,16 @@ struct SettingReducer {
                 }
             case .logoutButtonTapped:
                 state.alert = AlertState {
-                    TextState("로그아웃 하시겠습니까?")
+                    TextState(TextLiteral.SettingReducer.logoutAlertTitle)
                 } actions: {
                     ButtonState(
                         role: .destructive,
                         action: .confirmLogoutTapped) {
-                            TextState("로그아웃")
+                            TextState(TextLiteral.SettingReducer.logoutAlertConfirmTitle)
                         }
                     ButtonState(
                         role: .cancel) {
-                            TextState("취소")
+                            TextState(TextLiteral.SettingReducer.alertCancelTitle)
                         }
                 }
                 return .none
@@ -83,7 +83,7 @@ struct SettingReducer {
                     try await studentClient.deleteStudentInfo()
                     try await chapelClient.deleteChapelCard()
 
-                    YDSToast("로그아웃 완료", haptic: .success)
+                    YDSToast(TextLiteral.SettingReducer.logoutSuccessToast, haptic: .success)
 
                     await send(.logoutCompleted)
                 }
@@ -95,29 +95,29 @@ struct SettingReducer {
                 }
             case .togglePushAuthorization(false):
                 state.$permission.withLock { $0 = false }
-                YDSToast("알림권한 거부", haptic: .success)
+                YDSToast(TextLiteral.SettingReducer.pushAuthorizationDeniedToast, haptic: .success)
                 return .none
             case .pushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
                 if !granted {
                     state.alert = AlertState {
-                        TextState("알림 설정")
+                        TextState(TextLiteral.SettingReducer.pushAuthorizationAlertTitle)
                     } actions: {
                         ButtonState(
                             role: .destructive,
                             action: .configurePushAuthorizationTapped
                         ) {
-                            TextState("설정")
+                            TextState(TextLiteral.SettingReducer.pushAuthorizationAlertConfirmTitle)
                         }
                         ButtonState(
                             role: .cancel) {
-                                TextState("취소")
+                                TextState(TextLiteral.SettingReducer.alertCancelTitle)
                             }
                     } message: {
-                        TextState("알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요.")
+                        TextState(TextLiteral.SettingReducer.pushAuthorizationAlertMessage)
                     }
                 } else {
-                    YDSToast("알림권한 허용", haptic: .success)
+                    YDSToast(TextLiteral.SettingReducer.pushAuthorizationAllowedToast, haptic: .success)
                 }
                 return .none
             case .requestPushAuthorizationResponse(.success(let granted)):

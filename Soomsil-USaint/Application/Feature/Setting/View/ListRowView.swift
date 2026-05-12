@@ -26,10 +26,10 @@ struct ListRowView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(.titleText)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.gray850)
                 .padding(20)
-                .frame(height: 48)
+                .frame(height: 56)
             
             ForEach(items.indices, id: \.self) { index in
                 HStack {
@@ -43,22 +43,39 @@ struct ListRowView: View {
 struct RowView: View {
     let text: String
     let rightItem: RightItem
+    let isEnabled: Bool
     let action: () -> Void
     @State private var isPressed: Bool = false
+
+    init(
+        text: String,
+        rightItem: RightItem,
+        isEnabled: Bool = true,
+        action: @escaping () -> Void
+    ) {
+        self.text = text
+        self.rightItem = rightItem
+        self.isEnabled = isEnabled
+        self.action = action
+    }
     
     var body: some View {
         HStack {
             Text(text)
-                .font(YDSFont.button3)
-                .foregroundStyle(.titleText)
+                .font(.system(size: 15, weight: .regular))
+                .foregroundStyle(.gray850)
                 .padding(20)
-                .frame(height: 48)
+                .frame(height: 56)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(isPressed ? .lightGray : .clear)
                 .gesture(
                     DragGesture(minimumDistance: 0)
-                        .onChanged { _ in isPressed = true }
+                        .onChanged { _ in
+                            guard isEnabled else { return }
+                            isPressed = true
+                        }
                         .onEnded { _ in
+                            guard isEnabled else { return }
                             isPressed = false
                             switch rightItem {
                             case .none:
@@ -77,8 +94,8 @@ struct RowView: View {
                     .labelsHidden()
                     .padding(.horizontal, 20)
                     .padding(.vertical, 20)
-                    .tint(.vPrimary)
-                    .frame(height: 48)
+                    .tint(.blue)
+                    .frame(height: 56)
                     .onChange(of: isPushAuthorizationEnabled.wrappedValue) {
                         action()
                     }

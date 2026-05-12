@@ -33,8 +33,7 @@ struct MainTabView: View {
             placeholderView(TextLiteral.MainTabView.notificationPlaceholder)
         case .my:
             SettingView(
-                store: store.scope(state: \.settingState, action: \.setting),
-                showsBackButton: false
+                store: store.scope(state: \.settingState, action: \.setting)
             )
         }
     }

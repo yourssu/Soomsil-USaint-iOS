@@ -12,10 +12,15 @@ import YDS_SwiftUI
 
 struct SettingView: View {
     @Bindable var store: StoreOf<SettingReducer>
-    var showsBackButton = true
     
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 0) {
+            Text(TextLiteral.SettingView.title)
+                .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(.gray950)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6.5)
+            
             SettingList(
                 isPushAuthorizationEnabled: $store.permission,
                 appVersion: store.appVersion
@@ -39,17 +44,6 @@ struct SettingView: View {
         .onAppear {
             store.send(.onAppear)
         }
-        .navigationTitle("설정")
-        .navigationBarBackButtonHidden(showsBackButton)
-        .toolbar {
-            if showsBackButton {
-                ToolbarItem(placement: .topBarLeading) {
-                    BackButton {
-                        store.send(.backButtonTapped)
-                    }
-                }
-            }
-        }
     }
     
     struct SettingList: View {
@@ -61,9 +55,9 @@ struct SettingView: View {
         var body: some View {
             VStack(alignment: .leading) {
                 ListRowView(
-                    title: "계정관리",
+                    title: TextLiteral.SettingView.accountSectionTitle,
                     items: [
-                        RowView(text: "로그아웃",
+                        RowView(text: TextLiteral.SettingView.logoutButtonTitle,
                                 rightItem: .none,
                                 action: {
                                     listItemTapped(.logout)
@@ -72,10 +66,12 @@ struct SettingView: View {
                     ]
                 )
                 
+                Divider()
+                
                 ListRowView(
-                    title: "알림",
+                    title: TextLiteral.SettingView.notificationSectionTitle,
                     items: [
-                        RowView(text: "성적 알림 받기",
+                        RowView(text: TextLiteral.SettingView.gradeNotificationTitle,
                                 rightItem: .toggle(
                                     isPushAuthorizationEnabled: $isPushAuthorizationEnabled
                                 ),
@@ -86,17 +82,17 @@ struct SettingView: View {
                     ])
                 
                 ListRowView(
-                    title: "약관",
+                    title: TextLiteral.SettingView.termsSectionTitle,
                     items: [
                         RowView(
-                            text: "이용약관",
+                            text: TextLiteral.SettingView.termsOfServiceTitle,
                             rightItem: .none,
                             action: {
                                 listItemTapped(.termsOfService)
                             }
                         ),
                         RowView(
-                            text: "개인정보 처리 방침",
+                            text: TextLiteral.SettingView.privacyPolicyTitle,
                             rightItem: .none,
                             action: {
                                 listItemTapped(.privacyPolicy)
@@ -105,12 +101,15 @@ struct SettingView: View {
                     ]
                 )
                 
+                Divider()
+                
                 ListRowView(
-                    title: "버전정보",
+                    title: TextLiteral.SettingView.versionSectionTitle,
                     items: [
                         RowView(
-                            text: "v \(appVersion)",
+                            text: TextLiteral.SettingView.appVersion(appVersion),
                             rightItem: .none,
+                            isEnabled: false,
                             action: {}
                         )
                     ])
