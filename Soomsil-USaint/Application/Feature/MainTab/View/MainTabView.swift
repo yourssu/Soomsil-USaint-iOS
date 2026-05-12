@@ -28,7 +28,7 @@ struct MainTabView: View {
         case .home:
             HomeView(store: store.scope(state: \.homeState, action: \.home))
         case .chapel:
-            placeholderView(TextLiteral.MainTabView.chapelPlaceholder)
+            ChapelView(chapelCard: store.homeState.chapelCard)
         case .notification:
             placeholderView(TextLiteral.MainTabView.notificationPlaceholder)
         case .my:

@@ -170,6 +170,15 @@ enum TextLiteral {
         }
     }
 
+    // MARK: - ChapelView
+
+    enum ChapelView {
+        static let title = "채플"
+        static let remainingAttendanceTitle = "이번 학기 남은 출석"
+        static let attendanceButtonTitle = "출석 인증하기"
+        static let attendanceGuide = "입실 후 좌석 QR을 스캔해주세요"
+    }
+
     // MARK: - MainTabView
 
     enum MainTabView {

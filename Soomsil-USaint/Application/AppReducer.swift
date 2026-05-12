@@ -17,7 +17,7 @@ struct AppReducer {
     enum State {
         case initial(SplashReducer.State)
         case loggedOut(LoginReducer.State)
-        case loggedIn(HomeReducer.State)
+        case loggedIn(MainTabReducer.State)
         
         init() {
             self = .initial(SplashReducer.State())
@@ -28,7 +28,7 @@ struct AppReducer {
         case backgroundTask
         case splash(SplashReducer.Action)
         case login(LoginReducer.Action)
-        case home(HomeReducer.Action)
+        case mainTab(MainTabReducer.Action)
     }
     
     @Dependency(\.gradeClient) var gradeClient
@@ -43,13 +43,13 @@ struct AppReducer {
                     try await scheduleChangedGardeLecturePush()
                 }
             case .splash(.initResponse(.success(let (studentInfo, totalReportCard, chapelCard)))):
-                state = .loggedIn(HomeReducer.State(studentInfo: studentInfo, totalReportCard: totalReportCard, chapelCard: chapelCard))
+                state = .loggedIn(MainTabReducer.State(studentInfo: studentInfo, totalReportCard: totalReportCard, chapelCard: chapelCard))
                 return .none
             case .splash(.initResponse(.failure)):
                 state = .loggedOut(LoginReducer.State())
                 return .none
             case .login(.loginResponse(.success(let (info, report, chapel)))):
-                state = .loggedIn(HomeReducer.State(studentInfo: info, totalReportCard: report, chapelCard: chapel))
+                state = .loggedIn(MainTabReducer.State(studentInfo: info, totalReportCard: report, chapelCard: chapel))
                 return .none
             default:
                 return .none
@@ -61,8 +61,8 @@ struct AppReducer {
         .ifCaseLet(\.loggedOut, action: \.login) {
             LoginReducer()
         }
-        .ifCaseLet(\.loggedIn, action: \.home) {
-            HomeReducer()
+        .ifCaseLet(\.loggedIn, action: \.mainTab) {
+            MainTabReducer()
         }
     }
     
