@@ -13,6 +13,7 @@ struct MainTabReducer {
     struct State {
         var selectedTab: MainTabItem = .home
         var homeState: HomeReducer.State
+        var chapelState: ChapelReducer.State
         var settingState: SettingReducer.State = SettingReducer.State()
 
         init(studentInfo: StudentInfo, totalReportCard: TotalReportCard, chapelCard: ChapelCard) {
@@ -21,12 +22,14 @@ struct MainTabReducer {
                 totalReportCard: totalReportCard,
                 chapelCard: chapelCard
             )
+            chapelState = ChapelReducer.State(chapelCard: chapelCard)
         }
     }
 
     enum Action {
         case tabSelected(MainTabItem)
         case home(HomeReducer.Action)
+        case chapel(ChapelReducer.Action)
         case setting(SettingReducer.Action)
     }
 
@@ -39,12 +42,18 @@ struct MainTabReducer {
             case .home(.chapelAttendancePressed):
                 state.selectedTab = .chapel
                 return .none
+            case .home(.getChapelDataResponse(.success(let chapelCard))):
+                state.chapelState.updateChapelCard(chapelCard)
+                return .none
             default:
                 return .none
             }
         }
         Scope(state: \.homeState, action: \.home) {
             HomeReducer()
+        }
+        Scope(state: \.chapelState, action: \.chapel) {
+            ChapelReducer()
         }
         Scope(state: \.settingState, action: \.setting) {
             SettingReducer()
