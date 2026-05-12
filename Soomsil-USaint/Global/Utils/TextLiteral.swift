@@ -153,6 +153,12 @@ enum TextLiteral {
         }
     }
 
+    // MARK: - ChapelCard
+
+    enum ChapelCard {
+        static let inactiveSeatPosition = "이번 학기 채플 수강 없음"
+    }
+
     // MARK: - ChapelSeatInfoView
 
     enum ChapelSeatInfoView {
@@ -167,6 +173,68 @@ enum TextLiteral {
             seatZone: String
         ) -> String {
             "\(floorLevel)층 앞자리 · \(seatZone)구역"
+        }
+    }
+
+    // MARK: - ChapelSeatLocationView
+
+    enum ChapelSeatLocationView {
+        static let title = "내 좌석 위치"
+        static let stageTitle = "STAGE"
+        static let selectedSeatTitle = "이 자리에요"
+
+        static func seatGuide(
+            entranceDirection: String,
+            row: Int?,
+            seatIndexFromEntrance: Int?
+        ) -> String {
+            guard let row, let seatIndexFromEntrance else {
+                return "좌석표에서 파란색으로 표시된 자리가 내 자리예요"
+            }
+
+            return "입구에서 \(entranceDirection)으로 입장해 \(ordinal(row)) 줄 \(ordinal(seatIndexFromEntrance)) 자리예요"
+        }
+
+        private static func ordinal(_ number: Int) -> String {
+            switch number {
+            case 1:
+                return "첫 번째"
+            case 2:
+                return "두 번째"
+            case 3:
+                return "세 번째"
+            case 4:
+                return "네 번째"
+            case 5:
+                return "다섯 번째"
+            case 6:
+                return "여섯 번째"
+            case 7:
+                return "일곱 번째"
+            case 8:
+                return "여덟 번째"
+            case 9:
+                return "아홉 번째"
+            case 10:
+                return "열 번째"
+            default:
+                return "\(number)번째"
+            }
+        }
+    }
+
+    // MARK: - ChapelSeatMap
+
+    enum ChapelSeatMap {
+        static let leftDirection = "좌측"
+        static let rightDirection = "우측"
+
+        static func accessibilityLabel(
+            zone: String,
+            row: Int,
+            column: Int
+        ) -> String {
+            "\(zone)구역 \(row)번째 줄 \(column)번째 자리"
         }
     }
 

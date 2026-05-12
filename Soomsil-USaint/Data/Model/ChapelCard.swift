@@ -30,7 +30,7 @@ public struct ChapelCard: Hashable {
     static func inactive() -> ChapelCard {
         return ChapelCard(
             attendance: 0,
-            seatPosition: "이번 학기 채플 수강 없음",
+            seatPosition: TextLiteral.ChapelCard.inactiveSeatPosition,
             floorLevel: 0,
             status: .inactive
         )

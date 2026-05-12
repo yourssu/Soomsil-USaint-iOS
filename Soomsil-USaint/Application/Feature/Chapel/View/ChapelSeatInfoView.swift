@@ -88,6 +88,10 @@ struct ChapelSeatInfoView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(.slate100, lineWidth: 1)
+        )
     }
 
     private var actionCardBody: some View {
