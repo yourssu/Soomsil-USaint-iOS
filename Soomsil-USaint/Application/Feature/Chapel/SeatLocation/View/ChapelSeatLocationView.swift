@@ -19,8 +19,6 @@ struct ChapelSeatLocationView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            headerView
-
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 4) {
                     ChapelSeatInfoView(
@@ -42,48 +40,32 @@ struct ChapelSeatLocationView: View {
             }
         }
         .background(.white)
-    }
-}
-
-// MARK: - View
-
-private extension ChapelSeatLocationView {
-    var headerView: some View {
-        HStack(alignment: .center) {
-            Button {
-                store.send(.backButtonTapped)
-            } label: {
-                Image("ic_arrow_left_line")
-                    .resizable()
-                    .frame(width: 24, height: 24)
+        .navigationTitle(TextLiteral.ChapelSeatLocationView.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    store.send(.backButtonTapped)
+                } label: {
+                    Image("ic_arrow_left_line")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(.navy900)
+                }
             }
-            .buttonStyle(.plain)
-
-            Spacer()
-
-            Text(TextLiteral.ChapelSeatLocationView.title)
-                .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(.navy900)
-
-            Spacer()
-
-            Button {
-                store.send(.infoButtonTapped)
-            } label: {
-                Icon.info
-                    .renderingMode(.template)
-                    .foregroundStyle(.navy900)
-                    .frame(width: 22, height: 22)
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    store.send(.infoButtonTapped)
+                } label: {
+                    Icon.info
+                        .renderingMode(.template)
+                        .foregroundStyle(.navy900)
+                        .frame(width: 22, height: 22)
+                }
+                .accessibilityLabel(TextLiteral.ChapelSeatLocationView.title)
             }
-            .buttonStyle(.plain)
-            .accessibilityLabel(TextLiteral.ChapelSeatLocationView.title)
-        }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(.slate100)
-                .frame(height: 1)
         }
     }
 }
@@ -91,17 +73,19 @@ private extension ChapelSeatLocationView {
 // MARK: - Preview
 
 #Preview {
-    ChapelSeatLocationView(
-        store: Store(
-            initialState: ChapelSeatLocationReducer.State(
-                chapelCard: ChapelCard(
-                    attendance: 5,
-                    seatPosition: "H-1-4",
-                    floorLevel: 1
+    NavigationStack {
+        ChapelSeatLocationView(
+            store: Store(
+                initialState: ChapelSeatLocationReducer.State(
+                    chapelCard: ChapelCard(
+                        attendance: 5,
+                        seatPosition: "H-1-4",
+                        floorLevel: 1
+                    )
                 )
-            )
-        ) {
-            ChapelSeatLocationReducer()
-        }
-    )
+            ) {
+                ChapelSeatLocationReducer()
+            }
+        )
+    }
 }

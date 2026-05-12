@@ -7,48 +7,59 @@
 
 import SwiftUI
 
+import ComposableArchitecture
+
 /// 채플 탭 화면
 struct ChapelView: View {
     // MARK: - Properties
 
-    private let chapelCard: ChapelCard
-
-    /// 채플 화면 구성
-    /// - Parameter chapelCard: 채플 정보 모델
-    init(chapelCard: ChapelCard) {
-        self.chapelCard = chapelCard
-    }
+    @Bindable var store: StoreOf<ChapelReducer>
 
     // MARK: - Body
 
     var body: some View {
-        VStack(spacing: 0) {
-            headerView
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+            VStack(spacing: 0) {
+                headerView
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 12) {
-                    if chapelCard.status.isActive {
-                        ChapelSeatInfoView(
-                            type: .actionCard,
-                            chapelCard: chapelCard
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 12) {
+                        if store.chapelCard.status.isActive {
+                            Button {
+                                store.send(.seatCardTapped)
+                            } label: {
+                                ChapelSeatInfoView(
+                                    type: .actionCard,
+                                    chapelCard: store.chapelCard
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+
+                        ChapelAttendanceInfoView(
+                            type: .semester,
+                            chapelCard: store.chapelCard,
+                            titleText: TextLiteral.ChapelView.remainingAttendanceTitle
                         )
                     }
-
-                    ChapelAttendanceInfoView(
-                        type: .semester,
-                        chapelCard: chapelCard,
-                        titleText: TextLiteral.ChapelView.remainingAttendanceTitle
-                    )
+                    .padding(.horizontal, 29)
+                    .padding(.vertical, 8)
                 }
-                .padding(.horizontal, 29)
-                .padding(.vertical, 8)
+
+                Spacer(minLength: 0)
+
+                attendanceArea
             }
-
-            Spacer(minLength: 0)
-
-            attendanceArea
+            .background(.white)
+            .toolbar(.hidden, for: .navigationBar)
+        } destination: { store in
+            switch store.case {
+            case .seatLocation(let store):
+                ChapelSeatLocationView(store: store)
+            }
         }
-        .background(.white)
     }
 }
 
@@ -64,7 +75,7 @@ private extension ChapelView {
             Spacer()
 
             Button {
-                // TODO: 채플 안내 화면 연결
+                store.send(.infoButtonTapped)
             } label: {
                 Icon.info
                     .renderingMode(.template)
@@ -81,7 +92,7 @@ private extension ChapelView {
     var attendanceArea: some View {
         VStack(spacing: 8) {
             Button {
-                // TODO: 출석 인증 QR 스캔 연결
+                store.send(.attendanceButtonTapped)
             } label: {
                 HStack(spacing: 8) {
                     Icon.qr
@@ -113,10 +124,16 @@ private extension ChapelView {
 
 #Preview {
     ChapelView(
-        chapelCard: ChapelCard(
-            attendance: 3,
-            seatPosition: "B-12",
-            floorLevel: 1
-        )
+        store: Store(
+            initialState: ChapelReducer.State(
+                chapelCard: ChapelCard(
+                    attendance: 3,
+                    seatPosition: "B-12",
+                    floorLevel: 1
+                )
+            )
+        ) {
+            ChapelReducer()
+        }
     )
 }

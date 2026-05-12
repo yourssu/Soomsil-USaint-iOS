@@ -28,7 +28,7 @@ struct MainTabView: View {
         case .home:
             HomeView(store: store.scope(state: \.homeState, action: \.home))
         case .chapel:
-            ChapelView(chapelCard: store.homeState.chapelCard)
+            ChapelView(store: store.scope(state: \.chapelState, action: \.chapel))
         case .notification:
             placeholderView(TextLiteral.MainTabView.notificationPlaceholder)
         case .my:
@@ -49,7 +49,9 @@ struct MainTabView: View {
         switch store.selectedTab {
         case .home:
             store.homeState.path.isEmpty
-        case .chapel, .notification, .my:
+        case .chapel:
+            store.chapelState.path.isEmpty
+        case .notification, .my:
             true
         }
     }
