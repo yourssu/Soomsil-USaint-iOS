@@ -27,10 +27,12 @@ struct ChapelView: View {
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 12) {
-                    ChapelSeatInfoView(
-                        type: .actionCard,
-                        chapelCard: chapelCard
-                    )
+                    if chapelCard.status.isActive {
+                        ChapelSeatInfoView(
+                            type: .actionCard,
+                            chapelCard: chapelCard
+                        )
+                    }
 
                     ChapelAttendanceInfoView(
                         type: .semester,
