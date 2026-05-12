@@ -177,7 +177,7 @@ struct CurrentSemesterGradesView: View {
 
     CurrentSemesterGradesView(
         store: Store(initialState: state) {
-            CurrentSemesterGradesReducer()
+            Reduce { _, _ in .none }
         }
     )
 }
