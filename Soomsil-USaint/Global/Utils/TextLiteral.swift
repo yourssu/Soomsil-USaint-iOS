@@ -24,6 +24,38 @@ enum TextLiteral {
         }
     }
 
+    // MARK: - SettingView
+
+    enum SettingView {
+        static let title = "설정"
+        static let accountSectionTitle = "계정관리"
+        static let logoutButtonTitle = "로그아웃"
+        static let notificationSectionTitle = "알림"
+        static let gradeNotificationTitle = "성적 알림 받기"
+        static let termsSectionTitle = "약관"
+        static let termsOfServiceTitle = "이용약관"
+        static let privacyPolicyTitle = "개인정보수집 및 허용"
+        static let versionSectionTitle = "버전 정보"
+
+        static func appVersion(_ version: String) -> String {
+            "v.\(version)"
+        }
+    }
+
+    // MARK: - SettingReducer
+
+    enum SettingReducer {
+        static let logoutAlertTitle = "로그아웃 하시겠습니까?"
+        static let logoutAlertConfirmTitle = "로그아웃"
+        static let alertCancelTitle = "취소"
+        static let logoutSuccessToast = "로그아웃 완료"
+        static let pushAuthorizationDeniedToast = "알림권한 거부"
+        static let pushAuthorizationAllowedToast = "알림권한 허용"
+        static let pushAuthorizationAlertTitle = "알림 설정"
+        static let pushAuthorizationAlertConfirmTitle = "설정"
+        static let pushAuthorizationAlertMessage = "알림에 대한 권한 사용을 거부하였습니다. 기능 사용을 원하실 경우 설정 > 앱 > 숨쉴때 유세인트 > 알림 권한 허용을 해주세요."
+    }
+
     // MARK: - GPAGraphView
 
     enum GPAGraphView {
