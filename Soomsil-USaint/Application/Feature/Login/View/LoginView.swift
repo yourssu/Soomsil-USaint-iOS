@@ -6,33 +6,68 @@
 //
 
 import SwiftUI
+import UIKit
 
 import ComposableArchitecture
 import YDS_SwiftUI
 
-private enum Dimension {
-    enum VStack {
-        static let spacing: CGFloat = 8
-    }
-    enum Button {
-        static let minHeight: CGFloat = 48
-    }
-    static let largeSpace: CGFloat = 44
-    static let padding: CGFloat = 16
-}
-
 struct LoginView: View {
     @Bindable var store: StoreOf<LoginReducer>
+    @State private var isPasswordSecured = true
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            LoginLogoView()
+                .padding(.top, 96)
+                .padding(.bottom, 64)
 
-        VStack(spacing: 4) {
-            title
-            LoginForm(id: $store.id, password: $store.password) {
-                store.send(.loginPressed)
+            VStack(alignment: .leading, spacing: 12) {
+                Text("유세인트에\n로그인해주세요")
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundStyle(Color.adaptivePrimaryText)
+                    .lineSpacing(4)
+
+                Text("학사 정보를 한눈에 확인할 수 있어요")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(Color.adaptiveSecondaryText)
             }
+            .padding(.bottom, 76)
+
+            VStack(spacing: 12) {
+                LoginInputRow(
+                    placeholder: "학번",
+                    text: $store.id,
+                    isSecure: false,
+                    isPasswordSecured: .constant(false)
+                )
+
+                LoginInputRow(
+                    placeholder: "비밀번호",
+                    text: $store.password,
+                    isSecure: true,
+                    isPasswordSecured: $isPasswordSecured
+                )
+            }
+            .padding(.bottom, 70)
+
+            Button {
+                store.send(.loginPressed)
+            } label: {
+                Text("로그인")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 70)
+                    .background(.blue600)
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            }
+            .buttonStyle(.plain)
+
             Spacer()
         }
+        .padding(.horizontal, 28)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(Color.adaptiveBackground)
         .background {
             Color.clear.tapToHideKeyboard()
         }
@@ -45,56 +80,88 @@ struct LoginView: View {
         .onAppear {
             store.send(.onAppear)
         }
-
-    }
-
-    struct LoginForm: View {
-        @Binding var id: String
-        @Binding var password: String
-
-        let onLoginPressed: () -> Void
-
-        var body: some View {
-            VStack(alignment: .leading, spacing: Dimension.VStack.spacing) {
-                Text("학번")
-                    .font(YDSFont.body1)
-                    .foregroundStyle(.titleText)
-                YDSSimpleTextField(text: $id)
-
-                Text("유세인트 비밀번호")
-                    .font(YDSFont.body1)
-                    .foregroundStyle(.titleText)
-                SecureTextField(text: $password)
-                    .padding(.bottom, Dimension.largeSpace)
-
-                Button {
-                    onLoginPressed()
-                } label: {
-                    Text("로그인")
-                        .foregroundStyle(.smallText)
-                        .font(YDSFont.button4)
-                        .frame(maxWidth: .infinity, minHeight: Dimension.Button.minHeight)
-                        .background(.vPrimary, in: RoundedRectangle(cornerRadius: 5))
-                }
-                .buttonStyle(.plain)
-
-                HStack {
-                    YDSIcon.warningcircleLine
-                        .renderingMode(.template)
-                    Text("숨쉴때 유세인트 서비스 이용을 위한 유세인트 학번 및 비밀번호는 사용자 기기에만 저장되며, 유어슈는 유세인트 서비스를 통하여 이용자의 정보를 일체 수집ㆍ저장하지 않습니다.")
-                        .font(.caption2)
-                }
-                .foregroundStyle(.vPrimary)
-            }
-            .padding(Dimension.padding)
-        }
     }
 }
 
-private extension LoginView {
-    var title: some View {
-        Text("로그인")
-            .font(YDSFont.subtitle2)
+private struct LoginLogoView: View {
+    var body: some View {
+        Group {
+            if let icon = AppIconLoader.image {
+                Image(uiImage: icon)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .fill(.gray200)
+            }
+        }
+        .frame(width: 96, height: 96)
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
+    }
+}
+
+private struct LoginInputRow: View {
+    let placeholder: String
+    @Binding var text: String
+    let isSecure: Bool
+    @Binding var isPasswordSecured: Bool
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Text(placeholder)
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(Color.adaptiveSecondaryText)
+
+            if isSecure && isPasswordSecured {
+                SecureField("", text: $text)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .multilineTextAlignment(.trailing)
+                    .foregroundStyle(Color.adaptivePrimaryText)
+            } else {
+                TextField("", text: $text)
+                    .textInputAutocapitalization(.never)
+                    .autocorrectionDisabled()
+                    .keyboardType(isSecure ? .default : .numberPad)
+                    .multilineTextAlignment(.trailing)
+                    .foregroundStyle(Color.adaptivePrimaryText)
+            }
+
+            if isSecure {
+                Button {
+                    isPasswordSecured.toggle()
+                } label: {
+                    Image(systemName: isPasswordSecured ? "eye" : "eye.slash")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(Color.adaptiveSecondaryText)
+                        .frame(width: 24, height: 24)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .font(.system(size: 16, weight: .bold))
+        .padding(.horizontal, 24)
+        .frame(height: 68)
+        .background(Color.adaptiveInputSurface)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
+        )
+    }
+}
+
+private enum AppIconLoader {
+    static var image: UIImage? {
+        guard
+            let icons = Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any],
+            let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
+            let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
+            let iconName = iconFiles.last
+        else {
+            return nil
+        }
+        return UIImage(named: iconName)
     }
 }
 

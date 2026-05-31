@@ -11,6 +11,7 @@ extension Color {
     static let adaptiveBackground = adaptive(light: .white, dark: assetColor("gray_950"))
     static let adaptiveSurface = adaptive(light: .white, dark: assetColor("gray_900"))
     static let adaptiveMutedSurface = adaptive(light: assetColor("gray_25"), dark: assetColor("gray_800").withAlphaComponent(0.36))
+    static let adaptiveInputSurface = adaptive(light: .white, dark: assetColor("gray_800").withAlphaComponent(0.52))
     static let adaptiveBorder = adaptive(light: assetColor("slate_100"), dark: assetColor("gray_800").withAlphaComponent(0.45))
     static let adaptivePrimaryText = adaptive(light: assetColor("gray_950"), dark: .white)
     static let adaptiveSecondaryText = adaptive(light: assetColor("gray_500"), dark: assetColor("gray_500"))
