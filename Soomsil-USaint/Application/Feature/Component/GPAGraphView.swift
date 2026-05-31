@@ -55,7 +55,7 @@ private extension GPAGraphView {
             HStack(alignment: .center) {
                 Text(TextLiteral.GPAGraphView.title)
                     .font(.system(size: 15, weight: .bold))
-                    .foregroundStyle(.navy700)
+                    .foregroundStyle(Color.adaptivePrimaryText)
 
                 Spacer()
 
@@ -96,11 +96,11 @@ private extension GPAGraphView {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 20)
-        .background(.white)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
     }
 
@@ -109,7 +109,7 @@ private extension GPAGraphView {
             HStack(alignment: .center) {
                 Text(TextLiteral.GPAGraphView.overallTrendTitle)
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(.gray850)
+                    .foregroundStyle(Color.adaptivePrimaryText)
 
                 Spacer()
 
@@ -127,11 +127,11 @@ private extension GPAGraphView {
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 18)
-        .background(.white)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
     }
 

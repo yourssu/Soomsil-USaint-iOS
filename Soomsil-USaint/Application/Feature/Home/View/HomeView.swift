@@ -55,7 +55,7 @@ struct HomeView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 110)
             }
-            .background(.white)
+            .background(Color.adaptiveBackground)
         } destination: { store in
             switch store.case {
             case .web(let store):
@@ -91,12 +91,12 @@ private extension HomeView {
         VStack(alignment: .leading, spacing: 2) {
             Text(TextLiteral.HomeView.greeting(store.studentInfo.name))
                 .font(.system(size: 20, weight: .bold))
-                .foregroundStyle(.gray850)
+                .foregroundStyle(Color.adaptivePrimaryText)
                 .lineLimit(1)
 
             Text(TextLiteral.HomeView.notificationSummary(count: 0))
                 .font(.system(size: 12, weight: .regular))
-                .foregroundStyle(.gray500)
+                .foregroundStyle(Color.adaptiveSecondaryText)
         }
     }
 }

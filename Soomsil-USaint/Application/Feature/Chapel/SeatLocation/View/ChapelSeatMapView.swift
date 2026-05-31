@@ -97,11 +97,11 @@ struct ZoomableChapelSeatMapView: View {
         .padding(.vertical, 18)
         .padding(.horizontal, 24)
         .frame(maxWidth: .infinity)
-        .background(.gray25)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
         .onTapGesture(count: 2) {
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -159,7 +159,7 @@ struct ChapelSeatMapView: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 58)
-                .background(.gray800)
+                .background(Color.adaptiveMutedSurface)
 
             VStack(spacing: 38) {
                 ForEach(zoneRows.indices, id: \.self) { rowIndex in
@@ -176,7 +176,7 @@ struct ChapelSeatMapView: View {
         }
         .padding(.horizontal, 26)
         .padding(.vertical, 24)
-        .background(.gray25)
+        .background(Color.adaptiveSurface)
     }
 }
 
@@ -216,7 +216,7 @@ private struct ChapelSeatZoneView: View {
         VStack(spacing: 16) {
             Text(zone.id)
                 .font(.system(size: 15, weight: .bold))
-                .foregroundStyle(.gray800)
+                .foregroundStyle(Color.adaptiveSecondaryText)
 
             VStack(spacing: seatGap) {
                 ForEach(zone.rows.indices, id: \.self) { rowIndex in

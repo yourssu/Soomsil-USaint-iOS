@@ -32,7 +32,7 @@ struct CurrentSemesterGradesView: View {
         .padding(.top, 48)
         .padding(.horizontal, 20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .background(.white)
+        .background(Color.adaptiveBackground)
         .onAppear {
             store.send(.onAppear)
         }
@@ -47,28 +47,28 @@ struct CurrentSemesterGradesView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(semesterTitle)
                 .font(.system(size: 22, weight: .bold))
-                .foregroundStyle(.gray950)
+                .foregroundStyle(Color.adaptivePrimaryText)
                 .padding(.bottom, 4)
 
                 Text(semesterTitle)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.gray500)
+                    .foregroundStyle(Color.adaptiveSecondaryText)
                     .padding(.bottom, 20)
 
                 HStack(alignment: .bottom) {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(TextLiteral.CurrentSemesterGradesView.totalGPATitle)
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(.gray500)
+                            .foregroundStyle(Color.adaptiveSecondaryText)
 
                         HStack(alignment: .lastTextBaseline, spacing: 4) {
                             Text(TextLiteral.CurrentSemesterGradesView.averageGPA(lectures.averageGPA))
                                 .font(.system(size: 32, weight: .black))
-                                .foregroundStyle(.gray950)
+                                .foregroundStyle(Color.adaptivePrimaryText)
 
                             Text(TextLiteral.CurrentSemesterGradesView.maxGPA)
                                 .font(.system(size: 16, weight: .medium))
-                                .foregroundStyle(.gray500)
+                                .foregroundStyle(Color.adaptiveSecondaryText)
                         }
                     }
 
@@ -133,11 +133,11 @@ struct CurrentSemesterGradesView: View {
             VStack(alignment: .trailing, spacing: 6) {
                 Text(title)
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.gray500)
+                    .foregroundStyle(Color.adaptiveSecondaryText)
 
                 Text(value)
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.gray950)
+                    .foregroundStyle(Color.adaptivePrimaryText)
             }
         }
     }
@@ -152,11 +152,11 @@ struct CurrentSemesterGradesView: View {
                 VStack(spacing: 8) {
                     Text(TextLiteral.CurrentSemesterGradesView.emptyTitle)
                         .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(.gray950)
+                        .foregroundColor(Color.adaptivePrimaryText)
                     
                     Text(TextLiteral.CurrentSemesterGradesView.emptyDescription)
                         .font(.system(size: 13, weight: .regular))
-                        .foregroundColor(.gray500)
+                        .foregroundColor(Color.adaptiveSecondaryText)
                         .multilineTextAlignment(.center)
                 }
             }

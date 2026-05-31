@@ -15,12 +15,12 @@ struct StudentInfoView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(student.name)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.gray950)
+                    .foregroundStyle(Color.adaptivePrimaryText)
                     .lineLimit(1)
 
                 Text(student.subtitle)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundStyle(.slate600)
+                    .foregroundStyle(Color.adaptiveSecondaryText)
                     .lineLimit(1)
             }
 
@@ -29,22 +29,22 @@ struct StudentInfoView: View {
             if let studentID = student.trimmedStudentID {
                 Text(TextLiteral.StudentInfoView.studentID(studentID))
                     .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(.gray950)
+                    .foregroundStyle(Color.adaptivePrimaryText)
                     .lineLimit(1)
                     .padding(.horizontal, 15)
                     .padding(.vertical, 10)
-                    .background(.gray50)
+                    .background(Color.adaptiveMutedSurface)
                     .clipShape(Capsule())
             }
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 18)
         .frame(maxWidth: .infinity)
-        .background(.white)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
         .contentShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     }

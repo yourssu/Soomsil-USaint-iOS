@@ -90,7 +90,7 @@ struct ChapelAttendanceInfoView: View {
             HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text(title)
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.gray950)
+                    .foregroundStyle(Color.adaptivePrimaryText)
 
                 Spacer()
 
@@ -113,7 +113,7 @@ struct ChapelAttendanceInfoView: View {
             .progressViewStyle(
                 LinearProgressViewStyle(
                     progressColor: .blue500,
-                    trackColor: .slate100,
+                    trackColor: Color.adaptiveMutedSurface,
                     height: 8
                 )
             )
@@ -129,11 +129,11 @@ struct ChapelAttendanceInfoView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 18)
         .frame(maxWidth: .infinity)
-        .background(.white)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
     }
 
@@ -143,7 +143,7 @@ struct ChapelAttendanceInfoView: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(title)
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(.gray950)
+                        .foregroundStyle(Color.adaptivePrimaryText)
 
                     Text(
                         TextLiteral.ChapelAttendanceInfoView.attendanceSummary(
@@ -171,7 +171,7 @@ struct ChapelAttendanceInfoView: View {
             .progressViewStyle(
                 LinearProgressViewStyle(
                     progressColor: .blue500,
-                    trackColor: .slate100,
+                    trackColor: Color.adaptiveMutedSurface,
                     height: 8
                 )
             )
@@ -179,11 +179,11 @@ struct ChapelAttendanceInfoView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 16.5)
         .frame(maxWidth: .infinity)
-        .background(.white)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
     }
 
@@ -192,11 +192,11 @@ struct ChapelAttendanceInfoView: View {
             .font(.system(size: 16, weight: .bold))
             .foregroundStyle(.blue500)
             .frame(maxWidth: .infinity, minHeight: 80)
-            .background(.buttonSurface)
+            .background(Color.adaptiveSurface)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(.slate100, lineWidth: 1)
+                    .stroke(Color.adaptiveBorder, lineWidth: 1)
             )
     }
 }

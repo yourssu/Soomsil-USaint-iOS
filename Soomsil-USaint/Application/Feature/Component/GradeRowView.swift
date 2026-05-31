@@ -59,10 +59,10 @@ private extension GradeRowView {
                 .fill(.orange500)
                 .frame(width: 8, height: 8)
 
-            TitleText(
-                title: title,
-                color: .navy700
-            )
+                TitleText(
+                    title: title,
+                    color: Color.adaptivePrimaryText
+                )
 
             CourseMetadataView(
                 professorName: sanitizedProfessorName,
@@ -81,11 +81,11 @@ private extension GradeRowView {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 16)
-        .background(.white)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
     }
 
@@ -101,7 +101,7 @@ private extension GradeRowView {
             VStack(alignment: .leading, spacing: 4) {
                 TitleText(
                     title: title,
-                    color: .gray950
+                    color: Color.adaptivePrimaryText
                 )
 
                 CourseMetadataView(
@@ -122,7 +122,7 @@ private extension GradeRowView {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(.gray150)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
