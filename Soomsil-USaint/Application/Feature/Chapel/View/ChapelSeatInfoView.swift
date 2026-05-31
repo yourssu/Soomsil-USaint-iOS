@@ -73,7 +73,7 @@ struct ChapelSeatInfoView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(TextLiteral.ChapelSeatInfoView.title)
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.slate600)
+                .foregroundStyle(Color.adaptiveSecondaryText)
 
             Text(seatPosition)
                 .font(.system(size: 32, weight: .black))
@@ -81,16 +81,16 @@ struct ChapelSeatInfoView: View {
 
             Text(seatDescription)
                 .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.slate600)
+                .foregroundStyle(Color.adaptiveSecondaryText)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.white)
+        .background(Color.adaptiveSurface)
         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
     }
 

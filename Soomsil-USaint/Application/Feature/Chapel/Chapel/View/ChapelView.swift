@@ -50,7 +50,7 @@ struct ChapelView: View {
 
                 Spacer(minLength: 0)
             }
-            .background(.white)
+            .background(Color.adaptiveBackground)
             .toolbar(.hidden, for: .navigationBar)
         } destination: { store in
             switch store.case {
@@ -68,7 +68,7 @@ private extension ChapelView {
         HStack(alignment: .center) {
             Text(TextLiteral.ChapelView.title)
                 .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(.gray950)
+                .foregroundStyle(Color.adaptivePrimaryText)
 
             Spacer()
 

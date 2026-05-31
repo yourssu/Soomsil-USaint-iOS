@@ -28,18 +28,19 @@ enum TextLiteral {
 
     enum SettingView {
         static let title = "설정"
-        static let accountSectionTitle = "계정관리"
+        static let accountSectionTitle = "계정"
         static let logoutButtonTitle = "로그아웃"
         static let notificationSectionTitle = "알림"
         static let gradeNotificationTitle = "성적 알림 받기"
+        static let campusNotificationTitle = "캠퍼스 알림 받기"
         static let notificationSettingsTitle = "알림 설정"
         static let termsSectionTitle = "약관"
         static let termsOfServiceTitle = "이용약관"
-        static let privacyPolicyTitle = "개인정보수집 및 허용"
-        static let versionSectionTitle = "버전 정보"
+        static let privacyPolicyTitle = "개인정보 처리 방침"
+        static let versionSectionTitle = "버전"
 
         static func appVersion(_ version: String) -> String {
-            "v.\(version)"
+            "v\(version)"
         }
     }
 

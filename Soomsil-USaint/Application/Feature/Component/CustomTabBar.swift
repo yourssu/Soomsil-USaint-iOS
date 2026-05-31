@@ -42,11 +42,11 @@ struct CustomTabBar: View {
             }
         }
         .padding(6)
-        .background(Color.white)
+        .background(Color.adaptiveSurface)
         .clipShape(Capsule())
         .overlay(
             Capsule()
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
         .padding(.horizontal, 20)
         .padding(.top, 10)
@@ -63,7 +63,7 @@ struct CustomTabBar: View {
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: 18, height: 18)
-                    .foregroundStyle(isSelected ? .white : .gray500)
+                    .foregroundStyle(isSelected ? .white : Color.adaptiveSecondaryText)
                 Text(tab.title)
                     .font(
                         .system(
@@ -71,7 +71,7 @@ struct CustomTabBar: View {
                             weight: isSelected ? .semibold : .medium
                         )
                     )
-                    .foregroundStyle(isSelected ? .white : .gray500)
+                    .foregroundStyle(isSelected ? .white : Color.adaptiveSecondaryText)
             }
             .frame(maxWidth: .infinity)
             .padding(.horizontal, 12)

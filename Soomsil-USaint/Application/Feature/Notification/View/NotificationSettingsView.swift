@@ -69,7 +69,7 @@ struct NotificationSettingsView: View {
                 .padding(.bottom, 44)
             }
         }
-        .background(.white)
+        .background(Color.adaptiveBackground)
     }
 
     private var header: some View {
@@ -77,14 +77,14 @@ struct NotificationSettingsView: View {
             Button(action: close) {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(.gray950)
+                    .foregroundStyle(Color.adaptivePrimaryText)
                     .frame(width: 28, height: 44)
             }
             .buttonStyle(.plain)
 
             Text(TextLiteral.NotificationSettingsView.title)
                 .font(.system(size: 18, weight: .bold))
-                .foregroundStyle(.gray950)
+                .foregroundStyle(Color.adaptivePrimaryText)
 
             Spacer()
         }
@@ -93,7 +93,7 @@ struct NotificationSettingsView: View {
         .padding(.bottom, 14)
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(.slate100)
+                .fill(Color.adaptiveBorder)
                 .frame(height: 1)
         }
     }
@@ -142,14 +142,14 @@ struct NotificationSettingsView: View {
 
     private var divider: some View {
         Rectangle()
-            .fill(.slate100)
+            .fill(Color.adaptiveBorder)
             .frame(height: 1)
     }
 
     private func sectionTitle(_ title: String) -> some View {
         Text(title)
             .font(.system(size: 14, weight: .semibold))
-            .foregroundStyle(.slate400)
+            .foregroundStyle(Color.adaptiveSecondaryText)
             .padding(.bottom, 16)
     }
 
@@ -164,7 +164,7 @@ struct NotificationSettingsView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
-                    .background(isNotificationTypeEnabled ? .blue600 : .slate300)
+                    .background(isNotificationTypeEnabled ? .blue600 : Color.adaptiveMutedSurface)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
             }
             .buttonStyle(.plain)
@@ -172,7 +172,7 @@ struct NotificationSettingsView: View {
 
             Text(TextLiteral.NotificationSettingsView.debugSendTestNotificationSubtitle)
                 .font(.system(size: 13, weight: .medium))
-                .foregroundStyle(.slate400)
+                .foregroundStyle(Color.adaptiveSecondaryText)
         }
         .padding(.top, 32)
     }
@@ -191,11 +191,11 @@ private struct NotificationSettingRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 17, weight: .bold))
-                    .foregroundStyle(isEnabled ? .gray950 : .slate400)
+                    .foregroundStyle(isEnabled ? Color.adaptivePrimaryText : Color.adaptiveSecondaryText)
 
                 Text(subtitle)
                     .font(.system(size: 13, weight: .medium))
-                    .foregroundStyle(.slate400)
+                    .foregroundStyle(Color.adaptiveSecondaryText)
             }
 
             Spacer()

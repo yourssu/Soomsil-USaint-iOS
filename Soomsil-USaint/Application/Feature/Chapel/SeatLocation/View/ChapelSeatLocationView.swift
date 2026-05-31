@@ -39,7 +39,7 @@ struct ChapelSeatLocationView: View {
                 .padding(.top, 16)
             }
         }
-        .background(.white)
+        .background(Color.adaptiveBackground)
         .navigationTitle(TextLiteral.ChapelSeatLocationView.title)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
@@ -52,7 +52,7 @@ struct ChapelSeatLocationView: View {
                         .renderingMode(.template)
                         .resizable()
                         .frame(width: 24, height: 24)
-                        .foregroundStyle(.navy900)
+                        .foregroundStyle(Color.adaptivePrimaryText)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -61,7 +61,7 @@ struct ChapelSeatLocationView: View {
                 } label: {
                     Icon.info
                         .renderingMode(.template)
-                        .foregroundStyle(.navy900)
+                        .foregroundStyle(Color.adaptivePrimaryText)
                         .frame(width: 22, height: 22)
                 }
                 .accessibilityLabel(TextLiteral.ChapelSeatLocationView.title)

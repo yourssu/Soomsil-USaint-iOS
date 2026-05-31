@@ -78,7 +78,7 @@ struct LoginReducer {
                         return (studentInfo, report, chapel)
                     }))
                 }
-            case .loginResponse(.success(let (studentInfo, _, _))):
+            case .loginResponse(.success(let (_, _, _))):
                 state.isLoading = false
                 YDSToast("로그인 성공하였습니다.", haptic: .success)
                 return .none

@@ -54,10 +54,10 @@ private extension SemesterTabView {
         } label: {
             Text(tab.id)
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(isSelected ? .white : .slate400)
+                .foregroundStyle(isSelected ? .white : Color.adaptiveSecondaryText)
                 .padding(.horizontal, 17)
                 .padding(.vertical, 8)
-                .background(isSelected ? .gray950 : .gray100)
+                .background(isSelected ? Color.adaptiveSelectedPill : Color.adaptiveMutedSurface)
                 .clipShape(Capsule())
         }
         .buttonStyle(.plain)

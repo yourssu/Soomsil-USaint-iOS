@@ -51,7 +51,7 @@ struct SemesterDetailView: View {
                 }
             }
         }
-        .background(.white)
+        .background(Color.adaptiveBackground)
         .overlay(
             store.isLoading ? CircleLoadingView() : nil
         )
@@ -68,7 +68,7 @@ struct SemesterDetailView: View {
                         Text(TextLiteral.SemesterDetailView.title)
                             .font(.custom("AppleSDGothicNeo-Bold", size: 20))
                     }
-                    .foregroundStyle(.titleText)
+                    .foregroundStyle(Color.adaptivePrimaryText)
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -79,7 +79,7 @@ struct SemesterDetailView: View {
                 } label: {
                     YDSIcon.refreshLine
                         .renderingMode(.template)
-                        .foregroundStyle(.grayText)
+                        .foregroundStyle(Color.adaptiveSecondaryText)
                 }
             }
         }
