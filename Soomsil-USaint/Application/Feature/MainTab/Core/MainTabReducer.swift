@@ -31,6 +31,7 @@ struct MainTabReducer {
         case home(HomeReducer.Action)
         case chapel(ChapelReducer.Action)
         case setting(SettingReducer.Action)
+        case notificationOpened(USaintNotificationRoute)
     }
 
     var body: some Reducer<State, Action> {
@@ -44,6 +45,12 @@ struct MainTabReducer {
                 return .none
             case .home(.getChapelDataResponse(.success(let chapelCard))):
                 state.chapelState.updateChapelCard(chapelCard)
+                return .none
+            case .notificationOpened(.chapel):
+                state.selectedTab = .chapel
+                return .none
+            case .notificationOpened(.notification):
+                state.selectedTab = .notification
                 return .none
             default:
                 return .none

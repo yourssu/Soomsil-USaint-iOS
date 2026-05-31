@@ -35,6 +35,7 @@ public enum Icon {
     public static var sofa: Image { .load(name: "ic_sofa") }
     public static var bell: Image { .load(name: "ic_bell") }
     public static var person: Image { .load(name: "ic_person") }
+    public static var alarmSetting: Image { .load(name: "ic_alarm_setting") }
     public static var info: Image { .load(name: "ic_info") }
     public static var qr: Image { .load(name: "ic_qr") }
 
@@ -48,4 +49,3 @@ extension Image {
         return Image(name)
     }
 }
-
