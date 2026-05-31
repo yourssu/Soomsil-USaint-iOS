@@ -52,16 +52,22 @@ struct NotificationView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     summary
-                    featuredNotice
+                    if unreadCount > 0 {
+                        featuredNotice
+                    }
                     categoryTabs
                     retentionBanner
-                    notificationList
+                    if unreadCount > 0 {
+                        notificationList
+                    } else {
+                        emptyState
+                    }
                 }
                 .padding(.bottom, 24)
             }
-            .background(.white)
+            .background(Color.adaptiveBackground)
         }
-        .background(.white)
+        .background(Color.adaptiveBackground)
         .fullScreenCover(isPresented: $showsSettings) {
             NotificationSettingsContainerView(
                 close: {
@@ -75,7 +81,7 @@ struct NotificationView: View {
         HStack {
             Text(TextLiteral.NotificationView.title)
                 .font(.system(size: 22, weight: .bold))
-                .foregroundStyle(.gray950)
+                .foregroundStyle(Color.adaptivePrimaryText)
 
             Spacer()
 
@@ -100,16 +106,16 @@ struct NotificationView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(TextLiteral.NotificationView.unreadTitle)
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(.slate300)
+                        .foregroundStyle(Color.adaptiveSecondaryText)
 
                     HStack(alignment: .lastTextBaseline, spacing: 4) {
                         Text("\(unreadCount)")
                             .font(.system(size: 36, weight: .heavy))
-                            .foregroundStyle(.gray950)
+                            .foregroundStyle(Color.adaptivePrimaryText)
 
                         Text(TextLiteral.NotificationView.countUnit)
                             .font(.system(size: 20, weight: .bold))
-                            .foregroundStyle(.gray950)
+                            .foregroundStyle(Color.adaptivePrimaryText)
                     }
                 }
 
@@ -138,7 +144,7 @@ struct NotificationView: View {
             if unreadCount > 0 {
                 Label(TextLiteral.NotificationView.unreadDescription, systemImage: "info.circle")
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.slate300)
+                    .foregroundStyle(Color.adaptiveSecondaryText)
             }
         }
         .padding(.horizontal, 20)
@@ -151,26 +157,26 @@ struct NotificationView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text(TextLiteral.NotificationView.featuredTitle)
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.gray950)
+                    .foregroundStyle(Color.adaptivePrimaryText)
 
                 Text(TextLiteral.NotificationView.featuredSubtitle)
                     .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(.slate300)
+                    .foregroundStyle(Color.adaptiveSecondaryText)
             }
 
             Spacer()
 
             RoundedRectangle(cornerRadius: 4)
-                .fill(.gray150)
+                .fill(Color.adaptiveSecondaryText)
                 .frame(width: 16, height: 16)
                 .accessibilityHidden(true)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .background(.white)
+        .background(Color.adaptiveSurface)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(.slate100, lineWidth: 1)
+                .stroke(Color.adaptiveBorder, lineWidth: 1)
         )
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .padding(.horizontal, 20)
@@ -186,10 +192,10 @@ struct NotificationView: View {
                     VStack(spacing: 8) {
                         Text(category.title)
                             .font(.system(size: 14, weight: selectedCategory == category ? .semibold : .medium))
-                            .foregroundStyle(selectedCategory == category ? .gray950 : .slate300)
+                            .foregroundStyle(selectedCategory == category ? Color.adaptivePrimaryText : Color.adaptiveSecondaryText)
 
                         Capsule()
-                            .fill(selectedCategory == category ? .gray950 : .white)
+                            .fill(selectedCategory == category ? Color.adaptivePrimaryText : Color.clear)
                             .frame(width: selectedCategory == category ? 32 : 24, height: 2)
                     }
                     .padding(.vertical, 12)
@@ -202,12 +208,12 @@ struct NotificationView: View {
         .padding(.horizontal, 20)
         .overlay(alignment: .top) {
             Rectangle()
-                .fill(.slate100)
+                .fill(Color.adaptiveBorder)
                 .frame(height: 1)
         }
         .overlay(alignment: .bottom) {
             Rectangle()
-                .fill(.slate100)
+                .fill(Color.adaptiveBorder)
                 .frame(height: 1)
         }
     }
@@ -215,11 +221,11 @@ struct NotificationView: View {
     private var retentionBanner: some View {
         Label(TextLiteral.NotificationView.retentionNotice, systemImage: "info.circle")
             .font(.system(size: 12, weight: .medium))
-            .foregroundStyle(.slate500)
+            .foregroundStyle(Color.adaptiveSecondaryText)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .background(.gray25)
+            .background(Color.adaptiveSurface)
     }
 
     private var notificationList: some View {
@@ -234,6 +240,49 @@ struct NotificationView: View {
 
 }
 
+private extension NotificationView {
+    var emptyState: some View {
+        VStack(spacing: 18) {
+            ZStack {
+                Circle()
+                    .fill(Color.adaptiveMutedSurface)
+                    .frame(width: 76, height: 76)
+
+                RoundedRectangle(cornerRadius: 4)
+                    .fill(.gray200)
+                    .frame(width: 32, height: 32)
+            }
+
+            VStack(spacing: 10) {
+                Text("아직 받은 알림이 없어요")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(Color.adaptivePrimaryText)
+
+                Text("새로운 학사 소식이 도착하면\n여기서 바로 알려드릴게요")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(Color.adaptiveSecondaryText)
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+            }
+
+            Button {
+                showsSettings = true
+            } label: {
+                Text("알림 받기 설정하기")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Color.adaptivePrimaryText)
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 12)
+                    .background(Color.adaptiveMutedSurface)
+                    .clipShape(Capsule())
+            }
+            .buttonStyle(.plain)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 128)
+    }
+}
+
 private struct NotificationSectionView: View {
     let section: NotificationSection
 
@@ -242,11 +291,11 @@ private struct NotificationSectionView: View {
             HStack(spacing: 0) {
                 Text(section.title)
                     .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.slate300)
+                    .foregroundStyle(Color.adaptiveSecondaryText)
 
                 Text("  ·  \(section.notifications.count)건")
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.gray200)
+                    .foregroundStyle(Color.adaptiveTertiaryText)
 
                 Spacer()
             }
@@ -258,7 +307,7 @@ private struct NotificationSectionView: View {
 
                 if index < section.notifications.count - 1 {
                     Divider()
-                        .foregroundStyle(.slate100)
+                        .foregroundStyle(Color.adaptiveBorder)
                 }
             }
         }
@@ -273,7 +322,7 @@ private struct NotificationRowView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text(notification.title)
                     .font(.system(size: 14, weight: notification.isRead ? .medium : .semibold))
-                    .foregroundStyle(notification.isRead ? .slate500 : .gray950)
+                    .foregroundStyle(notification.isRead ? Color.adaptiveTertiaryText : Color.adaptivePrimaryText)
                     .lineLimit(1)
 
                 if let subtitle = notification.subtitle {
@@ -282,19 +331,19 @@ private struct NotificationRowView: View {
 
                         if let time = notification.time {
                             Circle()
-                                .fill(.slate300)
+                                .fill(Color.adaptiveSecondaryText)
                                 .frame(width: 3, height: 3)
 
                             Text(time)
                         }
                     }
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(notification.isRead ? .slate300 : .slate500)
+                    .foregroundStyle(notification.isRead ? Color.adaptiveTertiaryText : Color.adaptiveSecondaryText)
                     .lineLimit(1)
                 } else if let time = notification.time {
                     Text(time)
                         .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(.slate300)
+                        .foregroundStyle(Color.adaptiveTertiaryText)
                 }
             }
 
