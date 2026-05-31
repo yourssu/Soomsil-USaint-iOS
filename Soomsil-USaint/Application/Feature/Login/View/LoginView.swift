@@ -18,8 +18,8 @@ struct LoginView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             LoginLogoView()
-                .padding(.top, 96)
-                .padding(.bottom, 64)
+                .padding(.top, 32)
+                .padding(.bottom, 44)
 
             VStack(alignment: .leading, spacing: 12) {
                 Text("유세인트에\n로그인해주세요")
@@ -31,7 +31,7 @@ struct LoginView: View {
                     .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(Color.adaptiveSecondaryText)
             }
-            .padding(.bottom, 76)
+            .padding(.bottom, 78)
 
             VStack(spacing: 12) {
                 LoginInputRow(
@@ -48,7 +48,7 @@ struct LoginView: View {
                     isPasswordSecured: $isPasswordSecured
                 )
             }
-            .padding(.bottom, 70)
+            .padding(.bottom, 68)
 
             Button {
                 store.send(.loginPressed)
@@ -57,7 +57,7 @@ struct LoginView: View {
                     .font(.system(size: 16, weight: .bold))
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 70)
+                    .frame(height: 58)
                     .background(.blue600)
                     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
@@ -141,7 +141,7 @@ private struct LoginInputRow: View {
         }
         .font(.system(size: 16, weight: .bold))
         .padding(.horizontal, 24)
-        .frame(height: 68)
+        .frame(height: 58)
         .background(Color.adaptiveInputSurface)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
