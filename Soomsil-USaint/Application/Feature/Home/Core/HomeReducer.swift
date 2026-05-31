@@ -8,7 +8,6 @@
 import Foundation
 
 import ComposableArchitecture
-import UIKit
 
 @Reducer
 struct HomeReducer {
@@ -40,6 +39,7 @@ struct HomeReducer {
         case path(StackActionOf<Path>)
         case onAppear
         case checkPushAuthorizationResponse(Result<Bool, Error>)
+        case notificationPermissionResponse(Result<Bool, Error>)
         case semesterDetailPressed
 
         case currentSemesterGradesPressed
@@ -85,14 +85,15 @@ struct HomeReducer {
                         await send(.getGradeDataResponse(.failure(error)))
                     }
 
-                    // 알림 권한 요청
-                    await send(.checkPushAuthorizationResponse(Result {
-                        if (isFirst) {
-                            return try await localNotificationClient.requestPushAuthorization()
-                        } else {
-                            return await localNotificationClient.getPushAuthorizationStatus()
-                        }
-                    }))
+                    if isFirst {
+                        await send(.notificationPermissionResponse(Result {
+                            try await localNotificationClient.requestPushAuthorization()
+                        }))
+                    } else {
+                        await send(.checkPushAuthorizationResponse(Result {
+                            await localNotificationClient.getPushAuthorizationStatus()
+                        }))
+                    }
 
                     // 서버에서 최신 값 다시 fetch
                     await send(.fetchGradeDataResponse(Result {
@@ -122,6 +123,13 @@ struct HomeReducer {
                 return .none
             case .checkPushAuthorizationResponse(.failure(let error)):
                 debugPrint("Home Reducer: CheckPushAuthorization Error - \(error)")
+                return .none
+            case .notificationPermissionResponse(.success(let granted)):
+                state.$permission.withLock { $0 = granted }
+                return .none
+            case .notificationPermissionResponse(.failure(let error)):
+                debugPrint("Home Reducer: RequestPushAuthorization Error - \(error)")
+                state.$permission.withLock { $0 = false }
                 return .none
             case .semesterDetailPressed:
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))

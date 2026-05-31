@@ -29,6 +29,7 @@ struct AppReducer {
         case splash(SplashReducer.Action)
         case login(LoginReducer.Action)
         case mainTab(MainTabReducer.Action)
+        case notificationOpened(USaintNotificationRoute)
     }
     
     @Dependency(\.gradeClient) var gradeClient
@@ -44,16 +45,21 @@ struct AppReducer {
                 }
             case .splash(.initResponse(.success(let (studentInfo, totalReportCard, chapelCard)))):
                 state = .loggedIn(MainTabReducer.State(studentInfo: studentInfo, totalReportCard: totalReportCard, chapelCard: chapelCard))
-                return .none
+                return routePendingNotificationIfNeeded()
             case .splash(.initResponse(.failure)):
                 state = .loggedOut(LoginReducer.State())
                 return .none
             case .login(.loginResponse(.success(let (info, report, chapel)))):
                 state = .loggedIn(MainTabReducer.State(studentInfo: info, totalReportCard: report, chapelCard: chapel))
-                return .none
+                return routePendingNotificationIfNeeded()
             case .mainTab(.setting(.logoutCompleted)):
                 state = .initial(SplashReducer.State())
                 return .none
+            case .notificationOpened(let route):
+                guard case .loggedIn = state else {
+                    return .none
+                }
+                return .send(.mainTab(.notificationOpened(route)))
             default:
                 return .none
             }
@@ -122,5 +128,16 @@ struct AppReducer {
                 newLectures: grades.toLectureDetails()
             )
         }
+    }
+
+    private func routePendingNotificationIfNeeded() -> Effect<Action> {
+        guard let routeValue = UserDefaults.standard.string(forKey: NotificationStorageKey.pendingRoute),
+              let route = USaintNotificationRoute(rawValue: routeValue)
+        else {
+            return .none
+        }
+
+        UserDefaults.standard.removeObject(forKey: NotificationStorageKey.pendingRoute)
+        return .send(.mainTab(.notificationOpened(route)))
     }
 }
