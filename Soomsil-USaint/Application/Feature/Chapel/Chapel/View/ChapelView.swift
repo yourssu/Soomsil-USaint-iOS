@@ -49,8 +49,6 @@ struct ChapelView: View {
                 }
 
                 Spacer(minLength: 0)
-
-                attendanceArea
             }
             .background(.white)
             .toolbar(.hidden, for: .navigationBar)
@@ -89,35 +87,6 @@ private extension ChapelView {
         .padding(.vertical, 12)
     }
 
-    var attendanceArea: some View {
-        VStack(spacing: 8) {
-            Button {
-                store.send(.attendanceButtonTapped)
-            } label: {
-                HStack(spacing: 8) {
-                    Icon.qr
-                        .renderingMode(.template)
-                        .foregroundStyle(.white)
-                        .frame(width: 18, height: 18)
-
-                    Text(TextLiteral.ChapelView.attendanceButtonTitle)
-                        .font(.system(size: 16, weight: .bold))
-                }
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 18)
-                .background(.gray950)
-                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            }
-            .buttonStyle(.plain)
-
-            Text(TextLiteral.ChapelView.attendanceGuide)
-                .font(.system(size: 11, weight: .medium))
-                .foregroundStyle(.gray500)
-        }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 32)
-    }
 }
 
 // MARK: - Preview
