@@ -11,15 +11,26 @@ struct MainTabView: View {
     @Bindable var store: StoreOf<MainTabReducer>
 
     var body: some View {
-        tabContent
-            .safeAreaInset(edge: .bottom) {
-                if showsTabBar {
-                    CustomTabBar(selectedTab: Binding(
-                        get: { store.selectedTab },
-                        set: { store.send(.tabSelected($0)) }
-                    ))
+        ZStack {
+            tabContent
+                .safeAreaInset(edge: .bottom) {
+                    if showsTabBar {
+                        CustomTabBar(selectedTab: Binding(
+                            get: { store.selectedTab },
+                            set: { store.send(.tabSelected($0)) }
+                        ))
+                    }
                 }
+
+            if store.selectedTab == .my && store.settingState.showsLogoutDialog {
+                LogoutDialogView(
+                    cancel: { store.send(.setting(.logoutCancelTapped)) },
+                    confirm: { store.send(.setting(.logoutConfirmed)) }
+                )
+                .transition(.opacity)
             }
+        }
+        .animation(.easeInOut(duration: 0.18), value: store.settingState.showsLogoutDialog)
     }
 
     @ViewBuilder
@@ -30,7 +41,7 @@ struct MainTabView: View {
         case .chapel:
             ChapelView(store: store.scope(state: \.chapelState, action: \.chapel))
         case .notification:
-            placeholderView(TextLiteral.MainTabView.notificationPlaceholder)
+            NotificationView()
         case .my:
             SettingView(
                 store: store.scope(state: \.settingState, action: \.setting)

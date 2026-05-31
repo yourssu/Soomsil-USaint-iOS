@@ -18,6 +18,7 @@ struct SettingReducer {
         @Presents var alert: AlertState<Action.Alert>?
 
         var appVersion: String = "-"
+        var showsLogoutDialog = false
     }
 
     enum Action: BindableAction {
@@ -25,9 +26,11 @@ struct SettingReducer {
         case onAppear
         case backButtonTapped
         case logoutButtonTapped
+        case logoutCancelTapped
         case logoutConfirmed
         case logoutCompleted
         case togglePushAuthorization(Bool)
+        case syncPushAuthorizationResponse(Result<Bool, Error>)
         case pushAuthorizationResponse(Result<Bool, Error>)
         case requestPushAuthorizationResponse(Result<Bool, Error>)
         case termsOfServiceButtonTapped
@@ -60,23 +63,15 @@ struct SettingReducer {
                     await dismiss()
                 }
             case .logoutButtonTapped:
-                state.alert = AlertState {
-                    TextState(TextLiteral.SettingReducer.logoutAlertTitle)
-                } actions: {
-                    ButtonState(
-                        role: .destructive,
-                        action: .confirmLogoutTapped) {
-                            TextState(TextLiteral.SettingReducer.logoutAlertConfirmTitle)
-                        }
-                    ButtonState(
-                        role: .cancel) {
-                            TextState(TextLiteral.SettingReducer.alertCancelTitle)
-                        }
-                }
+                state.showsLogoutDialog = true
+                return .none
+            case .logoutCancelTapped:
+                state.showsLogoutDialog = false
                 return .none
             case .alert(.presented(.confirmLogoutTapped)):
                 return .send(.logoutConfirmed)
             case .logoutConfirmed:
+                state.showsLogoutDialog = false
                 return .run { send in
                     try await gradeClient.deleteTotalReportCard()
                     try await gradeClient.deleteAllSemesterGrades()
@@ -96,6 +91,12 @@ struct SettingReducer {
             case .togglePushAuthorization(false):
                 state.$permission.withLock { $0 = false }
                 YDSToast(TextLiteral.SettingReducer.pushAuthorizationDeniedToast, haptic: .success)
+                return .none
+            case .syncPushAuthorizationResponse(.success(let granted)):
+                state.$permission.withLock { $0 = granted }
+                return .none
+            case .syncPushAuthorizationResponse(.failure(let error)):
+                debugPrint("Setting Reducer: SyncPushAuthorization Error - \(error)")
                 return .none
             case .pushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }

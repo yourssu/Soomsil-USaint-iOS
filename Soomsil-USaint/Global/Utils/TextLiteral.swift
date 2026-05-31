@@ -32,6 +32,7 @@ enum TextLiteral {
         static let logoutButtonTitle = "로그아웃"
         static let notificationSectionTitle = "알림"
         static let gradeNotificationTitle = "성적 알림 받기"
+        static let notificationSettingsTitle = "알림 설정"
         static let termsSectionTitle = "약관"
         static let termsOfServiceTitle = "이용약관"
         static let privacyPolicyTitle = "개인정보수집 및 허용"
@@ -45,7 +46,8 @@ enum TextLiteral {
     // MARK: - SettingReducer
 
     enum SettingReducer {
-        static let logoutAlertTitle = "로그아웃 하시겠습니까?"
+        static let logoutAlertTitle = "정말 로그아웃할까요?"
+        static let logoutAlertMessage = "다시 로그인하려면\n학번을 입력해야 해요"
         static let logoutAlertConfirmTitle = "로그아웃"
         static let alertCancelTitle = "취소"
         static let logoutSuccessToast = "로그아웃 완료"
@@ -284,6 +286,47 @@ enum TextLiteral {
     enum MainTabView {
         static let chapelPlaceholder = "채플 화면"
         static let notificationPlaceholder = "알림 화면"
+    }
+
+    // MARK: - NotificationView
+
+    enum NotificationView {
+        static let title = "알림"
+        static let unreadTitle = "읽지 않은 알림"
+        static let countUnit = "건"
+        static let markAllReadButtonTitle = "모두 읽음"
+        static let unreadDescription = "확인할 알림이 많이 쌓였어요"
+        static let featuredTitle = "이번 학기 수강신청 안내"
+        static let featuredSubtitle = "지금 확인해야 하는 안내가 있어요"
+        static let allTabTitle = "전체"
+        static let academicTabTitle = "학사"
+        static let classTabTitle = "수업"
+        static let retentionNotice = "중요 알림은 14일 동안 보관돼요"
+    }
+
+    // MARK: - NotificationSettingsView
+
+    enum NotificationSettingsView {
+        static let title = "알림 설정"
+        static let receiveSectionTitle = "알림 받기"
+        static let pushNotificationTitle = "푸시 알림"
+        static let pushNotificationSubtitle = "알림으로 소식 받기"
+        static let pushNotificationDeniedSubtitle = "iPhone 설정에서 알림을 켜주세요"
+        static let typeSectionTitle = "알림 종류"
+        static let courseRegistrationTitle = "수강신청"
+        static let courseRegistrationSubtitle = "수강신청 일정 알림"
+        static let assignmentDeadlineTitle = "과제 마감"
+        static let assignmentDeadlineSubtitle = "마감 24시간 전 알림"
+        static let gradeAnnouncementTitle = "성적 발표"
+        static let gradeAnnouncementSubtitle = "성적 공개 즉시 알림"
+        static let chapelTitle = "채플 안내"
+        static let chapelSubtitle = "채플 일정 알림"
+        static let marketingSectionTitle = "마케팅"
+        static let marketingNotificationTitle = "마케팅 알림"
+        static let marketingNotificationSubtitle = "이벤트 · 혜택 알림"
+        static let debugSectionTitle = "DEBUG"
+        static let debugSendTestNotificationTitle = "테스트 알림 보내기"
+        static let debugSendTestNotificationSubtitle = "현재 기기에만 2초 뒤 테스트 알림이 예약돼요"
     }
 
     // MARK: - StudentInfoView
