@@ -12,15 +12,15 @@ import YDS_SwiftUI
 
 struct SettingView: View {
     @Bindable var store: StoreOf<SettingReducer>
-    @State private var showsNotificationSettings = false
     
     var body: some View {
         VStack(spacing: 0) {
             Text(TextLiteral.SettingView.title)
                 .font(.system(size: 24, weight: .bold))
-                .foregroundStyle(.gray950)
+                .foregroundStyle(Color.adaptivePrimaryText)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 6.5)
+                .padding(.top, 52)
+                .padding(.bottom, 8)
 
             SettingList(
                 appVersion: store.appVersion
@@ -28,8 +28,6 @@ struct SettingView: View {
                 switch tappedItem {
                 case .logout:
                     store.send(.logoutButtonTapped)
-                case .notificationSettings:
-                    showsNotificationSettings = true
                 case .termsOfService:
                     store.send(.termsOfServiceButtonTapped)
                 case .privacyPolicy:
@@ -41,45 +39,46 @@ struct SettingView: View {
         .alert(
             $store.scope(state: \.alert, action: \.alert)
         )
-        .fullScreenCover(isPresented: $showsNotificationSettings) {
-            NotificationSettingsContainerView {
-                showsNotificationSettings = false
-            }
-        }
         .onAppear {
             store.send(.onAppear)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .background(Color.adaptiveBackground)
     }
     
     struct SettingList: View {
         let appVersion: String
         let listItemTapped: (listItem) -> Void
+        @AppStorage("gradeAnnouncementNotificationEnabled") private var isGradeNotificationEnabled = true
+        @AppStorage("chapelNotificationEnabled") private var isCampusNotificationEnabled = true
         
         var body: some View {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 0) {
                 ListRowView(
                     title: TextLiteral.SettingView.accountSectionTitle,
                     items: [
                         RowView(text: TextLiteral.SettingView.logoutButtonTitle,
-                                rightItem: .none,
+                                rightItem: .chevron,
                                 action: {
                                     listItemTapped(.logout)
                                 }
                                )
                     ]
                 )
-                
-                Divider()
-                
+
                 ListRowView(
                     title: TextLiteral.SettingView.notificationSectionTitle,
                     items: [
-                        RowView(text: TextLiteral.SettingView.notificationSettingsTitle,
-                                rightItem: .none,
-                                action: {
-                                    listItemTapped(.notificationSettings)
-                                }
-                               )
+                        RowView(
+                            text: TextLiteral.SettingView.gradeNotificationTitle,
+                            rightItem: .toggle(isPushAuthorizationEnabled: $isGradeNotificationEnabled),
+                            action: {}
+                        ),
+                        RowView(
+                            text: TextLiteral.SettingView.campusNotificationTitle,
+                            rightItem: .toggle(isPushAuthorizationEnabled: $isCampusNotificationEnabled),
+                            action: {}
+                        )
                     ])
                 
                 ListRowView(
@@ -87,29 +86,27 @@ struct SettingView: View {
                     items: [
                         RowView(
                             text: TextLiteral.SettingView.termsOfServiceTitle,
-                            rightItem: .none,
+                            rightItem: .chevron,
                             action: {
                                 listItemTapped(.termsOfService)
                             }
                         ),
                         RowView(
                             text: TextLiteral.SettingView.privacyPolicyTitle,
-                            rightItem: .none,
+                            rightItem: .chevron,
                             action: {
                                 listItemTapped(.privacyPolicy)
                             }
                         )
                     ]
                 )
-                
-                Divider()
-                
+
                 ListRowView(
                     title: TextLiteral.SettingView.versionSectionTitle,
                     items: [
                         RowView(
-                            text: TextLiteral.SettingView.appVersion(appVersion),
-                            rightItem: .none,
+                            text: "버전정보",
+                            rightItem: .text(TextLiteral.SettingView.appVersion(appVersion)),
                             isEnabled: false,
                             action: {}
                         )
@@ -134,11 +131,11 @@ struct LogoutDialogView: View {
                 VStack(spacing: 9) {
                     Text(TextLiteral.SettingReducer.logoutAlertTitle)
                         .font(.system(size: 18, weight: .bold))
-                        .foregroundStyle(.gray950)
+                        .foregroundStyle(Color.adaptivePrimaryText)
 
                     Text(TextLiteral.SettingReducer.logoutAlertMessage)
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(.slate500)
+                        .foregroundStyle(Color.adaptiveSecondaryText)
                         .multilineTextAlignment(.center)
                         .lineSpacing(3)
                 }
@@ -147,10 +144,10 @@ struct LogoutDialogView: View {
                     Button(action: cancel) {
                         Text(TextLiteral.SettingReducer.alertCancelTitle)
                             .font(.system(size: 15, weight: .bold))
-                            .foregroundStyle(.gray950)
+                            .foregroundStyle(Color.adaptivePrimaryText)
                             .frame(maxWidth: .infinity)
                             .frame(height: 48)
-                            .background(.gray25)
+                            .background(Color.adaptiveMutedSurface)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                     }
                     .buttonStyle(.plain)
@@ -170,7 +167,7 @@ struct LogoutDialogView: View {
             .padding(.top, 40)
             .padding(.horizontal, 34)
             .padding(.bottom, 28)
-            .background(.white)
+            .background(Color.adaptiveSurface)
             .clipShape(RoundedRectangle(cornerRadius: 18))
             .padding(.horizontal, 34)
         }
@@ -179,7 +176,6 @@ struct LogoutDialogView: View {
 
 enum listItem {
     case logout
-    case notificationSettings
     case termsOfService
     case privacyPolicy
 }
