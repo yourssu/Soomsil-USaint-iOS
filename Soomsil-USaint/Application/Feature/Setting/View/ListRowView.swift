@@ -81,26 +81,7 @@ struct RowView: View {
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(Color.adaptivePrimaryText)
                 .padding(.leading, 16)
-                .frame(height: 58)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(isPressed ? Color.adaptiveMutedSurface : .clear)
-                .gesture(
-                    DragGesture(minimumDistance: 0)
-                        .onChanged { _ in
-                            guard isEnabled else { return }
-                            isPressed = true
-                        }
-                        .onEnded { _ in
-                            guard isEnabled else { return }
-                            isPressed = false
-                            switch rightItem {
-                            case .chevron:
-                                action()
-                            case .none, .text, .toggle:
-                                break
-                            }
-                        }
-                )
             
             switch rightItem {
             case .none:
@@ -126,5 +107,61 @@ struct RowView: View {
                     }
             }
         }
+        .frame(height: 58)
+        .background(isPressed ? Color.adaptiveMutedSurface : .clear)
+        .contentShape(Rectangle())
+        .rowTapGesture(
+            isEnabled: isEnabled && rightItem.isRowTapEnabled,
+            isPressed: $isPressed,
+            action: action
+        )
+    }
+}
+
+private extension RightItem {
+    var isRowTapEnabled: Bool {
+        if case .chevron = self {
+            return true
+        }
+        return false
+    }
+}
+
+private struct RowTapGestureModifier: ViewModifier {
+    let isEnabled: Bool
+    @Binding var isPressed: Bool
+    let action: () -> Void
+
+    func body(content: Content) -> some View {
+        if isEnabled {
+            content.gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in
+                        isPressed = true
+                    }
+                    .onEnded { _ in
+                        isPressed = false
+                        action()
+                    }
+            )
+        } else {
+            content
+        }
+    }
+}
+
+private extension View {
+    func rowTapGesture(
+        isEnabled: Bool,
+        isPressed: Binding<Bool>,
+        action: @escaping () -> Void
+    ) -> some View {
+        modifier(
+            RowTapGestureModifier(
+                isEnabled: isEnabled,
+                isPressed: isPressed,
+                action: action
+            )
+        )
     }
 }
