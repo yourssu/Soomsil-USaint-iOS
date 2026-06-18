@@ -75,9 +75,11 @@ extension USaintNotificationCategory {
 
     var defaultRoute: USaintNotificationRoute {
         switch self {
+        case .gradeAnnouncement:
+            .currentSemesterGrades
         case .chapel:
             .chapel
-        case .courseRegistration, .assignmentDeadline, .gradeAnnouncement, .marketing:
+        case .courseRegistration, .assignmentDeadline, .marketing:
             .notification
         }
     }
@@ -142,6 +144,7 @@ extension USaintNotificationCategory {
 
 enum USaintNotificationRoute: String, Sendable {
     case notification
+    case currentSemesterGrades
     case chapel
 }
 

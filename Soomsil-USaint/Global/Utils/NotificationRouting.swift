@@ -44,14 +44,23 @@ extension USaintNotificationRoute {
             "course_registration",
             "assignment",
             "assignment_deadline",
-            "grade",
-            "grade_announcement",
             "marketing",
             "알림",
-            "성적",
             "과제",
             "수강신청":
             self = .notification
+        case Self.currentSemesterGrades.rawValue.lowercased(),
+            "current_semester_grades",
+            "current_semester_grade",
+            "grade",
+            "grades",
+            "grade_announcement",
+            "semester_grade",
+            "semester_grades",
+            "성적",
+            "성적공개",
+            "성적_공개":
+            self = .currentSemesterGrades
         case Self.chapel.rawValue,
             "채플":
             self = .chapel

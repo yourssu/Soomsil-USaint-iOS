@@ -13,8 +13,17 @@ import Testing
     ]) == .chapel)
 
     #expect(USaintNotificationRoute(userInfo: [
+        NotificationUserInfoKey.category: "성적"
+    ]) == .currentSemesterGrades)
+
+    #expect(USaintNotificationRoute(userInfo: [
         NotificationUserInfoKey.category: "과제"
     ]) == .notification)
+}
+
+@Test func gradeNotificationRouteOpensCurrentSemesterGrades() async throws {
+    #expect(USaintNotificationRoute(remoteValue: "grade_announcement") == .currentSemesterGrades)
+    #expect(USaintNotificationRoute(remoteValue: "성적 공개") == .currentSemesterGrades)
 }
 
 @Test func notificationCategoriesUseStableFCMTopics() async throws {
