@@ -11,20 +11,50 @@ import UserNotifications
 
 import ComposableArchitecture
 import FirebaseCore
+import FirebaseMessaging
 import Rusaint
 import Mixpanel
 
 class AppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
+        Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().delegate = self
         registerNotificationCategories()
+        Task {
+            await RemoteNotificationClient.liveValue.registerDeviceIfAuthorized()
+        }
         if let token = Bundle.main.object(forInfoDictionaryKey: "MIXPANEL_TEAM_TOKEN") as? String {
             Mixpanel.initialize(token: "4cb8a3b1aabf9715a4db3005904a744d", trackAutomaticEvents: false)
         } else {
             assertionFailure("Mixpanel 토큰을 불러올 수 없습니다.")
         }
         return true
+    }
+
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        Messaging.messaging().apnsToken = deviceToken
+        Task {
+            await RemoteNotificationClient.liveValue.refreshRegistrationToken()
+        }
+    }
+
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        debugPrint("APNs registration failed: \(error)")
+    }
+
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        completionHandler(.noData)
     }
 
     private func registerNotificationCategories() {
@@ -90,7 +120,11 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         _ center: UNUserNotificationCenter,
         willPresent notification: UNNotification
     ) async -> UNNotificationPresentationOptions {
-        [.banner, .list, .sound]
+        guard shouldPresentNotification(notification) else {
+            return []
+        }
+
+        return [.banner, .list, .sound]
     }
 
     func userNotificationCenter(
@@ -108,15 +142,50 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             break
         }
 
-        if let route = response.notification.request.content.userInfo[NotificationUserInfoKey.route] as? String {
-            UserDefaults.standard.set(route, forKey: NotificationStorageKey.pendingRoute)
+        let userInfo = normalizedUserInfo(from: response.notification.request.content.userInfo)
+
+        if let route = USaintNotificationRoute(userInfo: userInfo) {
+            UserDefaults.standard.set(route.rawValue, forKey: NotificationStorageKey.pendingRoute)
         }
 
         NotificationCenter.default.post(
             name: .usaintNotificationOpened,
             object: nil,
-            userInfo: response.notification.request.content.userInfo
+            userInfo: userInfo
         )
+    }
+
+    private func shouldPresentNotification(_ notification: UNNotification) -> Bool {
+        guard USaintNotificationCategory.isPushEnabledInUserDefaults else {
+            return false
+        }
+
+        guard let category = USaintNotificationCategory(userInfo: notification.request.content.userInfo) else {
+            return true
+        }
+
+        return category.isEnabledInUserDefaults
+    }
+
+    private func normalizedUserInfo(from userInfo: [AnyHashable: Any]) -> [AnyHashable: Any] {
+        var normalizedUserInfo = userInfo
+
+        if let category = USaintNotificationCategory(userInfo: normalizedUserInfo) {
+            normalizedUserInfo[NotificationUserInfoKey.category] = category.rawValue
+            if let routeValue = normalizedUserInfo[NotificationUserInfoKey.route] as? String,
+               let route = USaintNotificationRoute(remoteValue: routeValue) {
+                normalizedUserInfo[NotificationUserInfoKey.route] = route.rawValue
+            } else {
+                normalizedUserInfo[NotificationUserInfoKey.route] = category.defaultRoute.rawValue
+            }
+            return normalizedUserInfo
+        }
+
+        if let route = USaintNotificationRoute(userInfo: normalizedUserInfo) {
+            normalizedUserInfo[NotificationUserInfoKey.route] = route.rawValue
+        }
+
+        return normalizedUserInfo
     }
 
     private func scheduleSnoozedNotification(
@@ -140,6 +209,14 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         )
 
         try? await UNUserNotificationCenter.current().add(request)
+    }
+}
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        Task {
+            await RemoteNotificationClient.liveValue.handleRegistrationToken(fcmToken)
+        }
     }
 }
 

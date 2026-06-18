@@ -6,11 +6,12 @@
 //
 
 import Foundation
+import UIKit
 import UserNotifications
 
 import ComposableArchitecture
 
-enum USaintNotificationCategory: String, Sendable {
+enum USaintNotificationCategory: String, CaseIterable, Sendable {
     case courseRegistration
     case assignmentDeadline
     case gradeAnnouncement
@@ -39,6 +40,103 @@ enum USaintNotificationCategory: String, Sendable {
         case .courseRegistration, .assignmentDeadline, .gradeAnnouncement, .chapel:
             true
         }
+    }
+}
+
+extension USaintNotificationCategory {
+    static var isPushEnabledInUserDefaults: Bool {
+        if UserDefaults.standard.object(forKey: "permission") == nil {
+            return true
+        }
+        return UserDefaults.standard.bool(forKey: "permission")
+    }
+
+    var isEnabledInUserDefaults: Bool {
+        if UserDefaults.standard.object(forKey: userDefaultsKey) == nil {
+            return defaultEnabled
+        }
+        return UserDefaults.standard.bool(forKey: userDefaultsKey)
+    }
+
+    var fcmTopic: String {
+        switch self {
+        case .courseRegistration:
+            "usaint_course_registration"
+        case .assignmentDeadline:
+            "usaint_assignment_deadline"
+        case .gradeAnnouncement:
+            "usaint_grade_announcement"
+        case .chapel:
+            "usaint_chapel"
+        case .marketing:
+            "usaint_marketing"
+        }
+    }
+
+    var defaultRoute: USaintNotificationRoute {
+        switch self {
+        case .chapel:
+            .chapel
+        case .courseRegistration, .assignmentDeadline, .gradeAnnouncement, .marketing:
+            .notification
+        }
+    }
+
+    init?(remoteValue: String) {
+        let normalizedValue = remoteValue
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+            .replacingOccurrences(of: "-", with: "_")
+            .replacingOccurrences(of: " ", with: "_")
+
+        switch normalizedValue {
+        case Self.courseRegistration.rawValue.lowercased(),
+            "course_registration",
+            "course",
+            "수강",
+            "수강신청":
+            self = .courseRegistration
+        case Self.assignmentDeadline.rawValue.lowercased(),
+            "assignment_deadline",
+            "assignment",
+            "assignments",
+            "과제":
+            self = .assignmentDeadline
+        case Self.gradeAnnouncement.rawValue.lowercased(),
+            "grade_announcement",
+            "grade",
+            "grades",
+            "성적":
+            self = .gradeAnnouncement
+        case Self.chapel.rawValue.lowercased(),
+            "채플":
+            self = .chapel
+        case Self.marketing.rawValue.lowercased(),
+            "event",
+            "events",
+            "마케팅",
+            "이벤트":
+            self = .marketing
+        default:
+            return nil
+        }
+    }
+
+    init?(userInfo: [AnyHashable: Any]) {
+        for key in [
+            NotificationUserInfoKey.category,
+            "notification_category",
+            "notificationCategory",
+            "domain",
+            "type"
+        ] {
+            if let value = userInfo[key] as? String,
+               let category = USaintNotificationCategory(remoteValue: value) {
+                self = category
+                return
+            }
+        }
+        return nil
     }
 }
 
@@ -120,8 +218,16 @@ extension DependencyValues {
 extension LocalNotificationClient: DependencyKey {
     static let liveValue: LocalNotificationClient = Self(
         requestPushAuthorization: {
-            return try await UNUserNotificationCenter.current()
+            let granted = try await UNUserNotificationCenter.current()
                 .requestAuthorization(options: [.alert, .badge, .sound])
+
+            if granted {
+                await MainActor.run {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+
+            return granted
         }, getPushAuthorizationStatus: {
             let settings = await UNUserNotificationCenter.current().notificationSettings()
             return (settings.authorizationStatus == .authorized) || (settings.authorizationStatus == .provisional)
@@ -159,26 +265,12 @@ extension LocalNotificationClient: DependencyKey {
     static let testValue: LocalNotificationClient = previewValue
 }
 
-private func isPushEnabled() -> Bool {
-    if UserDefaults.standard.object(forKey: "permission") == nil {
-        return true
-    }
-    return UserDefaults.standard.bool(forKey: "permission")
-}
-
-private func isCategoryEnabled(_ category: USaintNotificationCategory) -> Bool {
-    if UserDefaults.standard.object(forKey: category.userDefaultsKey) == nil {
-        return category.defaultEnabled
-    }
-    return UserDefaults.standard.bool(forKey: category.userDefaultsKey)
-}
-
 private func scheduleLocalNotification(_ payload: USaintNotificationPayload) async throws {
     let settings = await UNUserNotificationCenter.current().notificationSettings()
 
     guard (settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional),
-          isPushEnabled(),
-          isCategoryEnabled(payload.category) else {
+          USaintNotificationCategory.isPushEnabledInUserDefaults,
+          payload.category.isEnabledInUserDefaults else {
         return
     }
 

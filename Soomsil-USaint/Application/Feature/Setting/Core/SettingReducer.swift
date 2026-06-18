@@ -33,6 +33,7 @@ struct SettingReducer {
         case syncPushAuthorizationResponse(Result<Bool, Error>)
         case pushAuthorizationResponse(Result<Bool, Error>)
         case requestPushAuthorizationResponse(Result<Bool, Error>)
+        case notificationCategoryToggled(USaintNotificationCategory, Bool)
         case termsOfServiceButtonTapped
         case privacyPolicyButtonTapped
         case alert(PresentationAction<Alert>)
@@ -44,6 +45,7 @@ struct SettingReducer {
     }
 
     @Dependency(\.localNotificationClient) var localNotificationClient
+    @Dependency(\.remoteNotificationClient) var remoteNotificationClient
     @Dependency(\.studentClient) var studentClient
     @Dependency(\.gradeClient) var gradeClient
     @Dependency(\.chapelClient) var chapelClient
@@ -57,7 +59,9 @@ struct SettingReducer {
                 if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                     state.appVersion = currentVersion
                 }
-                return .none
+                return .run { _ in
+                    await remoteNotificationClient.syncTopicSubscriptions()
+                }
             case .backButtonTapped:
                 return .run { _ in
                     await dismiss()
@@ -91,10 +95,14 @@ struct SettingReducer {
             case .togglePushAuthorization(false):
                 state.$permission.withLock { $0 = false }
                 YDSToast(TextLiteral.SettingReducer.pushAuthorizationDeniedToast, haptic: .success)
-                return .none
+                return .run { _ in
+                    await remoteNotificationClient.syncTopicSubscriptions()
+                }
             case .syncPushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
-                return .none
+                return .run { _ in
+                    await remoteNotificationClient.syncTopicSubscriptions()
+                }
             case .syncPushAuthorizationResponse(.failure(let error)):
                 debugPrint("Setting Reducer: SyncPushAuthorization Error - \(error)")
                 return .none
@@ -120,7 +128,12 @@ struct SettingReducer {
                 } else {
                     YDSToast(TextLiteral.SettingReducer.pushAuthorizationAllowedToast, haptic: .success)
                 }
-                return .none
+                return .run { _ in
+                    if granted {
+                        await remoteNotificationClient.registerDeviceIfAuthorized()
+                    }
+                    await remoteNotificationClient.syncTopicSubscriptions()
+                }
             case .requestPushAuthorizationResponse(.success(let granted)):
                 if !granted {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
@@ -132,6 +145,10 @@ struct SettingReducer {
                     }
                 }
                 return .none
+            case .notificationCategoryToggled(let category, let isEnabled):
+                return .run { _ in
+                    await remoteNotificationClient.updateTopicSubscription(category, isEnabled)
+                }
             case .alert(.presented(.configurePushAuthorizationTapped)):
                 debugPrint("alert permission")
                 return .run { send in

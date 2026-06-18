@@ -52,6 +52,7 @@ struct HomeReducer {
     }
     
     @Dependency(\.localNotificationClient) var localNotificationClient
+    @Dependency(\.remoteNotificationClient) var remoteNotificationClient
     @Dependency(\.studentClient) var studentClient
     @Dependency(\.gradeClient) var gradeClient
     @Dependency(\.chapelClient) var chapelClient
@@ -120,17 +121,29 @@ struct HomeReducer {
 
             case .checkPushAuthorizationResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
-                return .none
+                return .run { _ in
+                    if granted {
+                        await remoteNotificationClient.registerDeviceIfAuthorized()
+                    }
+                    await remoteNotificationClient.syncTopicSubscriptions()
+                }
             case .checkPushAuthorizationResponse(.failure(let error)):
                 debugPrint("Home Reducer: CheckPushAuthorization Error - \(error)")
                 return .none
             case .notificationPermissionResponse(.success(let granted)):
                 state.$permission.withLock { $0 = granted }
-                return .none
+                return .run { _ in
+                    if granted {
+                        await remoteNotificationClient.registerDeviceIfAuthorized()
+                    }
+                    await remoteNotificationClient.syncTopicSubscriptions()
+                }
             case .notificationPermissionResponse(.failure(let error)):
                 debugPrint("Home Reducer: RequestPushAuthorization Error - \(error)")
                 state.$permission.withLock { $0 = false }
-                return .none
+                return .run { _ in
+                    await remoteNotificationClient.syncTopicSubscriptions()
+                }
             case .semesterDetailPressed:
                 state.path.append(.semesterDetail(SemesterDetailReducer.State()))
                 return .none
