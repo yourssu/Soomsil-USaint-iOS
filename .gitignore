@@ -153,4 +153,7 @@ xcuserdata
 
 secretConfig.xcconfig
 
+# Firebase configuration
+**/GoogleService-Info.plist
+
 # End of https://www.toptal.com/developers/gitignore/api/xcode,git,macos,swift,swiftpackagemanager
