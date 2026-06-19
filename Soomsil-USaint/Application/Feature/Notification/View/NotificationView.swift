@@ -7,42 +7,39 @@ import SwiftUI
 
 struct NotificationView: View {
     @State private var selectedCategory: NotificationCategory = .all
-    @State private var hasUnreadNotifications = true
+    @State private var notifications: [USaintReceivedNotification] = []
     @State private var showsSettings = false
 
-    private var visibleSections: [NotificationSection] {
-        let unreadSections = NotificationSampleData.sections.map { section in
-            NotificationSection(
-                title: section.title,
-                notifications: section.notifications.map { notification in
-                    NotificationItem(
-                        title: notification.title,
-                        subtitle: notification.subtitle,
-                        time: notification.time,
-                        badge: notification.badge,
-                        category: notification.category,
-                        isRead: hasUnreadNotifications ? notification.isRead : true
-                    )
-                }
-            )
-        }
-
-        guard selectedCategory != .all else {
-            return unreadSections
-        }
-
-        return unreadSections.compactMap { section in
-            let notifications = section.notifications.filter { $0.category == selectedCategory }
-            return notifications.isEmpty ? nil : NotificationSection(title: section.title, notifications: notifications)
+    private var visibleNotifications: [USaintReceivedNotification] {
+        switch selectedCategory {
+        case .all:
+            notifications
+        case .academic:
+            notifications.filter { $0.notificationCategory == .academic }
+        case .classNotice:
+            notifications.filter { $0.notificationCategory == .classNotice }
         }
     }
 
+    private var visibleSections: [NotificationSection] {
+        Dictionary(grouping: visibleNotifications, by: \.sectionTitle)
+            .map { title, notifications in
+                NotificationSection(
+                    title: title,
+                    notifications: notifications
+                        .sorted { $0.sentAt > $1.sentAt }
+                        .map(NotificationItem.init)
+                )
+            }
+            .sorted { $0.sortOrder < $1.sortOrder }
+    }
+
     private var unreadCount: Int {
-        guard hasUnreadNotifications else { return 0 }
-        return NotificationSampleData.sections
-            .flatMap(\.notifications)
-            .filter { !$0.isRead }
-            .count
+        notifications.filter { !$0.isRead }.count
+    }
+
+    private var featuredNotification: USaintReceivedNotification? {
+        notifications.first { !$0.isRead }
     }
 
     var body: some View {
@@ -52,15 +49,15 @@ struct NotificationView: View {
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     summary
-                    if unreadCount > 0 {
-                        featuredNotice
+                    if let featuredNotification {
+                        featuredNotice(featuredNotification)
                     }
                     categoryTabs
                     retentionBanner
-                    if unreadCount > 0 {
-                        notificationList
-                    } else {
+                    if visibleNotifications.isEmpty {
                         emptyState
+                    } else {
+                        notificationList
                     }
                 }
                 .padding(.bottom, 24)
@@ -68,6 +65,12 @@ struct NotificationView: View {
             .background(Color.adaptiveBackground)
         }
         .background(Color.adaptiveBackground)
+        .task {
+            await reloadNotifications()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .usaintReceivedNotificationsDidChange)) { _ in
+            notifications = USaintReceivedNotificationStore.load()
+        }
         .fullScreenCover(isPresented: $showsSettings) {
             NotificationSettingsContainerView(
                 close: {
@@ -122,7 +125,7 @@ struct NotificationView: View {
                 Spacer()
 
                 Button {
-                    hasUnreadNotifications = false
+                    notifications = USaintReceivedNotificationStore.markAllRead()
                 } label: {
                     HStack(spacing: 5) {
                         Image(systemName: "checkmark")
@@ -152,35 +155,42 @@ struct NotificationView: View {
         .padding(.bottom, unreadCount > 0 ? 20 : 8)
     }
 
-    private var featuredNotice: some View {
-        HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(TextLiteral.NotificationView.featuredTitle)
+    private func featuredNotice(_ notification: USaintReceivedNotification) -> some View {
+        Button {
+            open(notification)
+        } label: {
+            HStack(spacing: 14) {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(notification.title)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(Color.adaptivePrimaryText)
+                        .lineLimit(1)
+
+                    Text(notification.body ?? notification.category ?? notification.domain ?? "")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Color.adaptiveSecondaryText)
+                        .lineLimit(1)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(Color.adaptivePrimaryText)
-
-                Text(TextLiteral.NotificationView.featuredSubtitle)
-                    .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(Color.adaptiveSecondaryText)
+                    .accessibilityHidden(true)
             }
-
-            Spacer()
-
-            RoundedRectangle(cornerRadius: 4)
-                .fill(Color.adaptiveSecondaryText)
-                .frame(width: 16, height: 16)
-                .accessibilityHidden(true)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(Color.adaptiveSurface)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.adaptiveBorder, lineWidth: 1)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .padding(.horizontal, 20)
+            .padding(.bottom, 16)
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(Color.adaptiveSurface)
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.adaptiveBorder, lineWidth: 1)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .padding(.horizontal, 20)
-        .padding(.bottom, 16)
+        .buttonStyle(.plain)
     }
 
     private var categoryTabs: some View {
@@ -231,13 +241,30 @@ struct NotificationView: View {
     private var notificationList: some View {
         VStack(spacing: 0) {
             ForEach(visibleSections) { section in
-                NotificationSectionView(section: section)
+                NotificationSectionView(section: section, open: open)
             }
         }
         .padding(.horizontal, 20)
         .padding(.top, 8)
     }
 
+    private func reloadNotifications() async {
+        notifications = await USaintReceivedNotificationStore.mergeDeliveredNotifications()
+    }
+
+    private func open(_ notification: USaintReceivedNotification) {
+        notifications = USaintReceivedNotificationStore.markRead(notification.id)
+
+        guard let route = notification.notificationRoute else {
+            return
+        }
+
+        NotificationCenter.default.post(
+            name: .usaintNotificationOpened,
+            object: nil,
+            userInfo: [NotificationUserInfoKey.route: route.rawValue]
+        )
+    }
 }
 
 private extension NotificationView {
@@ -285,6 +312,7 @@ private extension NotificationView {
 
 private struct NotificationSectionView: View {
     let section: NotificationSection
+    let open: (USaintReceivedNotification) -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -303,7 +331,9 @@ private struct NotificationSectionView: View {
             .padding(.bottom, 8)
 
             ForEach(Array(section.notifications.enumerated()), id: \.element.id) { index, notification in
-                NotificationRowView(notification: notification)
+                NotificationRowView(notification: notification) {
+                    open(notification.rawNotification)
+                }
 
                 if index < section.notifications.count - 1 {
                     Divider()
@@ -316,45 +346,45 @@ private struct NotificationSectionView: View {
 
 private struct NotificationRowView: View {
     let notification: NotificationItem
+    let open: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(notification.title)
-                    .font(.system(size: 14, weight: notification.isRead ? .medium : .semibold))
-                    .foregroundStyle(notification.isRead ? Color.adaptiveTertiaryText : Color.adaptivePrimaryText)
-                    .lineLimit(1)
+        Button(action: open) {
+            HStack(spacing: 12) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(notification.title)
+                        .font(.system(size: 14, weight: notification.isRead ? .medium : .semibold))
+                        .foregroundStyle(notification.isRead ? Color.adaptiveTertiaryText : Color.adaptivePrimaryText)
+                        .lineLimit(1)
 
-                if let subtitle = notification.subtitle {
                     HStack(spacing: 6) {
-                        Text(subtitle)
+                        if let subtitle = notification.subtitle {
+                            Text(subtitle)
+                        }
 
-                        if let time = notification.time {
+                        if notification.subtitle != nil {
                             Circle()
                                 .fill(Color.adaptiveSecondaryText)
                                 .frame(width: 3, height: 3)
-
-                            Text(time)
                         }
+
+                        Text(notification.time)
                     }
                     .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(notification.isRead ? Color.adaptiveTertiaryText : Color.adaptiveSecondaryText)
                     .lineLimit(1)
-                } else if let time = notification.time {
-                    Text(time)
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(Color.adaptiveTertiaryText)
+                }
+
+                Spacer(minLength: 12)
+
+                if let badge = notification.badge {
+                    NotificationBadgeView(badge: badge)
                 }
             }
-
-            Spacer(minLength: 12)
-
-            if let badge = notification.badge {
-                NotificationBadgeView(badge: badge)
-            }
+            .padding(.vertical, 12)
+            .opacity(notification.isRead ? 0.55 : 1)
         }
-        .padding(.vertical, 12)
-        .opacity(notification.isRead ? 0.55 : 1)
+        .buttonStyle(.plain)
     }
 }
 
@@ -394,19 +424,41 @@ private enum NotificationCategory: CaseIterable {
 }
 
 private struct NotificationSection: Identifiable {
-    let id = UUID()
     let title: String
     let notifications: [NotificationItem]
+
+    var id: String { title }
+
+    var sortOrder: Int {
+        switch title {
+        case "오늘":
+            0
+        case "이번 주":
+            1
+        default:
+            2
+        }
+    }
 }
 
 private struct NotificationItem: Identifiable {
-    let id = UUID()
+    let rawNotification: USaintReceivedNotification
     let title: String
     let subtitle: String?
-    let time: String?
+    let time: String
     let badge: NotificationBadge?
-    let category: NotificationCategory
     let isRead: Bool
+
+    var id: String { rawNotification.id }
+
+    init(_ notification: USaintReceivedNotification) {
+        rawNotification = notification
+        title = notification.title
+        subtitle = notification.subtitle
+        time = notification.sentAt.relativeNotificationTimeText
+        badge = NotificationBadge(notification)
+        isRead = notification.isRead
+    }
 }
 
 private struct NotificationBadge {
@@ -415,6 +467,48 @@ private struct NotificationBadge {
     let backgroundColor: Color
     let borderColor: Color
     let hasBorder: Bool
+
+    init(
+        title: String,
+        foregroundColor: Color,
+        backgroundColor: Color,
+        borderColor: Color,
+        hasBorder: Bool
+    ) {
+        self.title = title
+        self.foregroundColor = foregroundColor
+        self.backgroundColor = backgroundColor
+        self.borderColor = borderColor
+        self.hasBorder = hasBorder
+    }
+
+    init?(_ notification: USaintReceivedNotification) {
+        if let priority = notification.priority, !priority.isEmpty {
+            switch priority {
+            case "P0":
+                self = .urgent(priority)
+            case "P1":
+                self = .warning(priority)
+            default:
+                self = .neutral(priority)
+            }
+            return
+        }
+
+        guard let pushType = notification.pushType, !pushType.isEmpty else {
+            return nil
+        }
+
+        if pushType.contains("이머전시") {
+            self = .urgent("긴급")
+        } else if pushType.contains("경고") {
+            self = .warning("경고")
+        } else if pushType.contains("미발송") {
+            self = .neutral("차단")
+        } else {
+            self = .neutral("안내")
+        }
+    }
 
     static func urgent(_ title: String) -> Self {
         Self(
@@ -447,104 +541,82 @@ private struct NotificationBadge {
     }
 }
 
-private enum NotificationSampleData {
-    static let sections: [NotificationSection] = [
-        NotificationSection(
-            title: "오늘",
-            notifications: [
-                NotificationItem(
-                    title: "내 자리 - B-12",
-                    subtitle: "채플 입장 시간 · 17:00 시작 · 입구 좌측으로 입장",
-                    time: "5분 전",
-                    badge: nil,
-                    category: .classNotice,
-                    isRead: false
-                ),
-                NotificationItem(
-                    title: "데이터베이스 과제 마감 D-1",
-                    subtitle: "오늘 자정 마감 · 아직 제출 전이에요",
-                    time: "1시간 전",
-                    badge: .urgent("D-1"),
-                    category: .classNotice,
-                    isRead: false
-                ),
-                NotificationItem(
-                    title: "수강신청 알림",
-                    subtitle: "2025-2학기 수강신청이 D-2 남았어요",
-                    time: "2시간 전",
-                    badge: nil,
-                    category: .academic,
-                    isRead: false
-                )
-            ]
-        ),
-        NotificationSection(
-            title: "이번 주",
-            notifications: [
-                NotificationItem(
-                    title: "비전채플 11회차",
-                    subtitle: "내 자리 B-12",
-                    time: "5/8 17:00",
-                    badge: .neutral("내일"),
-                    category: .classNotice,
-                    isRead: false
-                ),
-                NotificationItem(
-                    title: "데이터베이스 중간고사",
-                    subtitle: "형남공학관 308호",
-                    time: "5/20",
-                    badge: .neutral("D-5"),
-                    category: .classNotice,
-                    isRead: false
-                ),
-                NotificationItem(
-                    title: "운영체제 과제 2 안내",
-                    subtitle: "5월 12일 마감",
-                    time: "5/6",
-                    badge: nil,
-                    category: .classNotice,
-                    isRead: false
-                ),
-                NotificationItem(
-                    title: "학과 사무실 안내",
-                    subtitle: "휴학 신청 마감 D-7",
-                    time: "5/5",
-                    badge: nil,
-                    category: .academic,
-                    isRead: false
-                ),
-                NotificationItem(
-                    title: "성적장학금 신청 안내",
-                    subtitle: "신청 기간 시작",
-                    time: "5/4",
-                    badge: nil,
-                    category: .academic,
-                    isRead: false
-                )
-            ]
-        ),
-        NotificationSection(
-            title: "이전",
-            notifications: [
-                NotificationItem(
-                    title: "3월 학사일정 안내",
-                    subtitle: nil,
-                    time: "3일 전",
-                    badge: nil,
-                    category: .academic,
-                    isRead: true
-                ),
-                NotificationItem(
-                    title: "전산 시스템 점검 안내",
-                    subtitle: nil,
-                    time: "4월 25일",
-                    badge: nil,
-                    category: .academic,
-                    isRead: true
-                )
-            ]
-        )
-    ]
+private extension USaintReceivedNotification {
+    var notificationCategory: NotificationCategory {
+        switch domain {
+        case "과제", "시간표", "채플", "강의자료", "출석경고70", "출석경고75", "출석F확정":
+            .classNotice
+        default:
+            .academic
+        }
+    }
+
+    var notificationRoute: USaintNotificationRoute? {
+        if let route,
+           let notificationRoute = USaintNotificationRoute(rawValue: route) {
+            return notificationRoute
+        }
+
+        if domain == "성적" || category?.contains("성적") == true {
+            return .currentSemesterGrades
+        }
+
+        return .notification
+    }
+
+    var subtitle: String? {
+        if let body, !body.isEmpty {
+            return body
+        }
+
+        return [domain, category]
+            .compactMap { $0 }
+            .filter { !$0.isEmpty }
+            .joined(separator: " · ")
+            .nilIfEmpty
+    }
+
+    var sectionTitle: String {
+        let calendar = Calendar.current
+        if calendar.isDateInToday(sentAt) {
+            return "오늘"
+        }
+
+        if let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: sentAt), to: calendar.startOfDay(for: Date())).day,
+           days < 7 {
+            return "이번 주"
+        }
+
+        return "이전"
+    }
+}
+
+private extension Date {
+    var relativeNotificationTimeText: String {
+        let interval = max(0, Date().timeIntervalSince(self))
+        if interval < 60 {
+            return "방금"
+        }
+
+        if interval < 60 * 60 {
+            return "\(Int(interval / 60))분 전"
+        }
+
+        if interval < 24 * 60 * 60 {
+            return "\(Int(interval / 60 / 60))시간 전"
+        }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "M/d HH:mm"
+        return formatter.string(from: self)
+    }
+}
+
+private extension String {
+    var nilIfEmpty: String? {
+        isEmpty ? nil : self
+    }
 }
 
 #Preview {

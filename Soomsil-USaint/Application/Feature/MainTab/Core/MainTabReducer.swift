@@ -49,6 +49,10 @@ struct MainTabReducer {
             case .notificationOpened(.chapel):
                 state.selectedTab = .chapel
                 return .none
+            case .notificationOpened(.currentSemesterGrades):
+                state.selectedTab = .home
+                state.homeState.path.removeAll()
+                return .send(.home(.currentSemesterGradesPressed))
             case .notificationOpened(.notification):
                 state.selectedTab = .notification
                 return .none

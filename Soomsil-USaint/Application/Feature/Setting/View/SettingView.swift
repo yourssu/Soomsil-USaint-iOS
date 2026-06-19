@@ -23,17 +23,21 @@ struct SettingView: View {
                 .padding(.bottom, 8)
 
             SettingList(
-                appVersion: store.appVersion
-            ) { tappedItem in
-                switch tappedItem {
-                case .logout:
-                    store.send(.logoutButtonTapped)
-                case .termsOfService:
-                    store.send(.termsOfServiceButtonTapped)
-                case .privacyPolicy:
-                    store.send(.privacyPolicyButtonTapped)
+                appVersion: store.appVersion,
+                listItemTapped: { tappedItem in
+                    switch tappedItem {
+                    case .logout:
+                        store.send(.logoutButtonTapped)
+                    case .termsOfService:
+                        store.send(.termsOfServiceButtonTapped)
+                    case .privacyPolicy:
+                        store.send(.privacyPolicyButtonTapped)
+                    }
+                },
+                notificationToggleChanged: { category, isEnabled in
+                    store.send(.notificationCategoryToggled(category, isEnabled))
                 }
-            }
+            )
         }
         .registerYDSToast()
         .alert(
@@ -49,6 +53,7 @@ struct SettingView: View {
     struct SettingList: View {
         let appVersion: String
         let listItemTapped: (listItem) -> Void
+        let notificationToggleChanged: (USaintNotificationCategory, Bool) -> Void
         @AppStorage("gradeAnnouncementNotificationEnabled") private var isGradeNotificationEnabled = true
         @AppStorage("chapelNotificationEnabled") private var isCampusNotificationEnabled = true
         
@@ -72,12 +77,16 @@ struct SettingView: View {
                         RowView(
                             text: TextLiteral.SettingView.gradeNotificationTitle,
                             rightItem: .toggle(isPushAuthorizationEnabled: $isGradeNotificationEnabled),
-                            action: {}
+                            action: {
+                                notificationToggleChanged(.gradeAnnouncement, isGradeNotificationEnabled)
+                            }
                         ),
                         RowView(
                             text: TextLiteral.SettingView.campusNotificationTitle,
                             rightItem: .toggle(isPushAuthorizationEnabled: $isCampusNotificationEnabled),
-                            action: {}
+                            action: {
+                                notificationToggleChanged(.chapel, isCampusNotificationEnabled)
+                            }
                         )
                     ])
                 

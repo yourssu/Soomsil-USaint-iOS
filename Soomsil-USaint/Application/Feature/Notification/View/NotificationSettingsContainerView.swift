@@ -13,6 +13,7 @@ struct NotificationSettingsContainerView: View {
     let close: () -> Void
 
     @Dependency(\.localNotificationClient) private var localNotificationClient
+    @Dependency(\.remoteNotificationClient) private var remoteNotificationClient
 
     @AppStorage("permission") private var isPushNotificationEnabled = false
     @AppStorage("courseRegistrationNotificationEnabled") private var isCourseRegistrationEnabled = true
@@ -38,27 +39,27 @@ struct NotificationSettingsContainerView: View {
             isMarketingEnabled: isMarketingEnabled,
             pushToggleChanged: updatePushNotification,
             courseRegistrationToggleChanged: {
-                updateNotificationType(isOn: $0) {
+                updateNotificationType(.courseRegistration, isOn: $0) {
                     isCourseRegistrationEnabled = $0
                 }
             },
             assignmentDeadlineToggleChanged: {
-                updateNotificationType(isOn: $0) {
+                updateNotificationType(.assignmentDeadline, isOn: $0) {
                     isAssignmentDeadlineEnabled = $0
                 }
             },
             gradeAnnouncementToggleChanged: {
-                updateNotificationType(isOn: $0) {
+                updateNotificationType(.gradeAnnouncement, isOn: $0) {
                     isGradeAnnouncementEnabled = $0
                 }
             },
             chapelToggleChanged: {
-                updateNotificationType(isOn: $0) {
+                updateNotificationType(.chapel, isOn: $0) {
                     isChapelEnabled = $0
                 }
             },
             marketingToggleChanged: {
-                updateNotificationType(isOn: $0) {
+                updateNotificationType(.marketing, isOn: $0) {
                     isMarketingEnabled = $0
                 }
             },
@@ -67,6 +68,7 @@ struct NotificationSettingsContainerView: View {
         )
         .task {
             await refreshAuthorizationStatus()
+            await remoteNotificationClient.syncTopicSubscriptions()
         }
     }
 
@@ -83,12 +85,19 @@ struct NotificationSettingsContainerView: View {
     private func updatePushNotification(_ isOn: Bool) {
         guard isOn else {
             isPushNotificationEnabled = false
+            Task {
+                await remoteNotificationClient.syncTopicSubscriptions()
+            }
             return
         }
 
         switch authorizationStatus {
         case .authorized, .provisional:
             isPushNotificationEnabled = true
+            Task {
+                await remoteNotificationClient.registerDeviceIfAuthorized()
+                await remoteNotificationClient.syncTopicSubscriptions()
+            }
         case .notDetermined:
             requestAuthorization()
         case .denied, .ephemeral:
@@ -98,13 +107,20 @@ struct NotificationSettingsContainerView: View {
         }
     }
 
-    private func updateNotificationType(isOn: Bool, assign: (Bool) -> Void) {
+    private func updateNotificationType(
+        _ category: USaintNotificationCategory,
+        isOn: Bool,
+        assign: (Bool) -> Void
+    ) {
         guard isSystemAuthorized, isPushNotificationEnabled else {
             updatePushNotification(true)
             return
         }
 
         assign(isOn)
+        Task {
+            await remoteNotificationClient.updateTopicSubscription(category, isOn)
+        }
     }
 
     private func requestAuthorization() {
@@ -116,6 +132,11 @@ struct NotificationSettingsContainerView: View {
             }
 
             await refreshAuthorizationStatus()
+
+            if granted {
+                await remoteNotificationClient.registerDeviceIfAuthorized()
+            }
+            await remoteNotificationClient.syncTopicSubscriptions()
         }
     }
 
@@ -148,6 +169,9 @@ struct NotificationSettingsContainerView: View {
                     isPushNotificationEnabled = true
                 }
             }
+
+            await remoteNotificationClient.registerDeviceIfAuthorized()
+            await remoteNotificationClient.syncTopicSubscriptions()
 
             try? await localNotificationClient.setChapelPushNotification(
                 ChapelCard(attendance: 4, seatPosition: "B-12", floorLevel: 1)
