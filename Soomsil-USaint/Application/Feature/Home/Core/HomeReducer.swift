@@ -53,6 +53,7 @@ struct HomeReducer {
     
     @Dependency(\.localNotificationClient) var localNotificationClient
     @Dependency(\.remoteNotificationClient) var remoteNotificationClient
+    @Dependency(\.alarmBackendClient) var alarmBackendClient
     @Dependency(\.studentClient) var studentClient
     @Dependency(\.gradeClient) var gradeClient
     @Dependency(\.chapelClient) var chapelClient
@@ -124,6 +125,7 @@ struct HomeReducer {
                 return .run { _ in
                     if granted {
                         await remoteNotificationClient.registerDeviceIfAuthorized()
+                        try? await alarmBackendClient.registerStoredDevice()
                     }
                     await remoteNotificationClient.syncTopicSubscriptions()
                 }
@@ -135,6 +137,7 @@ struct HomeReducer {
                 return .run { _ in
                     if granted {
                         await remoteNotificationClient.registerDeviceIfAuthorized()
+                        try? await alarmBackendClient.registerStoredDevice()
                     }
                     await remoteNotificationClient.syncTopicSubscriptions()
                 }

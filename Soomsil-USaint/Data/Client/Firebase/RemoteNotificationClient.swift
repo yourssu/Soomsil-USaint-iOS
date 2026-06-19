@@ -26,24 +26,38 @@ extension DependencyValues {
 }
 
 extension RemoteNotificationClient: DependencyKey {
-    static let liveValue: RemoteNotificationClient = Self(
-        registerDeviceIfAuthorized: {
-            await registerRemoteNotificationsIfAuthorized()
-        },
-        syncTopicSubscriptions: {
-            await syncFCMTopicSubscriptions()
-        },
-        updateTopicSubscription: { category, isEnabled in
-            UserDefaults.standard.set(isEnabled, forKey: category.userDefaultsKey)
-            await syncFCMTopicSubscriptions()
-        },
-        refreshRegistrationToken: {
-            await refreshFCMRegistrationToken()
-        },
-        handleRegistrationToken: { token in
-            await handleFCMRegistrationToken(token)
-        }
-    )
+    static let liveValue: RemoteNotificationClient = {
+        @Dependency(\.alarmBackendClient) var alarmBackendClient
+
+        return Self(
+            registerDeviceIfAuthorized: {
+                await registerRemoteNotificationsIfAuthorized()
+            },
+            syncTopicSubscriptions: {
+                await syncFCMTopicSubscriptions()
+            },
+            updateTopicSubscription: { category, isEnabled in
+                UserDefaults.standard.set(isEnabled, forKey: category.userDefaultsKey)
+                await syncFCMTopicSubscriptions()
+            },
+            refreshRegistrationToken: {
+                await refreshFCMRegistrationToken()
+            },
+            handleRegistrationToken: { token in
+                await handleFCMRegistrationToken(token)
+
+                guard let token, !token.isEmpty else {
+                    return
+                }
+
+                do {
+                    try await alarmBackendClient.registerDevice(token)
+                } catch {
+                    debugPrint("Alarm backend device registration failed: \(error)")
+                }
+            }
+        )
+    }()
 
     static let previewValue: RemoteNotificationClient = Self(
         registerDeviceIfAuthorized: {},
