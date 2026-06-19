@@ -54,7 +54,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        completionHandler(.noData)
+        USaintReceivedNotificationStore.store(userInfo: userInfo)
+        completionHandler(.newData)
     }
 
     private func registerNotificationCategories() {
@@ -124,6 +125,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return []
         }
 
+        USaintReceivedNotificationStore.store(notification)
         return [.banner, .list, .sound]
     }
 
@@ -131,6 +133,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         _ center: UNUserNotificationCenter,
         didReceive response: UNNotificationResponse
     ) async {
+        USaintReceivedNotificationStore.store(response.notification, isRead: true)
+
         switch response.actionIdentifier {
         case NotificationActionIdentifier.snoozeChapel:
             await scheduleSnoozedNotification(from: response, seconds: 15 * 60)
@@ -175,6 +179,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             if let routeValue = normalizedUserInfo[NotificationUserInfoKey.route] as? String,
                let route = USaintNotificationRoute(remoteValue: routeValue) {
                 normalizedUserInfo[NotificationUserInfoKey.route] = route.rawValue
+            } else if let deeplinkValue = normalizedUserInfo[NotificationUserInfoKey.deeplink] as? String,
+                      let route = USaintNotificationRoute(remoteValue: deeplinkValue) {
+                normalizedUserInfo[NotificationUserInfoKey.route] = route.rawValue
             } else {
                 normalizedUserInfo[NotificationUserInfoKey.route] = category.defaultRoute.rawValue
             }
@@ -183,6 +190,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
         if let route = USaintNotificationRoute(userInfo: normalizedUserInfo) {
             normalizedUserInfo[NotificationUserInfoKey.route] = route.rawValue
+        } else {
+            normalizedUserInfo[NotificationUserInfoKey.route] = USaintNotificationRoute.notification.rawValue
         }
 
         return normalizedUserInfo

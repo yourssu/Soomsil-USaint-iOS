@@ -108,7 +108,11 @@ extension USaintNotificationCategory {
             "grade_announcement",
             "grade",
             "grades",
-            "성적":
+            "성적",
+            "성적공개",
+            "과목별성적공개",
+            "최종성적공개",
+            "계절성적공개":
             self = .gradeAnnouncement
         case Self.chapel.rawValue.lowercased(),
             "채플":

@@ -11,7 +11,9 @@ extension Notification.Name {
 
 enum NotificationUserInfoKey {
     static let route = "route"
+    static let deeplink = "deeplink"
     static let category = "category"
+    static let domain = "domain"
     static let title = "title"
     static let body = "body"
 }
@@ -45,9 +47,15 @@ extension USaintNotificationRoute {
             "assignment",
             "assignment_deadline",
             "marketing",
+            "leave",
+            "absence",
+            "app_system",
+            "system",
             "알림",
             "과제",
-            "수강신청":
+            "수강신청",
+            "휴학",
+            "앱시스템":
             self = .notification
         case Self.currentSemesterGrades.rawValue.lowercased(),
             "current_semester_grades",
@@ -70,9 +78,24 @@ extension USaintNotificationRoute {
     }
 
     init?(userInfo: [AnyHashable: Any]) {
-        if let routeValue = userInfo[NotificationUserInfoKey.route] as? String,
-           let route = USaintNotificationRoute(remoteValue: routeValue) {
-            self = route
+        for key in [
+            NotificationUserInfoKey.route,
+            NotificationUserInfoKey.deeplink,
+            "deepLink"
+        ] {
+            if let routeValue = userInfo[key] as? String,
+               let route = USaintNotificationRoute(remoteValue: routeValue) {
+                self = route
+                return
+            }
+        }
+
+        if let domainValue = userInfo[NotificationUserInfoKey.domain] as? String {
+            if domainValue == "성적" {
+                self = .currentSemesterGrades
+            } else {
+                self = .notification
+            }
             return
         }
 
