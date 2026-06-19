@@ -69,11 +69,17 @@ private func registerRemoteNotificationsIfAuthorized() async {
     }
 
     UIApplication.shared.registerForRemoteNotifications()
-    await refreshFCMRegistrationToken()
-    await syncFCMTopicSubscriptions()
+    if Messaging.messaging().apnsToken != nil {
+        await refreshFCMRegistrationToken()
+        await syncFCMTopicSubscriptions()
+    }
 }
 
 private func syncFCMTopicSubscriptions() async {
+    guard await hasAPNSToken() else {
+        return
+    }
+
     let settings = await UNUserNotificationCenter.current().notificationSettings()
     let canReceivePush = (settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional)
         && USaintNotificationCategory.isPushEnabledInUserDefaults
@@ -85,6 +91,10 @@ private func syncFCMTopicSubscriptions() async {
 }
 
 private func refreshFCMRegistrationToken() async {
+    guard await hasAPNSToken() else {
+        return
+    }
+
     await withCheckedContinuation { continuation in
         Messaging.messaging().token { token, error in
             if let error {
@@ -105,6 +115,11 @@ private func handleFCMRegistrationToken(_ token: String?) async {
 
     UserDefaults.standard.set(token, forKey: RemoteNotificationStorageKey.fcmToken)
     await syncFCMTopicSubscriptions()
+}
+
+@MainActor
+private func hasAPNSToken() -> Bool {
+    Messaging.messaging().apnsToken != nil
 }
 
 private func setFCMSubscription(_ shouldSubscribe: Bool, topic: String) async {
